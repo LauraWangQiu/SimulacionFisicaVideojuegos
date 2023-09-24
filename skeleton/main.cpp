@@ -10,6 +10,10 @@
 
 #include <iostream>
 
+// ACTIVIDAD 1B
+#include "Particle.h"
+// ============
+
 std::string display_text = "This is a test";
 
 
@@ -30,6 +34,9 @@ PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
+// ACTIVIDAD 1B
+Particle*				mParticle = NULL;
+// ============
 
 // Initialize physics engine
 void initPhysics(bool interactive)
@@ -54,6 +61,11 @@ void initPhysics(bool interactive)
 	sceneDesc.filterShader = contactReportFilterShader;
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
+
+	// ACTIVIDAD 1B
+	mParticle = new Particle(Vector3(1.0f, 1.0f, 1.0f), Vector3(0, 10.0f, 0));
+	// ============
+
 	}
 
 
@@ -66,6 +78,10 @@ void stepPhysics(bool interactive, double t)
 
 	gScene->simulate(t);
 	gScene->fetchResults(true);
+
+	// ACTIVIDAD 1B
+	mParticle->integrate(t);
+	// ============
 }
 
 // Function to clean data
