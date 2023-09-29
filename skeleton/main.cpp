@@ -9,10 +9,8 @@
 #include "callbacks.hpp"
 
 #include <iostream>
-
-// ACTIVIDAD 1B
+// ==================
 #include "Particle.h"
-// ============
 
 std::string display_text = "This is a test";
 
@@ -34,9 +32,10 @@ PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
-// ACTIVIDAD 1B
-Particle*				mParticle = NULL;
 // ============
+Particle*				mParticle = NULL;
+vector<Particle*>		mParticlesVector;
+vector<Particle*>		mParticlesToDelete;
 
 // Initialize physics engine
 void initPhysics(bool interactive)
@@ -62,10 +61,9 @@ void initPhysics(bool interactive)
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
 
-	// ACTIVIDAD 1B
-	mParticle = new Particle(Vector3(1.0f, 1.0f, 1.0f), Vector3(0, 10.0f, 0));
 	// ============
-
+	//mParticle = new Particle(currentShotType::NONE, Vector3(1.0f, 1.0f, 1.0f));
+	
 	}
 
 
@@ -79,9 +77,19 @@ void stepPhysics(bool interactive, double t)
 	gScene->simulate(t);
 	gScene->fetchResults(true);
 
-	// ACTIVIDAD 1B
-	mParticle->integrate(t);
 	// ============
+	//mParticle->integrate(t);
+
+	// Actualizo las particulas
+	for (vector<Particle*>::iterator it = mParticlesVector.begin(); it != mParticlesVector.end(); ++it) {
+		if ((*it)->integrate(t)) mParticlesToDelete.push_back(*it);
+	}
+
+	// ARREGLAR
+	// Elimino aquellas particulas no vivas
+	for (vector<Particle*>::iterator it2 = mParticlesToDelete.begin(); it2 != mParticlesToDelete.end(); ++it2) {
+		mParticlesToDelete.erase(it2);
+	}
 }
 
 // Function to clean data
@@ -113,6 +121,10 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	//case ' ':	break;
 	case ' ':
 	{
+		mParticlesVector.push_back(new Particle(currentShotType::NONE, Vector3(1.0f, 1.0f, 1.0f)));
+#ifdef _DEBUG
+		cout << "A particle has been instantiated.\n";
+#endif
 		break;
 	}
 	default:
