@@ -1,30 +1,33 @@
 #pragma once
 #include "RenderUtils.hpp"
 using namespace physx;
-using namespace std;
 
-enum currentShotType { NONE, CANNON_BALL, TANK_BALL, GUN_BULLET, LASER };
+enum currentSimpleParticleType { BASIC };
+enum currentShotType { CANNON_BALL, TANK_BALL, GUN_BULLET, LASER };
 
 class Particle {
 public:
 	// Diferentes constructoras
-	Particle(Vector3 Pos, float Mass, Vector3 Vel, Vector3 Acc, float Time, PxReal Size = 1.0f, Vector4 Color = Vector4(255.0, 255.0, 255.0, 255.0), float Damp = 0.998);
-	Particle(currentShotType Type, Vector3 Pos, float Time = 5.0f, PxReal Size = 1.0f, Vector4 Color = Vector4(255.0, 255.0, 255.0, 255.0));
-	~Particle();
+	Particle(currentSimpleParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 0.0f, 1.0f), float Time = 5.0f, PxReal Size = 1.0f, Vector4 Color = Vector4(255.0, 255.0, 255.0, 255.0));
+	Particle(currentShotType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 0.0f, 1.0f), float Time = 5.0f, PxReal Size = 1.0f, Vector4 Color = Vector4(255.0, 255.0, 255.0, 255.0));
+	virtual ~Particle();
 
-	bool integrate(double t);
+	virtual bool integrate(double t);
 
-private: 
+protected: 
+	currentSimpleParticleType particleType;
 	currentShotType shotType;
 	physx::PxTransform transform;
-	Vector3 vel, acc;
+	Vector3 dir, vel, acc;
 	PxReal size;
 	Vector4 color;
 	float mass, damping, time;
 	PxShape* shape;
 	RenderItem* renderItem;
 
+
 	// Getters
+	inline currentSimpleParticleType getParticleType() const { return particleType; }
 	inline currentShotType getShotType() const { return shotType; }
 	inline PxTransform getTransform() const { return transform; }
 	inline Vector3 getPos() const { return transform.p; }
@@ -37,6 +40,7 @@ private:
 	inline Vector3 getAcc() const { return acc; }
 	inline float getDamping() const { return damping; }
 	inline Vector4 getColor() const { return color; }
+	inline float getTime() const { return time; }
 
 	// Setters
 	inline void setPos(Vector3 Pos) { transform.p = Pos; }
@@ -51,5 +55,7 @@ private:
 	inline void setAcc(float X, float Y, float Z) { acc = Vector3(X, Y, Z); }
 	inline void setDamping(float Damp) { damping = Damp; }
 	inline void setColor(Vector4 Color) { color = Color; }
-	inline void setColor(float r, float g, float b, float a = 255.0f) { color = Vector4(r, g, b, a); }
+	inline void setColor(float R, float G, float B, float A = 255.0f) { color = Vector4(R, G, B, A); }
+	inline void setTime(float Time) { time = Time; }
+	inline void increaseTime(float Time) { time += Time; }
 };

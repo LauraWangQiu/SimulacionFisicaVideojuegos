@@ -117,6 +117,13 @@ PxVec3 Camera::getDir() const
 	return mDir; 
 }
 
+void Camera::setView(const PxVec3& eye, const PxVec3& dir)
+{
+	mEye = eye;
+	mDir = dir.getNormalized();
+	mMouseX = 0;
+	mMouseY = 0;
+}
 
 }
 

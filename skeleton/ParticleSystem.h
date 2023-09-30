@@ -1,0 +1,20 @@
+#pragma once
+#include <list>
+#include "Particle.h"
+#include "Projectile.h"
+
+class ParticleSystem {
+private:
+	std::list<Particle*> listOfParticles;
+	std::list<Projectile*> listOfProjectiles;
+
+public:
+	ParticleSystem();
+	~ParticleSystem();
+
+	void addParticle(currentSimpleParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 0.0f, 1.0f), float Time = 5.0f, PxReal Size = 1.0f, Vector4 Color = Vector4(255.0, 255.0, 255.0, 255.0));
+	void addProjectile(currentShotType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 0.0f, -1.0f), float Time = 5.0f, PxReal Size = 1.0f, Vector4 Color = Vector4(255.0, 255.0, 255.0, 255.0));
+
+	void update(double t);
+};
+

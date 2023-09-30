@@ -10,7 +10,7 @@
 
 #include <iostream>
 // ==================
-#include "Particle.h"
+#include "ParticleSystem.h"
 
 std::string display_text = "This is a test";
 
@@ -33,9 +33,8 @@ PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
 // ============
-Particle*				mParticle = NULL;
-vector<Particle*>		mParticlesVector;
-vector<Particle*>		mParticlesToDelete;
+std::unique_ptr<ParticleSystem> particleSys;
+
 
 // Initialize physics engine
 void initPhysics(bool interactive)
@@ -62,9 +61,8 @@ void initPhysics(bool interactive)
 	gScene = gPhysics->createScene(sceneDesc);
 
 	// ============
-	//mParticle = new Particle(currentShotType::NONE, Vector3(1.0f, 1.0f, 1.0f));
-	
-	}
+	particleSys = std::make_unique<ParticleSystem>();
+}
 
 
 // Function to configure what happens in each step of physics
@@ -78,18 +76,7 @@ void stepPhysics(bool interactive, double t)
 	gScene->fetchResults(true);
 
 	// ============
-	//mParticle->integrate(t);
-
-	// Actualizo las particulas
-	for (vector<Particle*>::iterator it = mParticlesVector.begin(); it != mParticlesVector.end(); ++it) {
-		if ((*it)->integrate(t)) mParticlesToDelete.push_back(*it);
-	}
-
-	// ARREGLAR
-	// Elimino aquellas particulas no vivas
-	for (vector<Particle*>::iterator it2 = mParticlesToDelete.begin(); it2 != mParticlesToDelete.end(); ++it2) {
-		mParticlesToDelete.erase(it2);
-	}
+	particleSys->update(t);
 }
 
 // Function to clean data
@@ -108,27 +95,25 @@ void cleanupPhysics(bool interactive)
 	transport->release();
 	
 	gFoundation->release();
-	}
+}
 
 // Function called when a key is pressed
 void keyPress(unsigned char key, const PxTransform& camera)
 {
 	PX_UNUSED(camera);
 
-	switch(toupper(key))
-	{
-	//case 'B': break;
-	//case ' ':	break;
-	case ' ':
-	{
-		mParticlesVector.push_back(new Particle(currentShotType::NONE, Vector3(1.0f, 1.0f, 1.0f)));
-#ifdef _DEBUG
-		cout << "A particle has been instantiated.\n";
-#endif
-		break;
-	}
-	default:
-		break;
+	switch(toupper(key)) {
+	// Cambiar vista de la camara
+	case 'F': GetCamera()->setView(PxVec3(0.0f, 0.0f, 0.0f), PxVec3(0.0f, 0.0f, 1.0f)); break;
+	case 'L': GetCamera()->setView(PxVec3(-100.0f, 0.0f, 0.0f), PxVec3(1.0f, 0.0f, 0.0f)); break;
+
+	case '0': particleSys->addParticle(BASIC, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	case '1': particleSys->addProjectile(CANNON_BALL, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	case '2': particleSys->addProjectile(TANK_BALL, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	case '3': particleSys->addProjectile(GUN_BULLET, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	case '4': particleSys->addProjectile(LASER, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	case ' ': break;
+	default: break;
 	}
 }
 
