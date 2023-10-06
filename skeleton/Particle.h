@@ -13,6 +13,7 @@ public:
 	virtual ~Particle();
 
 	virtual bool integrate(double t);
+	virtual Particle* clone() const;
 
 protected: 
 	currentSimpleParticleType particleType;
@@ -25,7 +26,7 @@ protected:
 	PxShape* shape;
 	RenderItem* renderItem;
 
-
+public:
 	// Getters
 	inline currentSimpleParticleType getParticleType() const { return particleType; }
 	inline currentShotType getShotType() const { return shotType; }

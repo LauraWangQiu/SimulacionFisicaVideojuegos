@@ -1,5 +1,5 @@
 # Hola, usuario...
-Este repositorio está dedicado para la asignatura de Simulación Física de Videojuegos del Grado de Desarrollo de Videojuegos en la UCM.
+Este repositorio está dedicado para la asignatura de Simulación Física para Videojuegos del Grado de Desarrollo de Videojuegos en la UCM.
 
 ### ¿Qué se puede encontrar aquí?
 Se presenta un motor básico de videojuegos basado en el uso de la librería de simulación Physx de Nvidia.

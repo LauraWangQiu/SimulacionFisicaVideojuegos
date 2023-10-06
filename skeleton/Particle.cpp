@@ -43,3 +43,7 @@ bool Particle::integrate(double t) {
 
 	return time > 0.0f;
 }
+
+Particle* Particle::clone() const {
+	return new Particle(particleType, transform, dir, time, size, color);
+}

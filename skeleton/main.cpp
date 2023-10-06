@@ -1,18 +1,14 @@
 #include <ctype.h>
-
 #include <PxPhysicsAPI.h>
-
 #include <vector>
-
 #include "core.hpp"
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
-
 #include <iostream>
 // ==================
 #include "ParticleSystem.h"
 
-std::string display_text = "This is a test";
+std::string display_text = "Simulacion Fisica para Videojuegos - Laura Wang Qiu";
 
 
 using namespace physx;
@@ -108,11 +104,16 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case 'L': GetCamera()->setView(PxVec3(-100.0f, 0.0f, 0.0f), PxVec3(1.0f, 0.0f, 0.0f)); break;
 
 	case '0': particleSys->addParticle(BASIC, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	//case '0': particleSys->addParticle(BASIC, PxTransform(0.0f, 0.0f, 0.0f)); break;
 	case '1': particleSys->addProjectile(CANNON_BALL, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	//case '1': particleSys->addProjectile(CANNON_BALL, PxTransform(0.0f, 0.0f, 0.0f)); break;
 	case '2': particleSys->addProjectile(TANK_BALL, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	//case '2': particleSys->addProjectile(TANK_BALL, PxTransform(0.0f, 0.0f, 0.0f)); break;
 	case '3': particleSys->addProjectile(GUN_BULLET, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	//case '3': particleSys->addProjectile(GUN_BULLET, PxTransform(0.0f, 0.0f, 0.0f)); break;
 	case '4': particleSys->addProjectile(LASER, GetCamera()->getTransform(), GetCamera()->getDir()); break;
-	case ' ': break;
+	//case '4': particleSys->addProjectile(LASER, PxTransform(0.0f, 0.0f, 0.0f)); break;
+	//case ' ': particleSys->generateFireworkSystem(); break;
 	default: break;
 	}
 }

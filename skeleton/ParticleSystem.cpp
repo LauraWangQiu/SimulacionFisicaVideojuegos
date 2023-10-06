@@ -33,3 +33,15 @@ void ParticleSystem::update(double t) {
 		else ++p2;
 	}
 }
+
+ParticleGenerator* ParticleSystem::getParticleGenerator(string name) {
+	auto it = listOfParticleGenerators.begin();
+	while (it != listOfParticleGenerators.end()) {
+		if ((*it)->getName() == name) return *it;
+	}
+}
+
+void ParticleSystem::generateFireworkSystem() {
+	listOfParticleGenerators.push_back(new GaussianParticleGenerator("GaussianParticleGenerator", Vector3(0.0f,0.0f,0.0f), Vector3(0.0f, -1.0f, 0.0f), 2, 100,
+		new Particle(BASIC, PxTransform(0.0f, 0.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, -1.0f, 0.0f), 50));
+}
