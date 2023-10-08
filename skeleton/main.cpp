@@ -105,15 +105,16 @@ void keyPress(unsigned char key, const PxTransform& camera)
 
 	case '0': particleSys->addParticle(BASIC, GetCamera()->getTransform(), GetCamera()->getDir()); break;
 	//case '0': particleSys->addParticle(BASIC, PxTransform(0.0f, 0.0f, 0.0f)); break;
-	case '1': particleSys->addProjectile(CANNON_BALL, GetCamera()->getTransform(), GetCamera()->getDir()); break;
-	//case '1': particleSys->addProjectile(CANNON_BALL, PxTransform(0.0f, 0.0f, 0.0f)); break;
-	case '2': particleSys->addProjectile(TANK_BALL, GetCamera()->getTransform(), GetCamera()->getDir()); break;
-	//case '2': particleSys->addProjectile(TANK_BALL, PxTransform(0.0f, 0.0f, 0.0f)); break;
-	case '3': particleSys->addProjectile(GUN_BULLET, GetCamera()->getTransform(), GetCamera()->getDir()); break;
-	//case '3': particleSys->addProjectile(GUN_BULLET, PxTransform(0.0f, 0.0f, 0.0f)); break;
-	case '4': particleSys->addProjectile(LASER, GetCamera()->getTransform(), GetCamera()->getDir()); break;
-	//case '4': particleSys->addProjectile(LASER, PxTransform(0.0f, 0.0f, 0.0f)); break;
-	//case ' ': particleSys->generateFireworkSystem(); break;
+	case '1': particleSys->addParticle(CANNON_BALL, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	//case '1': particleSys->addParticle(CANNON_BALL, PxTransform(0.0f, 0.0f, 0.0f)); break;
+	case '2': particleSys->addParticle(TANK_BALL, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	//case '2': particleSys->addParticle(TANK_BALL, PxTransform(0.0f, 0.0f, 0.0f)); break;
+	case '3': particleSys->addParticle(GUN_BULLET, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	//case '3': particleSys->addParticle(GUN_BULLET, PxTransform(0.0f, 0.0f, 0.0f)); break;
+	case '4': particleSys->addParticle(LASER, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	//case '4': particleSys->addParticle(LASER, PxTransform(0.0f, 0.0f, 0.0f)); break;
+
+	case ' ': break; // Para casos de prueba
 	default: break;
 	}
 }
@@ -127,6 +128,8 @@ void onCollision(physx::PxActor* actor1, physx::PxActor* actor2)
 
 int main(int, const char*const*)
 {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); // Check Memory Leaks
+
 #ifndef OFFLINE_EXECUTION 
 	extern void renderLoop();
 	renderLoop();

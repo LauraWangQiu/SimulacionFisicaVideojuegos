@@ -1,40 +1,53 @@
 #include "ParticleSystem.h"
 
-ParticleSystem::ParticleSystem() {}
+#define FIREWORKGENERATOR
+//#define FIREGENERATOR
+
+ParticleSystem::ParticleSystem(const Vector3& g) {
+	#ifdef FIREWORKGENERATOR
+		generateFireworkSystem();
+	#endif // FIREWORKGENERATOR
+	#ifdef FIREGENERATOR
+		generateFireSystem();
+	#endif // FIREGENERATOR
+}
 ParticleSystem::~ParticleSystem() {}
 
-void ParticleSystem::addParticle(currentSimpleParticleType Type, PxTransform Transform, Vector3 Dir, float Time, PxReal Size, Vector4 Color) {
+void ParticleSystem::addParticle(ParticleType Type, PxTransform Transform, Vector3 Dir, float Time, PxReal Size, Vector4 Color) {
 	listOfParticles.push_back(new Particle(Type, Transform, Dir, Time, Size, Color));
 }
 
-void ParticleSystem::addProjectile(currentShotType Type, PxTransform Transform, Vector3 Dir, float Time, PxReal Size, Vector4 Color) {
-	listOfProjectiles.push_back(new Projectile(Type, Transform, Dir, Time, Size, Color));
-}
-
 void ParticleSystem::update(double t) {
+	// Recorro todos los generadores de particulas y genero particulas anadiendolas a listOfParticles
+	for (auto pg : listOfParticleGenerators) {
+		if (pg->getActive()) {
+			auto list = pg->generateParticles();
+			for (auto p : list) listOfParticles.push_back(p);
+		}
+	}
+
 	// Actualizo las particulas y elimino aquellas no vivas
 	auto p = listOfParticles.begin();
 	while (p != listOfParticles.end()) {
 		// Si se termina su tiempo de vida, se elimina
 		if (!(*p)->integrate(t)) {
+			onParticleDeath(*p);
 			delete* p;
 			p = listOfParticles.erase(p);
 		} else ++p;
 	}
+}
 
-	// Actualizo las particulas y elimino aquellas no vivas
-	auto p2 = listOfProjectiles.begin();
-	while (p2 != listOfProjectiles.end()) {
-		// Si se termina su tiempo de vida, se elimina
-		if (!(*p2)->integrate(t)) {
-			delete* p2;
-			p2 = listOfProjectiles.erase(p2);
-		}
-		else ++p2;
+void ParticleSystem::onParticleDeath(Particle* p) {
+	
+	switch (p->getParticleType()) {
+	case FIREWORK:
+		// Cuando se elimine el fuego artificial, anadir la explosion
+	break;
 	}
 }
 
-ParticleGenerator* ParticleSystem::getParticleGenerator(string name) {
+ParticleGenerator* ParticleSystem::getParticleGenerator(const string& name) {
 	auto it = listOfParticleGenerators.begin();
 	while (it != listOfParticleGenerators.end()) {
 		if ((*it)->getName() == name) return *it;
@@ -42,6 +55,15 @@ ParticleGenerator* ParticleSystem::getParticleGenerator(string name) {
 }
 
 void ParticleSystem::generateFireworkSystem() {
-	listOfParticleGenerators.push_back(new GaussianParticleGenerator("GaussianParticleGenerator", Vector3(0.0f,0.0f,0.0f), Vector3(0.0f, -1.0f, 0.0f), 2, 100,
-		new Particle(BASIC, PxTransform(0.0f, 0.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, -1.0f, 0.0f), 50));
+	Particle* model = new Particle(FIREWORK, PxTransform(0.0f, 0.0f, 0.0f));
+	fireworkGenerator = new GaussianParticleGenerator("Fireworks", Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 1, 1,
+		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 1);
+	listOfParticleGenerators.push_back(fireworkGenerator);
+}
+
+void ParticleSystem::generateFireSystem() {
+	Particle* model = new Particle(FIRE, PxTransform(0.0f, 0.0f, 0.0f));
+	fireGenerator = new GaussianParticleGenerator("Fire", Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 1, 1,
+		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 1);
+	listOfParticleGenerators.push_back(fireGenerator);
 }

@@ -1,7 +1,7 @@
 #include "UniformParticleGenerator.h"
 
 UniformParticleGenerator::UniformParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanVel, double GenerationProbability, int NumParticles, Particle* Model,
-	Vector3 VelWidth, Vector3 PosWidth) : ParticleGenerator(Name, MeanPos, MeanVel, GenerationProbability, NumParticles, Model), 
+	Vector3 VelWidth, Vector3 PosWidth, bool Active) : ParticleGenerator(Name, MeanPos, MeanVel, GenerationProbability, NumParticles, Model, Active),
 	velWidth(VelWidth), posWidth(PosWidth) {}
 
 UniformParticleGenerator::~UniformParticleGenerator() {}

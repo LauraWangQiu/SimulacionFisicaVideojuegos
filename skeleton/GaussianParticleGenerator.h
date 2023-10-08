@@ -1,7 +1,5 @@
 #pragma once
 #include <list>
-#include <time.h>
-#include <random>
 #include "RenderUtils.hpp"
 #include "Particle.h"
 #include "ParticleGenerator.h"
@@ -12,11 +10,12 @@ class GaussianParticleGenerator : public ParticleGenerator {
 protected:
 	Vector3 stdDevPos, stdDevVel;
 	double stdDevTime;
-	normal_distribution<double> d{ 0, 1};
+
+	particlePalettes palettes;
 
 public:
 	GaussianParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanVel, double GenerationProbability, int NumParticles, Particle* Model, 
-		Vector3 StdDevPos, Vector3 StdDevVel, double StdDevTime);
+		Vector3 StdDevPos, Vector3 StdDevVel, double StdDevTime, bool Active = true);
 	~GaussianParticleGenerator();
 
 	virtual list<Particle*> generateParticles();

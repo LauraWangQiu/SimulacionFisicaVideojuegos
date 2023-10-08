@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <list>
+#include <time.h>
+#include <random>
 #include "RenderUtils.hpp"
 #include "Particle.h"
 using namespace std;
@@ -13,9 +15,14 @@ protected:
 	double generationProbability;
 	int numParticles;
 	Particle* model;
+	bool active;
+
+	mt19937 _mt;
+	uniform_real_distribution<double> u{ 0, 1};
+	normal_distribution<double> n{ 0, 1 };
 
 public:
-	ParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanVel, double GenerationProbability, int NumParticles, Particle* Model);
+	ParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanVel, double GenerationProbability, int NumParticles, Particle* Model, bool Active = true);
 	~ParticleGenerator();
 
 	virtual list<Particle*> generateParticles() = 0;
@@ -27,12 +34,14 @@ public:
 	double getGenerationProbability() const { return generationProbability; }
 	int getNumParticles() const { return numParticles; }
 	Particle* getModel() const { return model; }
+	bool getActive() const { return active; }
 	// Setters
 	void setName(string Name) { name = Name; }
 	void setMeanPos(Vector3 MeanPos) { meanPos = MeanPos; }
 	void setMeanVel(Vector3 MeanVel) { meanVel = MeanVel; }
 	void setGenerationProbability(double Probability) { generationProbability = Probability; }
 	void setNumParticles(int NumParticles) { numParticles = NumParticles; }
-	void setParticle(Particle* Model) { model = Model; }
+	void setModel(Particle* Model) { model = Model; }
+	void setActive(bool Active) { active = Active; }
 };
 

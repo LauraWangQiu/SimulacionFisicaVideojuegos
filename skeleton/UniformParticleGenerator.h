@@ -1,6 +1,7 @@
 #pragma once
 #include <list>
 #include <time.h>
+#include <list>
 #include "RenderUtils.hpp"
 #include "Particle.h"
 #include "ParticleGenerator.h"
@@ -13,7 +14,7 @@ protected:
 
 public:
 	UniformParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanVel, double GenerationProbability, int NumParticles, Particle* Model,
-		Vector3 VelWidth, Vector3 PosWidth);
+		Vector3 VelWidth, Vector3 PosWidth, bool Active = true);
 	~UniformParticleGenerator();
 
 	list<Particle*> generateParticles();
