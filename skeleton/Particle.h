@@ -2,7 +2,7 @@
 #include "RenderUtils.hpp"
 using namespace physx;
 
-enum ParticleType { BASIC, FIRE, FIREWORK, 
+enum ParticleType { BASIC, FIRE, FIREWORK, WATER,
 	CANNON_BALL, TANK_BALL, GUN_BULLET, LASER
 };
 
@@ -12,6 +12,8 @@ struct particlePalettes {
 		Vector4(1.0f, 0.65f, 0.0f, 1.0f),	// Naranja
 		Vector4(1.0f, 1.0f, 0.0f, 1.0f)		// Amarillo
 	};
+	int firePaletteSize = sizeof(firePalette) / sizeof(firePalette[0]);
+
 	Vector4 fireWorkPalette[5] = {
 		Vector4(1.0f, 0.078f, 0.576f, 1.0f),// Rosa neon
 		Vector4(0.22f, 1.0f, 0.08f, 1.0f),	// Verde neon
@@ -19,6 +21,14 @@ struct particlePalettes {
 		Vector4(1.0f, 0.5f, 0.0f, 1.0f),	// Naranja neon
 		Vector4(1.0f, 1.0f, 0.0f, 1.0f),	// Amarillo neon
 	};
+	int fireWorkPaletteSize = sizeof(fireWorkPalette) / sizeof(fireWorkPalette[0]);
+
+	Vector4 waterPalette[3] = {
+		Vector4(0.1f, 0.3f, 0.8f, 1.0f),
+		Vector4(0.1f, 0.3f, 0.9f, 1.0f),
+		Vector4(0.1f, 0.3f, 0.5f, 1.0f),
+	};
+	int waterPaletteSize = sizeof(waterPalette) / sizeof(waterPalette[0]);
 };
 
 class Particle {

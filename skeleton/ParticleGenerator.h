@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include <list>
-#include <time.h>
 #include <random>
 #include "RenderUtils.hpp"
 #include "Particle.h"
@@ -17,9 +16,10 @@ protected:
 	Particle* model;
 	bool active;
 
-	mt19937 _mt;
-	uniform_real_distribution<double> u{ 0, 1};
-	normal_distribution<double> n{ 0, 1 };
+	mt19937 rd;
+	default_random_engine generator;
+	uniform_real_distribution<double> u{ 0.0, 1.0};
+	normal_distribution<double> n{ 0.0, 1.0 };
 
 public:
 	ParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanVel, double GenerationProbability, int NumParticles, Particle* Model, bool Active = true);

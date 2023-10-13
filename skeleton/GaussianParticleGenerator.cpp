@@ -1,4 +1,5 @@
 #include "GaussianParticleGenerator.h"
+#include <iostream>
 
 GaussianParticleGenerator::GaussianParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanVel, double GenerationProbability, int NumParticles, Particle* Model, 
 	Vector3 StdDevPos, Vector3 StdDevVel, double StdDevTime, bool Active) : ParticleGenerator(Name, MeanPos, MeanVel, GenerationProbability, NumParticles, Model, Active),
@@ -15,24 +16,28 @@ list<Particle*> GaussianParticleGenerator::generateParticles() {
 		for (int i = 0; i < numParticles; i++) {
 			auto* p = model->clone();
 			
-			//p->setPos(model->getPos() + Vector3(normal * stdDevPos.x, normal * stdDevPos.y, normal * stdDevPos.z));
-			p->setPos(model->getPos() + Vector3(stdDevPos.x, stdDevPos.y, stdDevPos.z));
-			//p->setVel(model->getVel() + Vector3(normal * stdDevVel.x, normal * stdDevVel.y, normal * stdDevVel.z));
-			p->setVel(model->getVel() + Vector3(stdDevVel.x, stdDevVel.y, stdDevVel.z));
+			double randomValue = n(generator);
+			//std::cout << randomValue << endl;
 
-			int paletteSize;
-			switch (model->getParticleType()) {
-			case FIREWORK:
-				paletteSize = (sizeof(palettes.fireWorkPalette) / sizeof(palettes.fireWorkPalette[0]));
-				p->setColor2(palettes.fireWorkPalette[rand() % paletteSize]);
-			break;
-			case FIRE:
-				paletteSize = (sizeof(palettes.firePalette) / sizeof(palettes.firePalette[0]));
-				p->setColor2(palettes.firePalette[rand() % paletteSize]);
-			break;
+			if (randomValue <= generationProbability) {
+				p->setPos(model->getPos() + Vector3(n(generator) * stdDevPos.x, n(generator) * stdDevPos.y, n(generator) * stdDevPos.z));
+				p->setVel(model->getVel() + Vector3(n(generator) * stdDevVel.x, n(generator) * stdDevVel.y, n(generator) * stdDevVel.z));
+
+				int paletteSize;
+				switch (model->getParticleType()) {
+				case FIREWORK:
+					p->setColor2(palettes.fireWorkPalette[rand() % palettes.fireWorkPaletteSize]);
+					break;
+				case FIRE:
+					p->setColor2(palettes.firePalette[rand() % palettes.firePaletteSize]);
+					break;
+				case WATER:
+					p->setColor2(palettes.waterPalette[rand() % palettes.waterPaletteSize]);
+					break;
+				}
+
+				mGenerator.push_back(p);
 			}
-
-			mGenerator.push_back(p);
 		}
 	}
 

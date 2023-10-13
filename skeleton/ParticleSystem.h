@@ -2,6 +2,7 @@
 #include <list>
 #include "RenderUtils.hpp"
 #include "Particle.h"
+#include "Firework.h"
 #include "GaussianParticleGenerator.h"
 #include "UniformParticleGenerator.h"
 using namespace std;
@@ -17,6 +18,8 @@ protected:
 	//vector<Firework*> firePool;
 	ParticleGenerator* fireworkGenerator;
 	//vector<Firework*> fireworkPool;
+	ParticleGenerator* waterfallGenerator;
+	//vector<Firework*> waterfallPool;
 public:
 	ParticleSystem(const Vector3& g = { 0.0f, -9.8f, 0.0f});
 	~ParticleSystem();
@@ -37,5 +40,6 @@ public:
 
 	void generateFireworkSystem();
 	void generateFireSystem();
+	void generateWaterfallSystem();
 };
 

@@ -19,6 +19,7 @@ Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, float 
 		setAcc(0.0f, 0.0f, 0.0f);
 		setDamping(0.99f);
 		setColor(1.0f, 0.0f, 0.0f);
+		setTime(2.5f);
 		shape = CreateShape(PxSphereGeometry(size));
 	break;
 	case FIREWORK:
@@ -30,7 +31,15 @@ Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, float 
 		setColor(1.0f, 0.0f, 0.0f);
 		shape = CreateShape(PxSphereGeometry(size));
 		break;
-
+	case WATER:
+		setMass(1.0f);
+		setDir(0.0f, -1.0f, 0.0f);
+		setVel(dir * 100.0f);
+		setAcc(0.0f, 0.0f, 0.0f);
+		setDamping(0.99f);
+		setColor(0.5f, 0.9f, 1.0f);
+		shape = CreateShape(PxSphereGeometry(size));
+		break;
 
 	case CANNON_BALL:
 		setMass(1.0f);

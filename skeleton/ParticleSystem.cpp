@@ -2,6 +2,7 @@
 
 #define FIREWORKGENERATOR
 //#define FIREGENERATOR
+//#define WATERFALLGENERATOR
 
 ParticleSystem::ParticleSystem(const Vector3& g) {
 	#ifdef FIREWORKGENERATOR
@@ -10,6 +11,9 @@ ParticleSystem::ParticleSystem(const Vector3& g) {
 	#ifdef FIREGENERATOR
 		generateFireSystem();
 	#endif // FIREGENERATOR
+	#ifdef WATERFALLGENERATOR
+			generateWaterfallSystem();
+	#endif // WATERFALLGENERATOR
 }
 ParticleSystem::~ParticleSystem() {}
 
@@ -43,6 +47,7 @@ void ParticleSystem::onParticleDeath(Particle* p) {
 	switch (p->getParticleType()) {
 	case FIREWORK:
 		// Cuando se elimine el fuego artificial, anadir la explosion
+		static_cast<Firework*>(p)->explode();
 	break;
 	}
 }
@@ -55,15 +60,22 @@ ParticleGenerator* ParticleSystem::getParticleGenerator(const string& name) {
 }
 
 void ParticleSystem::generateFireworkSystem() {
-	Particle* model = new Particle(FIREWORK, PxTransform(0.0f, 0.0f, 0.0f));
-	fireworkGenerator = new GaussianParticleGenerator("Fireworks", Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 1, 1,
-		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 1);
+	Firework* model = new Firework();
+	fireworkGenerator = new GaussianParticleGenerator("Fireworks", Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, -1.0f, 0.0f), 0.1, 1,
+		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f), 5);
 	listOfParticleGenerators.push_back(fireworkGenerator);
 }
 
 void ParticleSystem::generateFireSystem() {
 	Particle* model = new Particle(FIRE, PxTransform(0.0f, 0.0f, 0.0f));
 	fireGenerator = new GaussianParticleGenerator("Fire", Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 1, 1,
-		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 1);
+		model, Vector3(2.0f, 2.0f, 2.0f), Vector3(1.0f, 1.0f, 1.0f), 5);
 	listOfParticleGenerators.push_back(fireGenerator);
+}
+
+void ParticleSystem::generateWaterfallSystem() {
+	Particle* model = new Particle(WATER, PxTransform(0.0f, 0.0f, 0.0f));
+	waterfallGenerator = new GaussianParticleGenerator("Waterfall", Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 1, 1,
+		model, Vector3(10.0f, 0.0f, 2.0f), Vector3(10.0f, 0.0f, 2.0f), 1);
+	listOfParticleGenerators.push_back(waterfallGenerator);
 }
