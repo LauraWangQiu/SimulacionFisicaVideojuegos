@@ -1,17 +1,24 @@
 #include "Firework.h"
 
-Firework::Firework() : Particle(FIREWORK, PxTransform(0.0f,0.0f,0.0f)) {}
+Firework::Firework(PxTransform Transform, Vector3 Vel, float Time, PxReal Size, Vector4 Color) : numDivisions(0), Particle(FIREWORK, Transform, Vel, Time, Size, Color) {}
 
-void Firework::explode() {}
+list<Particle*> Firework::explode() {
+	list<Particle*> list;
 
-//list<Particle*> Firework::explode() {
-//	
-//}
+	/* Generar lista de particulas de forma radial */
+
+	return list;
+}
 
 void Firework::addGenerator(ParticleGenerator* p) {
 	gen.push_back(p);
 }
 
-Particle* Firework::clone() const {
-	return new Particle(FIREWORK, PxTransform(0.0f, 0.0f, 0.0f));
+void Firework::removeGenerators() {
+	while (!gen.empty())
+		gen.pop_front();
+}
+
+Firework* Firework::clone() const {
+	return new Firework(transform, vel, time, size, color);
 }

@@ -9,7 +9,20 @@ UniformParticleGenerator::~UniformParticleGenerator() {}
 list<Particle*> UniformParticleGenerator::generateParticles() {
 	list<Particle*> mGenerator;
 
-	/* Generar particulas uniformes y anadirlas a la lista */
+	if (active) {
+		for (int i = 0; i < numParticles; i++) {
+			auto* p = model->clone();
+
+			if (generateRandomValue(2) <= generationProbability) {
+				p->setPos(model->getPos() + Vector3(u(generator) * posWidth.x, u(generator) * posWidth.y, u(generator) * posWidth.z));
+				p->setVel(model->getVel() + Vector3(u(generator) * velWidth.x, u(generator) * velWidth.y, u(generator) * velWidth.z));
+
+				setParticleColor(p);
+
+				mGenerator.push_back(p);
+			}
+		}
+	}
 
 	return mGenerator;
 }

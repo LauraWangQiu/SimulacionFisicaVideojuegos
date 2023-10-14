@@ -3,6 +3,7 @@
 #include "RenderUtils.hpp"
 #include "Particle.h"
 #include "ParticleGenerator.h"
+#include "Firework.h"
 using namespace std;
 using namespace physx;
 
@@ -11,8 +12,6 @@ class GaussianParticleGenerator : public ParticleGenerator {
 protected:
 	Vector3 stdDevPos, stdDevVel;
 	double stdDevTime;
-
-	particlePalettes palettes;
 
 public:
 	/// <summary> Generador de partículas gaussianas </summary>
@@ -36,12 +35,12 @@ public:
 	virtual list<Particle*> generateParticles();
 
 	// Getters
-	Vector3 getStdDevPos() const { return stdDevPos; }
-	Vector3 getStdDevVel() const { return stdDevVel; }
-	double getStdDevTime() const { return stdDevTime; }
+	inline Vector3 getStdDevPos() const { return stdDevPos; }
+	inline Vector3 getStdDevVel() const { return stdDevVel; }
+	inline double getStdDevTime() const { return stdDevTime; }
 	// Setters
-	void setStdDevPos(Vector3 StdDevPos) { stdDevPos = StdDevPos; }
-	void setStdDevVel(Vector3 StdDevVel) { stdDevVel = StdDevVel; }
-	void setStdDevTime(double StdDevTime) { stdDevTime = StdDevTime; }
+	inline void setStdDevPos(Vector3 StdDevPos) { stdDevPos = StdDevPos; }
+	inline void setStdDevVel(Vector3 StdDevVel) { stdDevVel = StdDevVel; }
+	inline void setStdDevTime(double StdDevTime) { stdDevTime = StdDevTime; }
 };
 

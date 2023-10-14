@@ -4,7 +4,6 @@
 #include "core.hpp"
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
-#include <iostream>
 // ==================
 #include "ParticleSystem.h"
 
@@ -57,7 +56,7 @@ void initPhysics(bool interactive)
 	gScene = gPhysics->createScene(sceneDesc);
 
 	// ============
-	particleSys = std::make_unique<ParticleSystem>();
+	particleSys = std::make_unique<ParticleSystem>(sceneDesc.gravity);
 }
 
 
@@ -103,15 +102,15 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case 'F': GetCamera()->setView(PxVec3(0.0f, 0.0f, 0.0f), PxVec3(0.0f, 0.0f, 1.0f)); break;
 	case 'L': GetCamera()->setView(PxVec3(-100.0f, 0.0f, 0.0f), PxVec3(1.0f, 0.0f, 0.0f)); break;
 
-	case '0': particleSys->addParticle(BASIC, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	case '0': particleSys->addParticle(BASIC, camera, GetCamera()->getDir()); break;
 	//case '0': particleSys->addParticle(BASIC, PxTransform(0.0f, 0.0f, 0.0f)); break;
-	case '1': particleSys->addParticle(CANNON_BALL, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	case '1': particleSys->addParticle(CANNON_BALL, camera, GetCamera()->getDir()); break;
 	//case '1': particleSys->addParticle(CANNON_BALL, PxTransform(0.0f, 0.0f, 0.0f)); break;
-	case '2': particleSys->addParticle(TANK_BALL, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	case '2': particleSys->addParticle(TANK_BALL, camera, GetCamera()->getDir()); break;
 	//case '2': particleSys->addParticle(TANK_BALL, PxTransform(0.0f, 0.0f, 0.0f)); break;
-	case '3': particleSys->addParticle(GUN_BULLET, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	case '3': particleSys->addParticle(GUN_BULLET, camera, GetCamera()->getDir()); break;
 	//case '3': particleSys->addParticle(GUN_BULLET, PxTransform(0.0f, 0.0f, 0.0f)); break;
-	case '4': particleSys->addParticle(LASER, GetCamera()->getTransform(), GetCamera()->getDir()); break;
+	case '4': particleSys->addParticle(LASER, camera, GetCamera()->getDir()); break;
 	//case '4': particleSys->addParticle(LASER, PxTransform(0.0f, 0.0f, 0.0f)); break;
 
 	case ' ': break; // Para casos de prueba

@@ -32,7 +32,6 @@
 #include "Camera.h"
 #include <ctype.h>
 #include "foundation/PxMat33.h"
-
 using namespace physx;
 
 namespace Snippets
@@ -60,6 +59,7 @@ bool Camera::handleKey(unsigned char key, int x, int y, float speed)
 	PX_UNUSED(y);
 
 	PxVec3 viewY = mDir.cross(PxVec3(0,1,0)).getNormalized();
+
 	switch(toupper(key))
 	{
 	case 'W':	mEye += mDir*2.0f*speed;		break;
@@ -112,9 +112,19 @@ PxVec3 Camera::getEye() const
 	return mEye; 
 }
 
+void Camera::setEye(PxVec3 eye) 
+{
+	mEye = eye;
+}
+
 PxVec3 Camera::getDir() const
 { 
 	return mDir; 
+}
+
+void Camera::setDir(PxVec3 dir) 
+{
+	mDir = dir;
 }
 
 void Camera::setView(const PxVec3& eye, const PxVec3& dir)

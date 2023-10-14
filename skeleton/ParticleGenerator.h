@@ -2,6 +2,7 @@
 #include <string>
 #include <list>
 #include <random>
+#include <math.h>
 #include "RenderUtils.hpp"
 #include "Particle.h"
 using namespace std;
@@ -21,6 +22,7 @@ protected:
 	uniform_real_distribution<double> u{ 0.0, 1.0};
 	normal_distribution<double> n{ 0.0, 1.0 };
 
+	particlePalettes palettes;
 public:
 	ParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanVel, double GenerationProbability, int NumParticles, Particle* Model, bool Active = true);
 	~ParticleGenerator();
@@ -28,20 +30,24 @@ public:
 	virtual list<Particle*> generateParticles() = 0;
 
 	// Getters
-	string getName() const { return name; }
-	Vector3 getMeanPos() const { return meanPos; }
-	Vector3 getMeanVel() const { return meanVel; }
-	double getGenerationProbability() const { return generationProbability; }
-	int getNumParticles() const { return numParticles; }
-	Particle* getModel() const { return model; }
-	bool getActive() const { return active; }
+	inline string getName() const { return name; }
+	inline Vector3 getMeanPos() const { return meanPos; }
+	inline Vector3 getMeanVel() const { return meanVel; }
+	inline double getGenerationProbability() const { return generationProbability; }
+	inline int getNumParticles() const { return numParticles; }
+	inline Particle* getModel() const { return model; }
+	inline bool getActive() const { return active; }
 	// Setters
-	void setName(string Name) { name = Name; }
-	void setMeanPos(Vector3 MeanPos) { meanPos = MeanPos; }
-	void setMeanVel(Vector3 MeanVel) { meanVel = MeanVel; }
-	void setGenerationProbability(double Probability) { generationProbability = Probability; }
-	void setNumParticles(int NumParticles) { numParticles = NumParticles; }
-	void setModel(Particle* Model) { model = Model; }
-	void setActive(bool Active) { active = Active; }
+	inline void setName(string Name) { name = Name; }
+	inline void setMeanPos(Vector3 MeanPos) { meanPos = MeanPos; }
+	inline void setMeanVel(Vector3 MeanVel) { meanVel = MeanVel; }
+	inline void setGenerationProbability(double Probability) { generationProbability = Probability; }
+	inline void setNumParticles(int NumParticles) { numParticles = NumParticles; }
+	inline void setModel(Particle* Model) { model = Model; }
+	inline void setActive(bool Active) { active = Active; }
+	
+	void setParticleColor(Particle* p);
+
+	inline double generateRandomValue(int precision) { return (double)(rand() % (int) pow(10, precision)) / pow(10, precision); }
 };
 

@@ -19,7 +19,6 @@ Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, float 
 		setAcc(0.0f, 0.0f, 0.0f);
 		setDamping(0.99f);
 		setColor(1.0f, 0.0f, 0.0f);
-		setTime(2.5f);
 		shape = CreateShape(PxSphereGeometry(size));
 	break;
 	case FIREWORK:

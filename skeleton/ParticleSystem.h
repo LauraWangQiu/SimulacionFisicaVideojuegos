@@ -12,12 +12,13 @@ class ParticleSystem {
 protected:
 	list<Particle*> listOfParticles;
 	list<ParticleGenerator*> listOfParticleGenerators;
-	Vector3 gravity;
+	int numParticles, numMaxParticles;
+	//Vector3 gravity;
 
-	ParticleGenerator* fireGenerator;
-	//vector<Firework*> firePool;
 	ParticleGenerator* fireworkGenerator;
 	//vector<Firework*> fireworkPool;
+	ParticleGenerator* fireGenerator;
+	//vector<Firework*> firePool;
 	ParticleGenerator* waterfallGenerator;
 	//vector<Firework*> waterfallPool;
 public:
@@ -25,6 +26,7 @@ public:
 	~ParticleSystem();
 
 	void addParticle(ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 0.0f, 1.0f), float Time = 5.0f, PxReal Size = 1.0f, Vector4 Color = Vector4(255.0, 255.0, 255.0, 255.0));
+	void addParticles(list<Particle*> list);
 
 	void update(double t);
 
@@ -37,6 +39,11 @@ public:
 	inline void deactivateParticleGenerator(const string& name) {
 		getParticleGenerator(name)->setActive(false);
 	}
+
+	inline void increaseNumParticles() { ++numParticles; }
+	inline void decreaseNumParticles() { --numParticles; }
+	inline void setNumMaxParticles(int max) { numMaxParticles = max; }
+	inline int getNumMaxParticles() { return numMaxParticles; }
 
 	void generateFireworkSystem();
 	void generateFireSystem();

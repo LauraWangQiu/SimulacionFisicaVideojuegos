@@ -5,7 +5,6 @@
 #include "core.hpp"
 #include "RenderUtils.hpp"
 
-
 using namespace physx;
 
 extern void initPhysics(bool interactive);
@@ -59,6 +58,25 @@ void keyboardCallback(unsigned char key, int x, int y)
 
 	if(!sCamera->handleKey(key, x, y))
 		keyPress(key, sCamera->getTransform());
+}
+
+void specialInput(int key, int x, int y)
+{
+	/* Falta tener en cuenta la direccion de la camara */
+	switch (key) {
+	case GLUT_KEY_UP:
+		sCamera->setEye(PxVec3(sCamera->getEye().x, sCamera->getEye().y + 2.0f, sCamera->getEye().z));
+		break;
+	case GLUT_KEY_DOWN:
+		sCamera->setEye(PxVec3(sCamera->getEye().x, sCamera->getEye().y - 2.0f, sCamera->getEye().z));
+		break;
+	case GLUT_KEY_LEFT:
+		sCamera->setEye(PxVec3(sCamera->getEye().x + 2.0f, sCamera->getEye().y, sCamera->getEye().z));
+		break;
+	case GLUT_KEY_RIGHT:
+		sCamera->setEye(PxVec3(sCamera->getEye().x - 2.0f, sCamera->getEye().y, sCamera->getEye().z));
+		break;
+	}
 }
 
 void mouseCallback(int button, int state, int x, int y)
@@ -148,6 +166,7 @@ void renderLoop()
 	glutIdleFunc(idleCallback);
 	glutDisplayFunc(renderCallback);
 	glutKeyboardFunc(keyboardCallback);
+	glutSpecialFunc(specialInput);
 	glutMouseFunc(mouseCallback);
 	glutMotionFunc(motionCallback);
 	motionCallback(0,0);
