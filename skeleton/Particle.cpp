@@ -1,79 +1,143 @@
 #include "Particle.h"
 
+vector<particleInfo> ParticlesInfo = {
+	{ // BASIC
+		1.0f,
+		10.0f,
+		Vector3(0.0f, 0.0f, 0.0f),
+		0.99f,
+		Vector4(1.0f, 1.0f, 1.0f, 1.0f),
+		1.0f,
+		0,
+		1.0f
+	},
+	{ // FIRE
+		1.0f,
+		10.0f,
+		Vector3(0.0f, -2.0f, 0.0f),
+		0.99f,
+		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
+		1.0f,
+		20,
+		1.0f
+	},
+	{ // FIREWORK
+		1.0f,
+		100.0f,
+		Vector3(0.0f, -50.0f, 0.0f),
+		0.99f,
+		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
+		1.0f,
+		10,
+		1.0f
+	},
+	{ // WATER
+		1.0f,
+		100.0f,
+		Vector3(0.0f, -50.0f, 0.0f),
+		0.99f,
+		Vector4(0.5f, 0.9f, 1.0f, 1.0f),
+		1.0f,
+		3,
+		1.0f
+	},
+	{ // FOG
+		1.0f,
+		100.0f,
+		Vector3(0.0f, 0.0f, 0.0f),
+		0.99f,
+		Vector4(1.0f, 1.0f, 1.0f, 0.2f),
+		5.0f,
+		0,
+		5.0f
+	},
+	{ // CANNON_BALL
+		1.0f,
+		10.0f,
+		Vector3(0.0f, -6.0f, 0.0f),
+		0.9f,
+		Vector4(0.2f, 0.2f, 0.2f, 1.0f),
+		1.0f,
+		0,
+		1.0f
+	},
+	{ // TANK_BALL
+		200.0f,
+		40.0f,
+		Vector3(0.0f, -20.0f, 0.0f),
+		0.99f,
+		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+		1.0f,
+		0,
+		1.0f
+	},
+	{ // GUN_BULLET
+		2.0f,
+		35.0f,
+		Vector3(0.0f, -1.0f, 0.0f),
+		0.99f,
+		Vector4(1.0f, 0.8f, 0.2f, 1.0f),
+		1.0f,
+		0,
+		1.0f
+	},
+	{ // LASER
+		0.1f,
+		100.0f,
+		Vector3(0.0f, 0.0f, 0.0f),
+		0.99f,
+		Vector4(0.0f, 0.0f, 1.0f, 1.0f),
+		1.0f,
+		0,
+		1.0f
+	}
+};
+
 Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, float Time, PxReal Size, Vector4 Color)
-	: particleType(Type), transform(Transform), dir(Dir), time(Time), size(Size), color(Color) {
+	: particleType(Type), transform(Transform), dir(Dir), time(Time), size(Size), color(Color), numDivisions(0),
+		toExplode(false) {
 
 	switch (particleType) {
 	case BASIC:
-		setMass(1.0f);
-		setVel(dir * 10.0f);
-		setAcc(0.0f, 0.0f, 0.0f);
-		setDamping(0.99f);
-		setColor(1.0f, 1.0f, 1.0f);
 		shape = CreateShape(PxSphereGeometry(size));
-	break;
+		break;
 	case FIRE:
-		setMass(1.0f);
-		setDir(0.0f, 1.0f, 0.0f);
-		setVel(dir * 10.0f);
-		setAcc(0.0f, 0.0f, 0.0f);
-		setDamping(0.99f);
-		setColor(1.0f, 0.0f, 0.0f);
 		shape = CreateShape(PxSphereGeometry(size));
-	break;
+		break;
 	case FIREWORK:
-		setMass(1.0f);
-		setDir(0.0f, 1.0f, 0.0f);
-		setVel(dir * 100.0f);
-		setAcc(0.0f, 0.0f, 0.0f);
-		setDamping(0.99f);
-		setColor(1.0f, 0.0f, 0.0f);
 		shape = CreateShape(PxSphereGeometry(size));
 		break;
 	case WATER:
-		setMass(1.0f);
-		setDir(0.0f, -1.0f, 0.0f);
-		setVel(dir * 100.0f);
-		setAcc(0.0f, 0.0f, 0.0f);
-		setDamping(0.99f);
-		setColor(0.5f, 0.9f, 1.0f);
 		shape = CreateShape(PxSphereGeometry(size));
+		break;
+	case STEAM:
+		shape = CreateShape(PxBoxGeometry(size, size, size));
 		break;
 
 	case CANNON_BALL:
-		setMass(1.0f);
-		setVel(dir * 10.0f);
-		setAcc(0.0f, -6.0f, 0.0f);
-		setDamping(0.9f);
-		setColor(0.2f, 0.2f, 0.2f);
 		shape = CreateShape(PxSphereGeometry(size));
 		break;
 	case TANK_BALL:
-		setMass(200.0f);
-		setVel(dir * 40.0f);
-		setAcc(0.0f, -20.0f, 0.0f);
-		setDamping(0.99f);
-		setColor(0.0f, 0.0f, 0.0f);
 		shape = CreateShape(PxSphereGeometry(size));
 		break;
 	case GUN_BULLET:
-		setMass(2.0f);
-		setVel(dir * 35.0f);
-		setAcc(0.0f, -1.0f, 0.0f);
-		setDamping(0.99f);
-		setColor(1.0f, 0.8f, 0.2f);
 		shape = CreateShape(PxBoxGeometry(size, size, size * 3 / 2));
 		break;
 	case LASER:
-		setMass(0.1f);
-		setVel(dir * 100.0f);
-		setAcc(0.0f, 0.0f, 0.0f);
-		setDamping(0.99f);
-		setColor(0.0f, 0.0f, 1.0f);
 		shape = CreateShape(PxBoxGeometry(size, size, size));
 		break;
 	default: break;
 	}
+
+	setMass(ParticlesInfo[particleType].mass);
+	setVel(dir * ParticlesInfo[particleType].velc);
+	setAcc(ParticlesInfo[particleType].acc);
+	setDamping(ParticlesInfo[particleType].damp);
+	setColor(ParticlesInfo[particleType].col);
+	setTime(ParticlesInfo[particleType].time);
+	setNumDivisions(ParticlesInfo[particleType].numDiv);
+	setSize(ParticlesInfo[particleType].size);
+	// setGeometry(ParticlesInfo[particleType].geo);
 	
 	renderItem = new RenderItem(shape, &transform, color);
 }

@@ -13,14 +13,17 @@ protected:
 	list<Particle*> listOfParticles;
 	list<ParticleGenerator*> listOfParticleGenerators;
 	int numParticles, numMaxParticles;
-	//Vector3 gravity;
+	Vector3 gravity;
 
+	PxTransform origin;
 	ParticleGenerator* fireworkGenerator;
 	//vector<Firework*> fireworkPool;
 	ParticleGenerator* fireGenerator;
 	//vector<Firework*> firePool;
 	ParticleGenerator* waterfallGenerator;
 	//vector<Firework*> waterfallPool;
+	ParticleGenerator* steamGenerator;
+	//vector<Firework*> steamPool;
 public:
 	ParticleSystem(const Vector3& g = { 0.0f, -9.8f, 0.0f});
 	~ParticleSystem();
@@ -48,5 +51,8 @@ public:
 	void generateFireworkSystem();
 	void generateFireSystem();
 	void generateWaterfallSystem();
+	void generateSteamSystem();
+
+	void addFirework(ParticleType Type, PxTransform Transform, Vector3 Dir);
 };
 

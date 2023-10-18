@@ -103,15 +103,13 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case 'L': GetCamera()->setView(PxVec3(-100.0f, 0.0f, 0.0f), PxVec3(1.0f, 0.0f, 0.0f)); break;
 
 	case '0': particleSys->addParticle(BASIC, camera, GetCamera()->getDir()); break;
-	//case '0': particleSys->addParticle(BASIC, PxTransform(0.0f, 0.0f, 0.0f)); break;
 	case '1': particleSys->addParticle(CANNON_BALL, camera, GetCamera()->getDir()); break;
-	//case '1': particleSys->addParticle(CANNON_BALL, PxTransform(0.0f, 0.0f, 0.0f)); break;
 	case '2': particleSys->addParticle(TANK_BALL, camera, GetCamera()->getDir()); break;
-	//case '2': particleSys->addParticle(TANK_BALL, PxTransform(0.0f, 0.0f, 0.0f)); break;
 	case '3': particleSys->addParticle(GUN_BULLET, camera, GetCamera()->getDir()); break;
-	//case '3': particleSys->addParticle(GUN_BULLET, PxTransform(0.0f, 0.0f, 0.0f)); break;
 	case '4': particleSys->addParticle(LASER, camera, GetCamera()->getDir()); break;
-	//case '4': particleSys->addParticle(LASER, PxTransform(0.0f, 0.0f, 0.0f)); break;
+	case '5': particleSys->addFirework(FIREWORK, camera, GetCamera()->getDir()); break;
+	case '6': particleSys->addFirework(WATER, camera, GetCamera()->getDir()); break;
+	case '7': particleSys->addFirework(FIRE, camera, GetCamera()->getDir()); break;
 
 	case ' ': break; // Para casos de prueba
 	default: break;

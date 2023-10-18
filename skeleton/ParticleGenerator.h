@@ -28,6 +28,7 @@ public:
 	~ParticleGenerator();
 
 	virtual list<Particle*> generateParticles() = 0;
+	virtual list<Particle*> generateParticles(Particle* deadP);
 
 	// Getters
 	inline string getName() const { return name; }

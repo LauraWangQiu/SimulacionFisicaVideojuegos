@@ -127,6 +127,10 @@ void Camera::setDir(PxVec3 dir)
 	mDir = dir;
 }
 
+PxVec3 Camera::getViewY() const {
+	return mDir.cross(PxVec3(0, 1, 0)).getNormalized();
+}
+
 void Camera::setView(const PxVec3& eye, const PxVec3& dir)
 {
 	mEye = eye;

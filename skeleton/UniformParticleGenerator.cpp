@@ -26,3 +26,9 @@ list<Particle*> UniformParticleGenerator::generateParticles() {
 
 	return mGenerator;
 }
+
+//list<Particle*> UniformParticleGenerator::generateParticles(Particle* deadP) {
+//	list<Particle*> mGenerator;
+//
+//	return mGenerator;
+//}

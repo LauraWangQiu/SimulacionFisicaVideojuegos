@@ -62,7 +62,6 @@ void keyboardCallback(unsigned char key, int x, int y)
 
 void specialInput(int key, int x, int y)
 {
-	/* Falta tener en cuenta la direccion de la camara */
 	switch (key) {
 	case GLUT_KEY_UP:
 		sCamera->setEye(PxVec3(sCamera->getEye().x, sCamera->getEye().y + 2.0f, sCamera->getEye().z));
@@ -71,10 +70,10 @@ void specialInput(int key, int x, int y)
 		sCamera->setEye(PxVec3(sCamera->getEye().x, sCamera->getEye().y - 2.0f, sCamera->getEye().z));
 		break;
 	case GLUT_KEY_LEFT:
-		sCamera->setEye(PxVec3(sCamera->getEye().x + 2.0f, sCamera->getEye().y, sCamera->getEye().z));
+		sCamera->setEye(sCamera->getEye() - sCamera->getViewY() * 2.0f);
 		break;
 	case GLUT_KEY_RIGHT:
-		sCamera->setEye(PxVec3(sCamera->getEye().x - 2.0f, sCamera->getEye().y, sCamera->getEye().z));
+		sCamera->setEye(sCamera->getEye() + sCamera->getViewY() * 2.0f);
 		break;
 	}
 }

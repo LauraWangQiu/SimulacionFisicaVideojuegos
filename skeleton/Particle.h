@@ -1,10 +1,29 @@
 #pragma once
+#include <vector>
 #include "RenderUtils.hpp"
+#include "Constants.h"
+using namespace std;
 using namespace physx;
 
-enum ParticleType { BASIC, FIRE, FIREWORK, WATER,
+enum ParticleType {
+	BASIC, FIRE, FIREWORK, WATER, STEAM,
 	CANNON_BALL, TANK_BALL, GUN_BULLET, LASER
 };
+
+struct particleInfo {
+	float mass;
+	float velc;
+	Vector3 acc;
+	float damp;
+	Vector4 col;
+	float time;
+	int numDiv;
+	float size;
+	// PxGeometry
+};
+
+// Declaración del vector como extern en el archivo de encabezado
+extern std::vector<particleInfo> ParticlesInfo;
 
 struct particlePalettes {
 	Vector4 firePalette[3] = {
@@ -33,7 +52,9 @@ struct particlePalettes {
 
 class Particle {
 public:
-	Particle(ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), float Time = 1.0f, PxReal Size = 1.0f, Vector4 Color = Vector4(255.0, 255.0, 255.0, 255.0));
+	Particle(ParticleType Type, PxTransform Transform, 
+		Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), float Time = 1.0f, 
+		PxReal Size = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 	virtual ~Particle();
 
 	virtual bool integrate(double t);
@@ -48,6 +69,8 @@ protected:
 	float mass, damping, time;
 	PxShape* shape;
 	RenderItem* renderItem;
+	int numDivisions;
+	bool toExplode;
 
 public:
 	// Getters
@@ -66,6 +89,8 @@ public:
 	inline PxReal getSize() const { return size; }
 	inline Vector4 getColor() const { return color; }
 	inline float getTime() const { return time; }
+	inline int getNumDivisions() const { return numDivisions; }
+	inline bool getToExplode() const { return toExplode; }
 
 	// Setters
 	inline void setPos(Vector3 Pos) { transform.p = Pos; }
@@ -88,4 +113,11 @@ public:
 	inline void setColor2(float R, float G, float B, float A = 255.0f) { renderItem->color = Vector4(R, G, B, A); }
 	inline void setTime(float Time) { time = Time; }
 	inline void increaseTime(float Time) { time += Time; }
+	inline void setNumDivisions(int Num) { numDivisions = Num; }
+	inline void setToExplode(bool Explode) { toExplode = Explode; }
+	inline void reTransform(Vector3 newPos, Vector3 newDir) {
+		transform.p = newPos;
+		dir = newDir;
+		vel = dir * ParticlesInfo[particleType].velc;
+	}
 };

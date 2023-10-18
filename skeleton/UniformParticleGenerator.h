@@ -26,7 +26,8 @@ public:
 		Vector3 VelWidth, Vector3 PosWidth, bool Active = true);
 	~UniformParticleGenerator();
 
-	list<Particle*> generateParticles();
+	virtual list<Particle*> generateParticles();
+	//virtual list<Particle*> generateParticles(Particle* deadP);
 
 	// Getters
 	inline Vector3 getVelWidth() const { return velWidth; }

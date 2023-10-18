@@ -13,13 +13,7 @@ list<Particle*> GaussianParticleGenerator::generateParticles() {
 	if (active) {
 		for (int i = 0; i < numParticles; i++) {
 			auto* p = model->clone();
-			
-			switch (p->getParticleType()) {
-			case FIREWORK: 
-				static_cast<Firework*>(p)->addGenerator(this);
-				break;
-			}
-			
+
 			if (generateRandomValue(2) <= generationProbability) {
 				p->setPos(model->getPos() + Vector3(n(generator) * stdDevPos.x, n(generator) * stdDevPos.y, n(generator) * stdDevPos.z));
 				p->setVel(model->getVel() + Vector3(n(generator) * stdDevVel.x, n(generator) * stdDevVel.y, n(generator) * stdDevVel.z));
@@ -27,9 +21,21 @@ list<Particle*> GaussianParticleGenerator::generateParticles() {
 				setParticleColor(p);
 
 				mGenerator.push_back(p);
+
+				switch (model->getParticleType()) {
+				case FIRE: case FIREWORK: case WATER:
+					static_cast<Firework*>(p)->addGenerator(this);
+					break;
+				}
 			}
 		}
 	}
 
 	return mGenerator;
 }
+
+//list<Particle*> GaussianParticleGenerator::generateParticles(Particle* deadP) {
+//	list<Particle*> mGenerator;
+//
+//	return mGenerator;
+//}

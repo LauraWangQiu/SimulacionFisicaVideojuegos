@@ -51,8 +51,9 @@ public:
 	void				setDir(physx::PxVec3 dir);
 	physx::PxTransform	getTransform() const;
 
+	physx::PxVec3		getViewY()	const;
 	void				setView(const physx::PxVec3& eye, const physx::PxVec3& dir);
-
+	
 	physx::PxVec3	mEye;
 	physx::PxVec3	mDir;
 	int				mMouseX;

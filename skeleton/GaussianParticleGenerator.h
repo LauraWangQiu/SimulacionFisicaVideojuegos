@@ -1,12 +1,12 @@
 #pragma once
 #include <list>
+#include <cmath>
 #include "RenderUtils.hpp"
 #include "Particle.h"
 #include "ParticleGenerator.h"
 #include "Firework.h"
 using namespace std;
 using namespace physx;
-
 
 class GaussianParticleGenerator : public ParticleGenerator {
 protected:
@@ -33,6 +33,7 @@ public:
 	/// <param name="StdDevVel"> Amplitud </param>
 	/// <returns> void </returns>
 	virtual list<Particle*> generateParticles();
+	//virtual list<Particle*> generateParticles(Particle* deadP);
 
 	// Getters
 	inline Vector3 getStdDevPos() const { return stdDevPos; }

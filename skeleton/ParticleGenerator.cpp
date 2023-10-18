@@ -6,6 +6,33 @@ ParticleGenerator::ParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanV
 }
 ParticleGenerator::~ParticleGenerator() {}
 
+list<Particle*> ParticleGenerator::generateParticles(Particle* deadP) {
+	list<Particle*> mGenerator;
+
+	switch (model->getParticleType()) {
+	//case FIREWORK:
+	default:
+		for (int i = 0; i < model->getNumDivisions(); ++i) {
+			// Calcula el ángulo
+			double angle = 2.0 * M_PI * (i + 1) / model->getNumDivisions();
+
+			// Calcula las componentes x, y y z de la dirección basadas en el ángulo.
+			double dirX = std::cos(angle);
+			double dirY = std::sin(angle);
+			double dirZ = 0.0;
+
+			auto* p = model->clone();
+			setParticleColor(p);
+			p->reTransform(deadP->getPos(), Vector3(dirX, dirY, dirZ));
+
+			mGenerator.push_back(p);
+		}
+		break;
+	}
+
+	return mGenerator;
+}
+
 void ParticleGenerator::setParticleColor(Particle* p) {
 	switch (p->getParticleType()) {
 	case FIREWORK:
