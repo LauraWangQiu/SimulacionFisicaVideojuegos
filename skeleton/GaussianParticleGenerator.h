@@ -13,10 +13,14 @@ protected:
 	Vector3 stdDevPos, stdDevVel;
 	double stdDevTime;
 
+	uniform_real_distribution<double> r1{ -0.1, 1.0 };
+	uniform_real_distribution<double> r2{ -1.0, 1.0 };
+
 public:
 	/// <summary> Generador de partículas gaussianas </summary>
 	/// <param name="**Name**"> Nombre del generador </param>
 	/// <param name="**MeanPos**"> Origen de las partículas </param>
+	/// <param name="**MeanVel**"> Velocidad de las partículas </param>
 	/// <param name="**GenerationProbability**"> Probabilidad de generar partícula </param>
 	/// <param name="**NumParticles**"> Número de partículas totales </param>
 	/// <param name="**Model**"> Número de partículas totales </param>
@@ -33,7 +37,7 @@ public:
 	/// <param name="StdDevVel"> Amplitud </param>
 	/// <returns> void </returns>
 	virtual list<Particle*> generateParticles();
-	//virtual list<Particle*> generateParticles(Particle* deadP);
+	virtual list<Particle*> generateParticles(Particle* deadP);
 
 	// Getters
 	inline Vector3 getStdDevPos() const { return stdDevPos; }

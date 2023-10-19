@@ -9,17 +9,8 @@ vector<particleInfo> ParticlesInfo = {
 		Vector4(1.0f, 1.0f, 1.0f, 1.0f),
 		1.0f,
 		0,
-		1.0f
-	},
-	{ // FIRE
-		1.0f,
-		10.0f,
-		Vector3(0.0f, -2.0f, 0.0f),
-		0.99f,
-		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
-		1.0f,
-		20,
-		1.0f
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Sphere"
 	},
 	{ // FIREWORK
 		1.0f,
@@ -29,7 +20,41 @@ vector<particleInfo> ParticlesInfo = {
 		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
 		1.0f,
 		10,
-		1.0f
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Sphere"
+	},
+	{ // FIREWORK2
+		1.0f,
+		20.0f,
+		Vector3(0.0f, -2.0f, 0.0f),
+		0.99f,
+		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
+		1.0f,
+		20,
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Sphere"
+	},
+	{ // FIREWORK3
+		1.0f,
+		10.0f,
+		Vector3(0.0f, -2.0f, 0.0f),
+		0.99f,
+		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
+		1.0f,
+		30,
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Sphere"
+	},
+	{ // FIRE
+		1.0f,
+		10.0f,
+		Vector3(0.0f, -2.0f, 0.0f),
+		0.99f,
+		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
+		1.0f,
+		0,
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Sphere"
 	},
 	{ // WATER
 		1.0f,
@@ -38,8 +63,9 @@ vector<particleInfo> ParticlesInfo = {
 		0.99f,
 		Vector4(0.5f, 0.9f, 1.0f, 1.0f),
 		1.0f,
-		3,
-		1.0f
+		0,
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Sphere"
 	},
 	{ // FOG
 		1.0f,
@@ -49,7 +75,8 @@ vector<particleInfo> ParticlesInfo = {
 		Vector4(1.0f, 1.0f, 1.0f, 0.2f),
 		5.0f,
 		0,
-		5.0f
+		Vector3(5.0f, 5.0f, 5.0f),
+		"Cube"
 	},
 	{ // CANNON_BALL
 		1.0f,
@@ -59,7 +86,8 @@ vector<particleInfo> ParticlesInfo = {
 		Vector4(0.2f, 0.2f, 0.2f, 1.0f),
 		1.0f,
 		0,
-		1.0f
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Sphere"
 	},
 	{ // TANK_BALL
 		200.0f,
@@ -69,7 +97,8 @@ vector<particleInfo> ParticlesInfo = {
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 		1.0f,
 		0,
-		1.0f
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Sphere"
 	},
 	{ // GUN_BULLET
 		2.0f,
@@ -79,7 +108,8 @@ vector<particleInfo> ParticlesInfo = {
 		Vector4(1.0f, 0.8f, 0.2f, 1.0f),
 		1.0f,
 		0,
-		1.0f
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Cube"
 	},
 	{ // LASER
 		0.1f,
@@ -89,57 +119,37 @@ vector<particleInfo> ParticlesInfo = {
 		Vector4(0.0f, 0.0f, 1.0f, 1.0f),
 		1.0f,
 		0,
-		1.0f
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Cube"
 	}
 };
 
-Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, float Time, PxReal Size, Vector4 Color)
-	: particleType(Type), transform(Transform), dir(Dir), time(Time), size(Size), color(Color), numDivisions(0),
-		toExplode(false) {
-
-	switch (particleType) {
-	case BASIC:
-		shape = CreateShape(PxSphereGeometry(size));
-		break;
-	case FIRE:
-		shape = CreateShape(PxSphereGeometry(size));
-		break;
-	case FIREWORK:
-		shape = CreateShape(PxSphereGeometry(size));
-		break;
-	case WATER:
-		shape = CreateShape(PxSphereGeometry(size));
-		break;
-	case STEAM:
-		shape = CreateShape(PxBoxGeometry(size, size, size));
-		break;
-
-	case CANNON_BALL:
-		shape = CreateShape(PxSphereGeometry(size));
-		break;
-	case TANK_BALL:
-		shape = CreateShape(PxSphereGeometry(size));
-		break;
-	case GUN_BULLET:
-		shape = CreateShape(PxBoxGeometry(size, size, size * 3 / 2));
-		break;
-	case LASER:
-		shape = CreateShape(PxBoxGeometry(size, size, size));
-		break;
-	default: break;
-	}
+Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Active) : particleType(Type), transform(Transform), dir(Dir), velc(ParticlesInfo[particleType].velc), active(Active) {
 
 	setMass(ParticlesInfo[particleType].mass);
-	setVel(dir * ParticlesInfo[particleType].velc);
+	setVel(dir * velc);
 	setAcc(ParticlesInfo[particleType].acc);
 	setDamping(ParticlesInfo[particleType].damp);
-	setColor(ParticlesInfo[particleType].col);
-	setTime(ParticlesInfo[particleType].time);
-	setNumDivisions(ParticlesInfo[particleType].numDiv);
 	setSize(ParticlesInfo[particleType].size);
-	// setGeometry(ParticlesInfo[particleType].geo);
+	setTime(ParticlesInfo[particleType].time);
+	setColor(ParticlesInfo[particleType].col);
+	setNumDivisions(ParticlesInfo[particleType].numDiv);
+
+	if (ParticlesInfo[particleType].geometryType == "Sphere") shape = CreateShape(PxSphereGeometry(size.x));
+	else if (ParticlesInfo[particleType].geometryType == "Cube") shape = CreateShape(PxBoxGeometry(size));
+	else shape = CreateShape(PxSphereGeometry(size.x));
 	
-	renderItem = new RenderItem(shape, &transform, color);
+	if (active) renderItem = new RenderItem(shape, &transform, color);
+}
+
+Particle::Particle(PxTransform Transform, Vector3 Dir, float Mass, float Velc, Vector3 Acc, float Damping, Vector3 Size, 
+	float Time, Vector4 Color, int NumDivisions, bool Active) :
+	particleType(NONE), transform(Transform), dir(Dir), mass(Mass), velc(Velc), acc(Acc), damping(Damping), size(Size), time(Time), color(Color), 
+	numDivisions(NumDivisions), active(Active) {
+
+	setVel(dir * velc);
+	shape = CreateShape(PxSphereGeometry(size.x));
+	if (active) renderItem = new RenderItem(shape, &transform, color);
 }
 
 Particle::~Particle() {
@@ -166,5 +176,8 @@ bool Particle::integrate(double t) {
 }
 
 Particle* Particle::clone() const {
-	return new Particle(particleType, transform, dir, time, size, color);
+	switch (particleType) {
+	case NONE: return new Particle(transform, dir, mass, velc, acc, damping, size, time, color, numDivisions); break;
+	default: return new Particle(particleType, transform, dir); break;
+	}
 }

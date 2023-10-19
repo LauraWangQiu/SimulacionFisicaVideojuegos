@@ -12,7 +12,7 @@ protected:
 	list<ParticleGenerator*> gen;
 	
 public:
-	Firework(ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), float Time = 1.0f, PxReal Size = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+	Firework(ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), bool Active = true);
 
 	list<Particle*> explode();
 	void addGenerator(ParticleGenerator* p);

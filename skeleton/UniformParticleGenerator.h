@@ -16,6 +16,7 @@ public:
 	/// <summary> Generador de partículas uniformes </summary>
 	/// <param name="**Name**"> Nombre del generador </param>
 	/// <param name="**MeanPos**"> Origen de las partículas </param>
+	/// <param name="**MeanVel**"> Velocidad de las partículas </param>
 	/// <param name="**GenerationProbability**"> Probabilidad de generar partícula </param>
 	/// <param name="**NumParticles**"> Número de partículas totales </param>
 	/// <param name="**Model**"> Número de partículas totales </param>
@@ -27,7 +28,7 @@ public:
 	~UniformParticleGenerator();
 
 	virtual list<Particle*> generateParticles();
-	//virtual list<Particle*> generateParticles(Particle* deadP);
+	virtual list<Particle*> generateParticles(Particle* deadP);
 
 	// Getters
 	inline Vector3 getVelWidth() const { return velWidth; }

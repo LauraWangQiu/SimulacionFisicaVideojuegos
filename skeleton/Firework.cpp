@@ -1,6 +1,6 @@
 #include "Firework.h"
 
-Firework::Firework(ParticleType Type, PxTransform Transform, Vector3 Dir, float Time, PxReal Size, Vector4 Color) : type(Type), Particle(Type, Transform, Dir, Time, Size, Color) {}
+Firework::Firework(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Active) : type(Type), Particle(Type, Transform, Dir, Active) {}
 
 list<Particle*> Firework::explode() {
 	list<Particle*> list;
@@ -28,5 +28,5 @@ void Firework::removeGenerators() {
 }
 
 Firework* Firework::clone() const {
-	return new Firework(type, transform, vel, time, size, color);
+	return new Firework(type, transform, dir);
 }
