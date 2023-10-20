@@ -15,14 +15,13 @@ protected:
 	Particle* originParticle;
 	int numParticles, numMaxParticles;
 	Vector3 gravity;
-
 	PxTransform origin;
-	//vector<Particle*> particlesPool;
 
 	ParticleGenerator* fireworkGenerator;
 	ParticleGenerator* fireGenerator;
 	ParticleGenerator* waterfallGenerator;
 	ParticleGenerator* steamGenerator;
+	ParticleGenerator* squirtGenerator;
 
 public:
 	ParticleSystem(const Vector3& g = { 0.0f, -9.8f, 0.0f});
@@ -56,6 +55,38 @@ public:
 	void generateFireSystem();
 	void generateWaterfallSystem();
 	void generateSteamSystem();
+	void generateSquirtSystem();
+
+	inline void switchFireworkSystem() { 
+		if (!fireworkGenerator->getActive()) {
+			fireworkGenerator->setActive(true);
+			fireworkGenerator->getModel()->setParticleType(FIREWORK);
+		}
+		else {
+			switch (fireworkGenerator->getModel()->getParticleType()) {
+			case FIREWORK: fireworkGenerator->getModel()->setParticleType(FIREWORK2); break;
+			case FIREWORK2: fireworkGenerator->getModel()->setParticleType(FIREWORK3); break;
+			case FIREWORK3: fireworkGenerator->setActive(!fireworkGenerator->getActive()); break;
+			}
+		}
+	}
+	inline void activateFireSystem() { fireGenerator->setActive(!fireGenerator->getActive()); }
+	inline void activateWaterfallSystem() { waterfallGenerator->setActive(!waterfallGenerator->getActive()); }
+	inline void activateSteamSystem() { steamGenerator->setActive(!steamGenerator->getActive()); }
+	inline void activateSquirtSystem() { squirtGenerator->setActive(!squirtGenerator->getActive()); }
+
+	inline void increaseSquirtVel() {
+		Vector3 newVel = Vector3(squirtGenerator->getModel()->getVel().x, squirtGenerator->getModel()->getVel().y + SQUIRT_INCREASE_VEL, squirtGenerator->getModel()->getVel().z);
+		squirtGenerator->getModel()->setVel(newVel);
+	}
+	inline void decreaseSquirtVel() {
+		Vector3 newVel = Vector3(squirtGenerator->getModel()->getVel().x, squirtGenerator->getModel()->getVel().y - SQUIRT_INCREASE_VEL, squirtGenerator->getModel()->getVel().z);
+		squirtGenerator->getModel()->setVel(newVel);
+	}
+	inline void resetSquirtVel() { 
+		Vector3 newVel = Vector3(squirtGenerator->getModel()->getVel().x, SQUIRT_INITIAL_VEL, squirtGenerator->getModel()->getVel().z);
+		squirtGenerator->getModel()->setVel(newVel);
+	}
 
 	void addFirework(ParticleType Type, PxTransform Transform, Vector3 Dir);
 	void addOrigin();

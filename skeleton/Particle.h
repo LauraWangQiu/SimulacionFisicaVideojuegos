@@ -115,6 +115,8 @@ public:
 	inline int getNumExplodes() const { return numExplodes;  }
 
 	// Setters
+	inline void setParticleType(ParticleType Type) { particleType = Type; }
+	inline void setTransform(PxTransform Transform) { transform = Transform; }
 	inline void setPos(Vector3 Pos) { transform.p = Pos; }
 	inline void setPos(float X, float Y, float Z) { transform.p = Vector3(X, Y, Z); }
 	inline void setPosX(float X) { transform.p.x = X; }

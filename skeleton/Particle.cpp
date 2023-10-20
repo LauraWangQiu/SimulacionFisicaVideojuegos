@@ -67,7 +67,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(0.0f, -50.0f, 0.0f),
 		0.99f,
 		Vector4(0.5f, 0.9f, 1.0f, 1.0f),
-		1.0f,
+		10.0f,
 		0,
 		0,
 		Vector3(1.0f, 1.0f, 1.0f),

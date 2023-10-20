@@ -28,7 +28,7 @@ public:
 	/// <param name="**PosWidth**"> Area base </param>
 	/// <param name="**Active** (Opcional)"> Activación/Desactivación del generador </param>
 	UniformParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanVel, double GenerationProbability, int NumParticles, Particle* Model,
-		Vector3 VelWidth, Vector3 PosWidth, bool Active = true);
+		Vector3 VelWidth, Vector3 PosWidth, bool Active = false);
 	~UniformParticleGenerator();
 
 	virtual list<Particle*> generateParticles();

@@ -7,7 +7,7 @@ ParticleGenerator::ParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanV
 ParticleGenerator::~ParticleGenerator() {}
 
 void ParticleGenerator::setParticleColor(Particle* p) {
-	switch (p->getParticleType()) {
+	switch (model->getParticleType()) {
 	case FIREWORK:
 		p->setColor2(palettes.fireWorkPalette[rand() % palettes.fireWorkPaletteSize]);
 		break; 

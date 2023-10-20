@@ -1,42 +1,27 @@
 #include "ParticleSystem.h"
 
-#define WORLD_ORIGIN
+#define GIZMO
 
-//#define FIREWORKGENERATOR
-#define FIREWORKGENERATOR_ACTIVE false
-#define FIREWORK_GAUSSIAN_GEN
 #define FIREWORK_MODEL_ACTIVE false
-#define TYPEOF_FIREWORK FIREWORK
-
-//#define FIREGENERATOR
-#define FIREGENERATOR_ACTIVE true
+#define FIREWORK_GAUSSIAN_GEN
 #define FIRE_MODEL_ACTIVE false
-
-//#define WATERFALLGENERATOR
-#define WATERFALLGENERATOR_ACTIVE true
 #define WATERFALL_MODEL_ACTIVE false
-
-//#define STEAMGENERATOR
-#define STEAMGENERATOR_ACTIVE true
 #define STEAM_MODEL_ACTIVE false
+#define SQUIRT_MODEL_ACTIVE false
 
 ParticleSystem::ParticleSystem(const Vector3& g) : gravity(g), numMaxParticles(MAX_PARTICLES), originParticle(nullptr), numParticles(0), origin(PxTransform(Vector3(0.0f, 0.0f, 0.0f))) {
-	#ifdef WORLD_ORIGIN
+
+	#ifdef GIZMO
 		addOrigin();
-	#endif // WORLD_ORIGIN
-	#ifdef FIREWORKGENERATOR
-		generateFireworkSystem();
-	#endif // FIREWORKGENERATOR
-	#ifdef FIREGENERATOR
-		generateFireSystem();
-	#endif // FIREGENERATOR
-	#ifdef WATERFALLGENERATOR
-		generateWaterfallSystem();
-	#endif // WATERFALLGENERATOR
-	#ifdef STEAMGENERATOR
-		generateSteamSystem();
-	#endif // STEAMGENERATOR
+	#endif // GIZMO
+
+	generateFireworkSystem();
+	generateFireSystem();
+	generateWaterfallSystem();
+	generateSteamSystem();
+	generateSquirtSystem();
 }
+
 ParticleSystem::~ParticleSystem() {
 
 	for (auto p : listOfParticles) {
@@ -86,7 +71,6 @@ void ParticleSystem::update(double t) {
 }
 
 void ParticleSystem::onParticleDeath(Particle* p) {
-	
 	switch (p->getParticleType()) {
 	case FIREWORK: case FIREWORK2: case FIREWORK3:
 		addParticles(static_cast<Firework*>(p)->explode());
@@ -102,13 +86,13 @@ ParticleGenerator* ParticleSystem::getParticleGenerator(const string& name) {
 }
 
 void ParticleSystem::generateFireworkSystem() {
-	Firework* model = new Firework(TYPEOF_FIREWORK, origin, Vector3(0.0f, 1.0f, 0.0f), FIREWORK_MODEL_ACTIVE);
+	Firework* model = new Firework(FIREWORK, origin, Vector3(0.0f, 1.0f, 0.0f), FIREWORK_MODEL_ACTIVE);
 #ifdef FIREWORK_GAUSSIAN_GEN
 	fireworkGenerator = new GaussianParticleGenerator("Fireworks", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.1, 1,
-		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f), FIREWORKGENERATOR_ACTIVE);
+		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
 #else
 	fireworkGenerator = new UniformParticleGenerator("Fireworks", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.3, 1,
-		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f), FIREWORKGENERATOR_ACTIVE);
+		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
 #endif
 	listOfParticleGenerators.push_back(fireworkGenerator);
 }
@@ -116,22 +100,29 @@ void ParticleSystem::generateFireworkSystem() {
 void ParticleSystem::generateFireSystem() {
 	Particle* model = new Particle(FIRE, origin, Vector3(0.0f, 1.0f, 0.0f), FIRE_MODEL_ACTIVE);
 	fireGenerator = new GaussianParticleGenerator("Fire", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 1,
-		model, Vector3(2.0f, 2.0f, 2.0f), Vector3(1.0f, 1.0f, 1.0f), FIREGENERATOR_ACTIVE);
+		model, Vector3(2.0f, 2.0f, 2.0f), Vector3(1.0f, 1.0f, 1.0f));
 	listOfParticleGenerators.push_back(fireGenerator);
 }
 
 void ParticleSystem::generateWaterfallSystem() {
 	Particle* model = new Particle(WATER, origin, Vector3(0.0f,-1.0f,0.0f), WATERFALL_MODEL_ACTIVE);
 	waterfallGenerator = new UniformParticleGenerator("Waterfall", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.3, 1,
-		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(50.0f, 0.0f, 0.0f), WATERFALLGENERATOR_ACTIVE);
+		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(50.0f, 0.0f, 0.0f));
 	listOfParticleGenerators.push_back(waterfallGenerator);
 }
 
 void ParticleSystem::generateSteamSystem() {
 	Particle* model = new Particle(STEAM, origin, Vector3(0.0f, 1.0f, 0.0f), STEAM_MODEL_ACTIVE);
-	steamGenerator = new GaussianParticleGenerator("Fog", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 100,
-		model, Vector3(10.0f, 10.0f, 10.0f), Vector3(0.0f, 0.0f, 0.0f), STEAMGENERATOR_ACTIVE);
+	steamGenerator = new GaussianParticleGenerator("Steam", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 100,
+		model, Vector3(10.0f, 10.0f, 10.0f), Vector3(0.0f, 0.0f, 0.0f));
 	listOfParticleGenerators.push_back(steamGenerator);
+}
+
+void ParticleSystem::generateSquirtSystem() {
+	Particle* model = new Particle(WATER, origin, Vector3(0.3f, SQUIRT_INITIAL_VEL, 0.0f), SQUIRT_MODEL_ACTIVE);
+	squirtGenerator = new GaussianParticleGenerator("Squirt", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 50,
+		model, Vector3(1.0f, 1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f));
+	listOfParticleGenerators.push_back(squirtGenerator);
 }
 
 void ParticleSystem::addFirework(ParticleType Type, PxTransform Transform, Vector3 Dir) {

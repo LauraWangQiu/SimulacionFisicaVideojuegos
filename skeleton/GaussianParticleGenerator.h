@@ -27,7 +27,7 @@ public:
 	/// <param name="**StdDevVel**"> Amplitud </param>
 	/// <param name="**Active** (Opcional)"> Activación/Desactivación del generador </param>
 	GaussianParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanVel, double GenerationProbability, int NumParticles, Particle* Model, 
-		Vector3 StdDevPos, Vector3 StdDevVel, bool Active = true);
+		Vector3 StdDevPos, Vector3 StdDevVel, bool Active = false);
 	~GaussianParticleGenerator();
 
 	virtual list<Particle*> generateParticles();

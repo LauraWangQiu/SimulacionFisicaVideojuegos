@@ -102,6 +102,14 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case 'F': GetCamera()->setView(PxVec3(0.0f, 0.0f, 0.0f), PxVec3(0.0f, 0.0f, 1.0f)); break;
 	case 'L': GetCamera()->setView(PxVec3(-100.0f, 0.0f, 0.0f), PxVec3(1.0f, 0.0f, 0.0f)); break;
 
+	case 'Z': particleSys->switchFireworkSystem(); break;
+	case 'X': particleSys->activateFireSystem();  break;
+	case 'C': particleSys->activateWaterfallSystem(); break;
+	case 'V': particleSys->activateSteamSystem(); break;
+	case 'B': particleSys->activateSquirtSystem(); break;
+	case 'N': particleSys->increaseSquirtVel(); break;
+	case 'M': particleSys->decreaseSquirtVel(); break;
+
 	case '0': particleSys->addParticle(BASIC, camera, GetCamera()->getDir()); break;
 	case '1': particleSys->addParticle(CANNON_BALL, camera, GetCamera()->getDir()); break;
 	case '2': particleSys->addParticle(TANK_BALL, camera, GetCamera()->getDir()); break;
