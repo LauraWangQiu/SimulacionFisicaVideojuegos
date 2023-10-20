@@ -165,10 +165,7 @@ Particle::Particle(PxTransform Transform, Vector3 Dir, float Mass, float Velc, V
 }
 
 Particle::~Particle() {
-	if (visible) {
-		DeregisterRenderItem(renderItem);
-		delete renderItem;
-	}
+	if (visible) DeregisterRenderItem(renderItem);
 }
 
 bool Particle::integrate(double t) {

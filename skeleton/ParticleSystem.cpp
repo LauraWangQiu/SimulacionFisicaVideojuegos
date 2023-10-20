@@ -24,12 +24,9 @@ ParticleSystem::ParticleSystem(const Vector3& g) : gravity(g), numMaxParticles(M
 
 ParticleSystem::~ParticleSystem() {
 
-	for (auto p : listOfParticles) {
-		static_cast<Firework*>(p)->deleteGenerators();
-		delete p;
-	}
-		
-	for (auto pg : listOfParticleGenerators) delete pg;
+	while (!listOfParticles.empty()) listOfParticles.pop_back();
+
+	while (!listOfParticleGenerators.empty()) listOfParticleGenerators.pop_back();
 }
 
 void ParticleSystem::addParticles(list<Particle*> list) {

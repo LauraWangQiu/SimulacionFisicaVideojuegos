@@ -4,7 +4,10 @@ ParticleGenerator::ParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanV
 	name(Name), meanPos(MeanPos), meanVel(MeanVel), generationProbability(GenerationProbability), numParticles(NumParticles), model(Model), active(Active) {
 	generator = default_random_engine(rd());
 }
-ParticleGenerator::~ParticleGenerator() {}
+
+ParticleGenerator::~ParticleGenerator() {
+	delete model;
+}
 
 void ParticleGenerator::setParticleColor(Particle* p) {
 	switch (model->getParticleType()) {

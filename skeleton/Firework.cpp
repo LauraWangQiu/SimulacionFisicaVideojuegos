@@ -2,6 +2,12 @@
 
 Firework::Firework(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Active) : type(Type), Particle(Type, Transform, Dir, Active) {}
 
+Firework::~Firework() {
+	while (!gen.empty()) {
+		gen.pop_front();
+	}
+}
+
 list<Particle*> Firework::explode() {
 	list<Particle*> list;
 
@@ -25,13 +31,6 @@ void Firework::addGenerator(ParticleGenerator* p) {
 void Firework::removeGenerators() {
 	while (!gen.empty())
 		gen.pop_front();
-}
-
-void Firework::deleteGenerators() {
-	while (!gen.empty()) {
-		delete gen.front();
-		gen.pop_front();
-	}
 }
 
 ParticleGenerator* Firework::getFirstGenerator() const {
