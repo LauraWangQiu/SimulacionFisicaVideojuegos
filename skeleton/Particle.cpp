@@ -9,6 +9,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector4(1.0f, 1.0f, 1.0f, 1.0f),
 		1.0f,
 		0,
+		0,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Sphere"
 	},
@@ -20,6 +21,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
 		1.0f,
 		10,
+		2,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Sphere"
 	},
@@ -30,7 +32,8 @@ vector<particleInfo> ParticlesInfo = {
 		0.99f,
 		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
 		1.0f,
-		20,
+		5,
+		3,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Sphere"
 	},
@@ -41,7 +44,8 @@ vector<particleInfo> ParticlesInfo = {
 		0.99f,
 		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
 		1.0f,
-		30,
+		10,
+		2,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Sphere"
 	},
@@ -52,6 +56,7 @@ vector<particleInfo> ParticlesInfo = {
 		0.99f,
 		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
 		1.0f,
+		0,
 		0,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Sphere"
@@ -64,6 +69,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector4(0.5f, 0.9f, 1.0f, 1.0f),
 		1.0f,
 		0,
+		0,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Sphere"
 	},
@@ -74,6 +80,7 @@ vector<particleInfo> ParticlesInfo = {
 		0.99f,
 		Vector4(1.0f, 1.0f, 1.0f, 0.2f),
 		5.0f,
+		0,
 		0,
 		Vector3(5.0f, 5.0f, 5.0f),
 		"Cube"
@@ -86,6 +93,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector4(0.2f, 0.2f, 0.2f, 1.0f),
 		1.0f,
 		0,
+		0,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Sphere"
 	},
@@ -96,6 +104,7 @@ vector<particleInfo> ParticlesInfo = {
 		0.99f,
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 		1.0f,
+		0,
 		0,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Sphere"
@@ -108,6 +117,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector4(1.0f, 0.8f, 0.2f, 1.0f),
 		1.0f,
 		0,
+		0,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Cube"
 	},
@@ -118,6 +128,7 @@ vector<particleInfo> ParticlesInfo = {
 		0.99f,
 		Vector4(0.0f, 0.0f, 1.0f, 1.0f),
 		1.0f,
+		0,
 		0,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Cube"
@@ -134,6 +145,7 @@ Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool A
 	setTime(ParticlesInfo[particleType].time);
 	setColor(ParticlesInfo[particleType].col);
 	setNumDivisions(ParticlesInfo[particleType].numDiv);
+	setNumExplodes(ParticlesInfo[particleType].numExp);
 
 	if (ParticlesInfo[particleType].geometryType == "Sphere") shape = CreateShape(PxSphereGeometry(size.x));
 	else if (ParticlesInfo[particleType].geometryType == "Cube") shape = CreateShape(PxBoxGeometry(size));
@@ -143,9 +155,9 @@ Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool A
 }
 
 Particle::Particle(PxTransform Transform, Vector3 Dir, float Mass, float Velc, Vector3 Acc, float Damping, Vector3 Size, 
-	float Time, Vector4 Color, int NumDivisions, bool Active) :
+	float Time, Vector4 Color, int NumDivisions, int NumExplodes, bool Active) :
 	particleType(NONE), transform(Transform), dir(Dir), mass(Mass), velc(Velc), acc(Acc), damping(Damping), size(Size), time(Time), color(Color), 
-	numDivisions(NumDivisions), active(Active) {
+	numDivisions(NumDivisions), numExplodes(NumExplodes), active(Active) {
 
 	setVel(dir * velc);
 	shape = CreateShape(PxSphereGeometry(size.x));
@@ -177,7 +189,7 @@ bool Particle::integrate(double t) {
 
 Particle* Particle::clone() const {
 	switch (particleType) {
-	case NONE: return new Particle(transform, dir, mass, velc, acc, damping, size, time, color, numDivisions); break;
+	case NONE: return new Particle(transform, dir, mass, velc, acc, damping, size, time, color, numDivisions, numExplodes); break;
 	default: return new Particle(particleType, transform, dir); break;
 	}
 }

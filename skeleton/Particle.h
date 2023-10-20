@@ -20,6 +20,7 @@ struct particleInfo {
 	Vector4 col;
 	float time;
 	int numDiv;
+	int numExp;
 	Vector3 size;
 	string geometryType;
 };
@@ -75,7 +76,7 @@ public:
 	Particle(ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), bool Active = true);
 	Particle(PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), float Mass = 1.0f, float Velc = 10.0f, 
 		Vector3 Acc = Vector3(0.0f, 0.0f, 0.0f), float Damping = 0.99f, Vector3 Size = Vector3(1.0f, 1.0f, 1.0f),
-		float Time = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f), int NumDivisions = 0, bool Active = true);
+		float Time = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f), int NumDivisions = 0, int NumExplodes = 0, bool Active = true);
 
 	virtual ~Particle();
 
@@ -90,7 +91,7 @@ protected:
 	float mass, velc, damping, time;
 	PxShape* shape;
 	RenderItem* renderItem;
-	int numDivisions;
+	int numDivisions, numExplodes;
 	bool active;
 
 public:
@@ -111,6 +112,7 @@ public:
 	inline Vector4 getColor() const { return color; }
 	inline float getTime() const { return time; }
 	inline int getNumDivisions() const { return numDivisions; }
+	inline int getNumExplodes() const { return numExplodes;  }
 
 	// Setters
 	inline void setPos(Vector3 Pos) { transform.p = Pos; }
@@ -135,6 +137,11 @@ public:
 	inline void setTime(float Time) { time = Time; }
 	inline void increaseTime(float Time) { time += Time; }
 	inline void setNumDivisions(int Num) { numDivisions = Num; }
+	inline void decreaseNumDivisions() { --numDivisions; }
+	inline void increaseNumDivisions() { ++numDivisions; }
+	inline void setNumExplodes(int Num) { numExplodes = Num; }
+	inline void decreaseNumExplodes() { --numExplodes; }
+	inline void increaseNumExplodes() { ++numExplodes; }
 	inline void reTransform(Vector3 newPos, Vector3 newDir) {
 		transform.p = newPos;
 		dir = newDir;

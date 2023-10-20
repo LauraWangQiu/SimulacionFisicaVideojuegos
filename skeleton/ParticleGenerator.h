@@ -49,6 +49,6 @@ public:
 	
 	void setParticleColor(Particle* p);
 
-	inline double generateRandomValue(int precision) { return (double)(rand() % (int) pow(10, precision)) / pow(10, precision); }
+	inline double generateRandomValue(int precision = 2) { return (double)(rand() % (int) pow(10, precision)) / pow(10, precision); }
 };
 

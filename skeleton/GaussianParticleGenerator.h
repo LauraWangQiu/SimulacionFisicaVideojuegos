@@ -11,10 +11,9 @@ using namespace physx;
 class GaussianParticleGenerator : public ParticleGenerator {
 protected:
 	Vector3 stdDevPos, stdDevVel;
-	double stdDevTime;
 
-	uniform_real_distribution<double> r1{ -0.1, 1.0 };
-	uniform_real_distribution<double> r2{ -1.0, 1.0 };
+	normal_distribution<double> n1{ -1.0, 1.0 };
+	normal_distribution<double> n2{ -0.5, 2.0 };
 
 public:
 	/// <summary> Generador de partículas gaussianas </summary>
@@ -29,23 +28,17 @@ public:
 	/// <param name="**StdDevTime**"> Tiempo de regeneración </param>
 	/// <param name="**Active** (Opcional)"> Activación/Desactivación del generador </param>
 	GaussianParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanVel, double GenerationProbability, int NumParticles, Particle* Model, 
-		Vector3 StdDevPos, Vector3 StdDevVel, double StdDevTime, bool Active = true);
+		Vector3 StdDevPos, Vector3 StdDevVel, bool Active = true);
 	~GaussianParticleGenerator();
 
-	/// <summary> Generador de partículas gaussianas </summary>
-	/// <param name="StdDevPos"> Area base </param>
-	/// <param name="StdDevVel"> Amplitud </param>
-	/// <returns> void </returns>
 	virtual list<Particle*> generateParticles();
 	virtual list<Particle*> generateParticles(Particle* deadP);
 
 	// Getters
 	inline Vector3 getStdDevPos() const { return stdDevPos; }
 	inline Vector3 getStdDevVel() const { return stdDevVel; }
-	inline double getStdDevTime() const { return stdDevTime; }
 	// Setters
 	inline void setStdDevPos(Vector3 StdDevPos) { stdDevPos = StdDevPos; }
 	inline void setStdDevVel(Vector3 StdDevVel) { stdDevVel = StdDevVel; }
-	inline void setStdDevTime(double StdDevTime) { stdDevTime = StdDevTime; }
 };
 
