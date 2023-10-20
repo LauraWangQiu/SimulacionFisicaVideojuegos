@@ -35,33 +35,43 @@ list<Particle*> UniformParticleGenerator::generateParticles() {
 list<Particle*> UniformParticleGenerator::generateParticles(Particle* deadP) {
 	list<Particle*> mGenerator;
 
-	for (int i = 0; i < model->getNumDivisions(); ++i) {
+	if (deadP->getNumExplodes() > 0) {
+		for (int i = 0; i < model->getNumDivisions(); ++i) {
+			auto* p = model->clone();
+			p->setNumExplodes(deadP->getNumExplodes() - 1);
 
-		Vector3 pos, dir;
-		double angle = 2.0 * M_PI * (i + 1) / model->getNumDivisions();
+			Vector3 pos, dir;
+			double angle = 2.0 * M_PI * (i + 1) / model->getNumDivisions();
 
-		switch (model->getParticleType()) {
-		case FIREWORK:
-			pos = deadP->getPos();
-			dir.x = std::cos(angle);
-			dir.y = std::sin(angle);
-			dir.z = 0.0f;
-			break;
-		case FIREWORK2:
-			pos = deadP->getPos() + Vector3(u1(generator) * posWidth.x, u1(generator) * posWidth.y, u1(generator) * posWidth.z);
-			dir = deadP->getVel() + Vector3(u1(generator) * (velWidth.x + 10), u1(generator) * velWidth.y, u1(generator) * velWidth.z);
-			break;
-		case FIREWORK3:
-			pos = deadP->getPos() + Vector3(u2(generator) * posWidth.x, u2(generator) * posWidth.y, u2(generator) * posWidth.z);
-			dir = deadP->getVel() + Vector3(u2(generator) * (velWidth.x + 5), u2(generator) * velWidth.y, u2(generator) * velWidth.z);
-			break;
+			int min = 1;
+			int max = 5;
+			std::uniform_int_distribution<> randomX(min, max);
+			std::uniform_int_distribution<> randomZ(min, max);
+
+			switch (model->getParticleType()) {
+			case FIREWORK:
+				pos = deadP->getPos();
+				dir.x = std::cos(angle);
+				dir.y = std::sin(angle);
+				dir.z = 0.0f;
+				if (p->getNumExplodes() > 0) static_cast<Firework*>(p)->addGenerator(this);
+				break;
+			case FIREWORK2:
+				pos = deadP->getPos() + Vector3(u1(generator) * posWidth.x, u1(generator) * posWidth.y, u1(generator) * posWidth.z);
+				dir = deadP->getVel() + Vector3(u1(generator) * (velWidth.x + randomX(generator)), u1(generator) * velWidth.y, u1(generator) * (velWidth.z + randomZ(generator)));
+				if (p->getNumExplodes() > 0) static_cast<Firework*>(p)->addGenerator(this);
+				break;
+			case FIREWORK3:
+				pos = deadP->getPos() + Vector3(u2(generator) * posWidth.x, u2(generator) * posWidth.y, u2(generator) * posWidth.z);
+				dir = deadP->getVel() + Vector3(u2(generator) * (velWidth.x + randomX(generator)), u2(generator) * velWidth.y, u2(generator) * (velWidth.z + randomZ(generator)));
+				if (p->getNumExplodes() > 0) static_cast<Firework*>(p)->addGenerator(this);
+				break;
+			}
+
+			setParticleColor(p);
+			p->reTransform(deadP->getPos(), dir);
+			mGenerator.push_back(p);
 		}
-
-		auto* p = model->clone();
-		setParticleColor(p);
-		p->reTransform(deadP->getPos(), dir);
-
-		mGenerator.push_back(p);
 	}
 
 	return mGenerator;

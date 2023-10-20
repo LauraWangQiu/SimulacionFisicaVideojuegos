@@ -27,24 +27,24 @@ vector<particleInfo> ParticlesInfo = {
 	},
 	{ // FIREWORK2
 		1.0f,
-		20.0f,
-		Vector3(0.0f, -2.0f, 0.0f),
+		100.0f,
+		Vector3(0.0f, -50.0f, 0.0f),
 		0.99f,
 		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
 		1.0f,
-		5,
-		3,
+		50,
+		1,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Sphere"
 	},
 	{ // FIREWORK3
 		1.0f,
-		10.0f,
-		Vector3(0.0f, -2.0f, 0.0f),
+		100.0f,
+		Vector3(0.0f, -50.0f, 0.0f),
 		0.99f,
 		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
 		1.0f,
-		10,
+		20,
 		2,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Sphere"
@@ -135,7 +135,7 @@ vector<particleInfo> ParticlesInfo = {
 	}
 };
 
-Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Active) : particleType(Type), transform(Transform), dir(Dir), velc(ParticlesInfo[particleType].velc), active(Active) {
+Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible, bool Active) : particleType(Type), transform(Transform), dir(Dir), velc(ParticlesInfo[particleType].velc), visible(Visible), active(Active) {
 
 	setMass(ParticlesInfo[particleType].mass);
 	setVel(dir * velc);
@@ -151,21 +151,24 @@ Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool A
 	else if (ParticlesInfo[particleType].geometryType == "Cube") shape = CreateShape(PxBoxGeometry(size));
 	else shape = CreateShape(PxSphereGeometry(size.x));
 	
-	if (active) renderItem = new RenderItem(shape, &transform, color);
+	if (visible) renderItem = new RenderItem(shape, &transform, color);
 }
 
 Particle::Particle(PxTransform Transform, Vector3 Dir, float Mass, float Velc, Vector3 Acc, float Damping, Vector3 Size, 
-	float Time, Vector4 Color, int NumDivisions, int NumExplodes, bool Active) :
+	float Time, Vector4 Color, int NumDivisions, int NumExplodes, bool Visible, bool Active) :
 	particleType(NONE), transform(Transform), dir(Dir), mass(Mass), velc(Velc), acc(Acc), damping(Damping), size(Size), time(Time), color(Color), 
-	numDivisions(NumDivisions), numExplodes(NumExplodes), active(Active) {
+	numDivisions(NumDivisions), numExplodes(NumExplodes), visible(Visible), active(Active) {
 
 	setVel(dir * velc);
 	shape = CreateShape(PxSphereGeometry(size.x));
-	if (active) renderItem = new RenderItem(shape, &transform, color);
+	if (visible) renderItem = new RenderItem(shape, &transform, color);
 }
 
 Particle::~Particle() {
-	DeregisterRenderItem(renderItem);
+	if (visible) {
+		DeregisterRenderItem(renderItem);
+		delete renderItem;
+	}
 }
 
 bool Particle::integrate(double t) {
@@ -184,7 +187,8 @@ bool Particle::integrate(double t) {
 	// Le vamos restando tiempo de vida
 	time -= t;
 
-	return time > 0.0f;
+	if (active) return false;
+	else return time > 0.0f;
 }
 
 Particle* Particle::clone() const {

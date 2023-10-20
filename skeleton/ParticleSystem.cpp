@@ -1,10 +1,12 @@
 #include "ParticleSystem.h"
 
-#define FIREWORKGENERATOR
-#define FIREWORKGENERATOR_ACTIVE true
-//#define FIREWORK_GAUSSIAN_GEN
+#define WORLD_ORIGIN
+
+//#define FIREWORKGENERATOR
+#define FIREWORKGENERATOR_ACTIVE false
+#define FIREWORK_GAUSSIAN_GEN
 #define FIREWORK_MODEL_ACTIVE false
-#define TYPEOF_FIREWORK FIREWORK2
+#define TYPEOF_FIREWORK FIREWORK
 
 //#define FIREGENERATOR
 #define FIREGENERATOR_ACTIVE true
@@ -18,7 +20,10 @@
 #define STEAMGENERATOR_ACTIVE true
 #define STEAM_MODEL_ACTIVE false
 
-ParticleSystem::ParticleSystem(const Vector3& g) : gravity(g), numMaxParticles(MAX_PARTICLES), numParticles(0), origin(PxTransform(Vector3(0.0f, 0.0f, 0.0f))) {
+ParticleSystem::ParticleSystem(const Vector3& g) : gravity(g), numMaxParticles(MAX_PARTICLES), originParticle(nullptr), numParticles(0), origin(PxTransform(Vector3(0.0f, 0.0f, 0.0f))) {
+	#ifdef WORLD_ORIGIN
+		addOrigin();
+	#endif // WORLD_ORIGIN
 	#ifdef FIREWORKGENERATOR
 		generateFireworkSystem();
 	#endif // FIREWORKGENERATOR
@@ -32,7 +37,15 @@ ParticleSystem::ParticleSystem(const Vector3& g) : gravity(g), numMaxParticles(M
 		generateSteamSystem();
 	#endif // STEAMGENERATOR
 }
-ParticleSystem::~ParticleSystem() {}
+ParticleSystem::~ParticleSystem() {
+
+	for (auto p : listOfParticles) {
+		static_cast<Firework*>(p)->deleteGenerators();
+		delete p;
+	}
+		
+	for (auto pg : listOfParticleGenerators) delete pg;
+}
 
 void ParticleSystem::addParticles(list<Particle*> list) {
 	for (auto p : list) {
@@ -128,4 +141,8 @@ void ParticleSystem::addFirework(ParticleType Type, PxTransform Transform, Vecto
 	GaussianParticleGenerator* g = new GaussianParticleGenerator("Fireworks", Transform.p, Dir, 0.1, 1,
 		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
 	p->addGenerator(g);
+}
+
+void ParticleSystem::addOrigin() {
+	originParticle = new Particle(BASIC, origin, Vector3(0.0f, 0.0f, 0.0f), true, true);
 }

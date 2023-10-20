@@ -107,9 +107,12 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case '2': particleSys->addParticle(TANK_BALL, camera, GetCamera()->getDir()); break;
 	case '3': particleSys->addParticle(GUN_BULLET, camera, GetCamera()->getDir()); break;
 	case '4': particleSys->addParticle(LASER, camera, GetCamera()->getDir()); break;
-	case '5': particleSys->addFirework(FIREWORK, camera, GetCamera()->getDir()); break;
-	case '6': particleSys->addFirework(FIREWORK2, camera, GetCamera()->getDir()); break;
-	case '7': particleSys->addFirework(FIREWORK3, camera, GetCamera()->getDir()); break;
+	//case '5': particleSys->addFirework(FIREWORK, camera, GetCamera()->getDir()); break;
+	case '5': particleSys->addFirework(FIREWORK, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
+	//case '6': particleSys->addFirework(FIREWORK2, camera, GetCamera()->getDir()); break;
+	case '6': particleSys->addFirework(FIREWORK2, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
+	//case '7': particleSys->addFirework(FIREWORK3, camera, GetCamera()->getDir()); break;
+	case '7': particleSys->addFirework(FIREWORK3, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
 
 	case ' ': particleSys->addParticle(camera, GetCamera()->getDir()); break; // Para casos de prueba
 	default: break;
@@ -125,7 +128,7 @@ void onCollision(physx::PxActor* actor1, physx::PxActor* actor2)
 
 int main(int, const char*const*)
 {
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); // Check Memory Leaks
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); // Check Memory Leaks
 
 #ifndef OFFLINE_EXECUTION 
 	extern void renderLoop();

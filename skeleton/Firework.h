@@ -16,6 +16,8 @@ public:
 
 	list<Particle*> explode();
 	void addGenerator(ParticleGenerator* p);
+	ParticleGenerator* getFirstGenerator() const;
 	void removeGenerators();
+	void deleteGenerators();
 	virtual Firework* clone() const;
 };

@@ -12,6 +12,7 @@ class ParticleSystem {
 protected:
 	list<Particle*> listOfParticles;
 	list<ParticleGenerator*> listOfParticleGenerators;
+	Particle* originParticle;
 	int numParticles, numMaxParticles;
 	Vector3 gravity;
 
@@ -57,5 +58,6 @@ public:
 	void generateSteamSystem();
 
 	void addFirework(ParticleType Type, PxTransform Transform, Vector3 Dir);
+	void addOrigin();
 };
 

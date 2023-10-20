@@ -27,6 +27,17 @@ void Firework::removeGenerators() {
 		gen.pop_front();
 }
 
+void Firework::deleteGenerators() {
+	while (!gen.empty()) {
+		delete gen.front();
+		gen.pop_front();
+	}
+}
+
+ParticleGenerator* Firework::getFirstGenerator() const {
+	return gen.front();
+}
+
 Firework* Firework::clone() const {
 	return new Firework(type, transform, dir);
 }

@@ -73,10 +73,10 @@ struct particlePalettes {
 
 class Particle {
 public:
-	Particle(ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), bool Active = true);
+	Particle(ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), bool Visible = true, bool Active = false);
 	Particle(PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), float Mass = 1.0f, float Velc = 10.0f, 
 		Vector3 Acc = Vector3(0.0f, 0.0f, 0.0f), float Damping = 0.99f, Vector3 Size = Vector3(1.0f, 1.0f, 1.0f),
-		float Time = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f), int NumDivisions = 0, int NumExplodes = 0, bool Active = true);
+		float Time = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f), int NumDivisions = 0, int NumExplodes = 0, bool Visible = true, bool Active = false);
 
 	virtual ~Particle();
 
@@ -92,7 +92,7 @@ protected:
 	PxShape* shape;
 	RenderItem* renderItem;
 	int numDivisions, numExplodes;
-	bool active;
+	bool visible, active;
 
 public:
 	// Getters

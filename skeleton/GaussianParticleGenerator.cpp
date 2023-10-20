@@ -39,6 +39,7 @@ list<Particle*> GaussianParticleGenerator::generateParticles(Particle* deadP) {
 	if (deadP->getNumExplodes() > 0) {
 		for (int i = 0; i < model->getNumDivisions(); ++i) {
 			auto* p = model->clone();
+			p->setNumExplodes(deadP->getNumExplodes() - 1);
 
 			Vector3 pos, dir;
 			double angle = 2.0 * M_PI * (i + 1) / model->getNumDivisions();
@@ -49,23 +50,22 @@ list<Particle*> GaussianParticleGenerator::generateParticles(Particle* deadP) {
 				dir.x = std::cos(angle);
 				dir.y = std::sin(angle);
 				dir.z = 0.0f;
-				static_cast<Firework*>(p)->addGenerator(this);
+				if (p->getNumExplodes() > 0) static_cast<Firework*>(p)->addGenerator(this);
 				break;
 			case FIREWORK2:
 				pos = deadP->getPos() + Vector3(n1(generator) * stdDevPos.x, n1(generator) * stdDevPos.y, n1(generator) * stdDevPos.z);
-				dir = deadP->getVel() + Vector3(n1(generator) * stdDevVel.x, n1(generator) * stdDevVel.y, n1(generator) * stdDevVel.z);
-				static_cast<Firework*>(p)->addGenerator(this);
+				dir = Vector3(n1(generator), n1(generator), n1(generator));
+				if (p->getNumExplodes() > 0) static_cast<Firework*>(p)->addGenerator(this);
 				break;
 			case FIREWORK3:
 				pos = deadP->getPos() + Vector3(n2(generator) * stdDevPos.x, n2(generator) * stdDevPos.y, n2(generator) * stdDevPos.z);
-				dir = deadP->getVel() + Vector3(n2(generator) * stdDevVel.x, n2(generator) * stdDevVel.y, n2(generator) * stdDevVel.z);
-				static_cast<Firework*>(p)->addGenerator(this);
+				dir = Vector3(n2(generator), n2(generator), n2(generator));
+				if (p->getNumExplodes() > 0) static_cast<Firework*>(p)->addGenerator(this);
 				break;
 			}
 
 			setParticleColor(p);
 			p->reTransform(pos, dir);
-			p->setNumExplodes(deadP->getNumExplodes() - 1);
 			mGenerator.push_back(p);
 		}
 	}
