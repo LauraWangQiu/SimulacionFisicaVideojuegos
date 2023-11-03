@@ -172,6 +172,9 @@ bool Particle::integrate(double t) {
 
 	if (getInverseMass() <= 0.0f) return false;
 
+	// Actualizamos la aceleracion en funcion de la fuerza
+	acc = force * getInverseMass();
+
 	// Actualizamos la velocidad de la particula
 	vel += acc * t;
 
@@ -193,4 +196,8 @@ Particle* Particle::clone() const {
 	case NONE: return new Particle(transform, dir, mass, velc, acc, damping, size, time, color, numDivisions, numExplodes); break;
 	default: return new Particle(particleType, transform, dir); break;
 	}
+}
+
+void Particle::addForce(Vector3 f) {
+	force += f;
 }

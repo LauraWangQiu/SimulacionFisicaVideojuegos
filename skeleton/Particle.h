@@ -83,6 +83,9 @@ public:
 	virtual bool integrate(double t);
 	virtual Particle* clone() const;
 
+	void addForce(Vector3 f);
+	void clearForces();
+
 protected: 
 	ParticleType particleType;
 	PxTransform transform;
@@ -93,6 +96,8 @@ protected:
 	RenderItem* renderItem;
 	int numDivisions, numExplodes;
 	bool visible, active;
+
+	Vector3 force;
 
 public:
 	// Getters

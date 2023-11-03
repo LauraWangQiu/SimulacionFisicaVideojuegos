@@ -5,6 +5,8 @@
 #include "Firework.h"
 #include "GaussianParticleGenerator.h"
 #include "UniformParticleGenerator.h"
+#include "ForceGenerator.h"
+#include "ParticleForceRegistry.h"
 using namespace std;
 using namespace physx;
 
@@ -22,6 +24,9 @@ protected:
 	ParticleGenerator* waterfallGenerator;
 	ParticleGenerator* steamGenerator;
 	ParticleGenerator* squirtGenerator;
+
+	list<ForceGenerator*> listOfForceGenerators;
+	ParticleForceRegistry particleForceRegistry;
 
 public:
 	ParticleSystem(const Vector3& g = { 0.0f, -9.8f, 0.0f});

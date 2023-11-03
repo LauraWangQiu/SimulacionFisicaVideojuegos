@@ -54,9 +54,17 @@ void ParticleSystem::update(double t) {
 		}
 	}
 
+	// Actualiza las fuerzas que actuan sobre las particulas
+	//particleForceRegistry.updateForces();
+
 	// Actualizo las particulas y elimino aquellas no vivas
 	auto p = listOfParticles.begin();
 	while (p != listOfParticles.end()) {
+		//// Para todas las particulas, se le añaden todas las fuerzas existentes
+		//for (auto fg : listOfForceGenerators) {
+		//	particleForceRegistry.addRegistry(fg, *p);
+		//}
+
 		// Si se termina su tiempo de vida, se elimina
 		if (!(*p)->integrate(t)) {
 			onParticleDeath(*p);
