@@ -55,20 +55,21 @@ void ParticleSystem::update(double t) {
 	}
 
 	// Actualiza las fuerzas que actuan sobre las particulas
-	//particleForceRegistry.updateForces();
+	particleForceRegistry.updateForces();
 
 	// Actualizo las particulas y elimino aquellas no vivas
 	auto p = listOfParticles.begin();
 	while (p != listOfParticles.end()) {
-		//// Para todas las particulas, se le añaden todas las fuerzas existentes
-		//for (auto fg : listOfForceGenerators) {
-		//	particleForceRegistry.addRegistry(fg, *p);
-		//}
+		// Para todas las particulas, se le añaden todas las fuerzas existentes
+		for (auto fg : listOfForceGenerators) {
+			particleForceRegistry.addRegistry(fg, *p);
+		}
 
 		// Si se termina su tiempo de vida, se elimina
 		if (!(*p)->integrate(t)) {
 			onParticleDeath(*p);
 			delete* p;
+			particleForceRegistry.deleteParticleRegistry(*p);
 			p = listOfParticles.erase(p);
 			decreaseNumParticles();
 		} else ++p;
@@ -141,4 +142,26 @@ void ParticleSystem::addFirework(ParticleType Type, PxTransform Transform, Vecto
 
 void ParticleSystem::addOrigin() {
 	originParticle = new Particle(BASIC, origin, Vector3(0.0f, 0.0f, 0.0f), true, true);
+}
+
+void ParticleSystem::addGravityForce() {
+	gravityForceGenerator = new GravityForceGenerator(gravity, "GravityForce", 0.0, 0.0);
+	listOfForceGenerators.push_back(gravityForceGenerator);
+}
+
+void ParticleSystem::removeGravityForce() {
+	if (gravityForceGenerator != nullptr) {
+		particleForceRegistry.removeForceGenerator(gravityForceGenerator);
+	}
+}
+
+void ParticleSystem::addDragForce() {
+	particleDragForceGenerator = new ParticleDragGenerator("DragForce", 0.0, 0.0);
+	listOfForceGenerators.push_back(particleDragForceGenerator);
+}
+
+void ParticleSystem::removeDragForce() {
+	if (particleDragForceGenerator != nullptr) {
+		particleForceRegistry.removeForceGenerator(particleDragForceGenerator);
+	}
 }

@@ -97,7 +97,7 @@ protected:
 	int numDivisions, numExplodes;
 	bool visible, active;
 
-	Vector3 force;
+	Vector3 initialForce, force;
 
 public:
 	// Getters
@@ -118,6 +118,10 @@ public:
 	inline float getTime() const { return time; }
 	inline int getNumDivisions() const { return numDivisions; }
 	inline int getNumExplodes() const { return numExplodes;  }
+	inline bool getVisible() const { return visible; }
+	inline bool getActive() const { return active; }
+	inline Vector3 getInitialForce() const { return initialForce; }
+	inline Vector3 getForce() const { return force; }
 
 	// Setters
 	inline void setParticleType(ParticleType Type) { particleType = Type; }
@@ -154,4 +158,11 @@ public:
 		dir = newDir;
 		vel = dir * ParticlesInfo[particleType].velc;
 	}
+	inline void setVisible(bool Visible) { visible = Visible; }
+	inline void setActive(bool Active) { active = Active; }
+	inline void setInitialForce(Vector3 InitialForce) { initialForce = InitialForce; }
+	inline void setInitialForce(float X, float Y, float Z) { initialForce = Vector3(X, Y, Z); }
+	inline void setForce(Vector3 Force) { force = Force; }
+	inline void setForce(float X, float Y, float Z) { force = Vector3(X, Y, Z); }
+	
 };

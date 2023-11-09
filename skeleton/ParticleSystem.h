@@ -5,7 +5,8 @@
 #include "Firework.h"
 #include "GaussianParticleGenerator.h"
 #include "UniformParticleGenerator.h"
-#include "ForceGenerator.h"
+#include "GravityForceGenerator.h"
+#include "ParticleDragGenerator.h"
 #include "ParticleForceRegistry.h"
 using namespace std;
 using namespace physx;
@@ -19,14 +20,17 @@ protected:
 	Vector3 gravity;
 	PxTransform origin;
 
-	ParticleGenerator* fireworkGenerator;
-	ParticleGenerator* fireGenerator;
-	ParticleGenerator* waterfallGenerator;
-	ParticleGenerator* steamGenerator;
-	ParticleGenerator* squirtGenerator;
+	ParticleGenerator* fireworkGenerator = nullptr;
+	ParticleGenerator* fireGenerator = nullptr;
+	ParticleGenerator* waterfallGenerator = nullptr;
+	ParticleGenerator* steamGenerator = nullptr;
+	ParticleGenerator* squirtGenerator = nullptr;
 
 	list<ForceGenerator*> listOfForceGenerators;
 	ParticleForceRegistry particleForceRegistry;
+
+	GravityForceGenerator* gravityForceGenerator = nullptr;
+	ParticleDragGenerator* particleDragForceGenerator = nullptr;
 
 public:
 	ParticleSystem(const Vector3& g = { 0.0f, -9.8f, 0.0f});
@@ -95,5 +99,10 @@ public:
 
 	void addFirework(ParticleType Type, PxTransform Transform, Vector3 Dir);
 	void addOrigin();
-};
 
+	inline ParticleForceRegistry getParticleForceRegistry() const { return particleForceRegistry; }
+	void addGravityForce();
+	void removeGravityForce();
+	void addDragForce();
+	void removeDragForce();
+};

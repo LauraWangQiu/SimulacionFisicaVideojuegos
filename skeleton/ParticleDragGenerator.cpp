@@ -21,3 +21,18 @@ void ParticleDragGenerator::updateForce(Particle* particle) {
 #endif
 	particle->addForce(dragF);
 }
+
+void ParticleDragGenerator::removeForce(Particle* particle) {
+
+
+	if (fabs(particle->getInverseMass()) < 1e-10)
+		return;
+
+	Vector3 v = particle->getVel();
+	float drag_coef = v.normalize();
+	Vector3 dragF;
+	drag_coef = k1 * drag_coef + k2 * drag_coef * drag_coef;
+	dragF = -v * drag_coef;
+
+	particle->addForce(-dragF);
+}

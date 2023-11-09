@@ -17,5 +17,6 @@ public:
 	void updateForces();
 	void addRegistry(ForceGenerator* fg, Particle* p);
 	void deleteParticleRegistry(Particle* p);
+	void removeForceGenerator(ForceGenerator* fg);
 };
 

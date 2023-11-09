@@ -110,19 +110,28 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case 'N': particleSys->increaseSquirtVel(); break;
 	case 'M': particleSys->decreaseSquirtVel(); break;
 
-	case '0': particleSys->addParticle(BASIC, camera, GetCamera()->getDir()); break;
-	case '1': particleSys->addParticle(CANNON_BALL, camera, GetCamera()->getDir()); break;
-	case '2': particleSys->addParticle(TANK_BALL, camera, GetCamera()->getDir()); break;
-	case '3': particleSys->addParticle(GUN_BULLET, camera, GetCamera()->getDir()); break;
-	case '4': particleSys->addParticle(LASER, camera, GetCamera()->getDir()); break;
+	//case '0': particleSys->addParticle(BASIC, camera, GetCamera()->getDir()); break;
+	case '0': particleSys->addParticle(BASIC, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
+	//case '1': particleSys->addParticle(CANNON_BALL, camera, GetCamera()->getDir()); break;
+	case '1': particleSys->addParticle(CANNON_BALL, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
+	//case '2': particleSys->addParticle(TANK_BALL, camera, GetCamera()->getDir()); break;
+	case '2': particleSys->addParticle(TANK_BALL, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
+	//case '3': particleSys->addParticle(GUN_BULLET, camera, GetCamera()->getDir()); break;
+	case '3': particleSys->addParticle(GUN_BULLET, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
+	//case '4': particleSys->addParticle(LASER, camera, GetCamera()->getDir()); break;
+	case '4': particleSys->addParticle(LASER, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
 	//case '5': particleSys->addFirework(FIREWORK, camera, GetCamera()->getDir()); break;
 	case '5': particleSys->addFirework(FIREWORK, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
 	//case '6': particleSys->addFirework(FIREWORK2, camera, GetCamera()->getDir()); break;
 	case '6': particleSys->addFirework(FIREWORK2, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
 	//case '7': particleSys->addFirework(FIREWORK3, camera, GetCamera()->getDir()); break;
 	case '7': particleSys->addFirework(FIREWORK3, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
+	case '8': particleSys->addGravityForce(); break;
+	case '9': particleSys->removeGravityForce(); break;
+	case 'O': particleSys->addDragForce(); break;
+	case 'P': particleSys->removeDragForce(); break;
 
-	case ' ': particleSys->addParticle(camera, GetCamera()->getDir()); break; // Para casos de prueba
+	case ' ': break; // Para casos de prueba
 	default: break;
 	}
 }

@@ -10,3 +10,7 @@ void GravityForceGenerator::updateForce(Particle* particle) {
 
 	particle->addForce(gravity * particle->getMass());
 }
+
+void GravityForceGenerator::removeForce(Particle* particle) {
+	particle->addForce(-gravity * particle->getMass());
+}

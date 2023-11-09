@@ -7,7 +7,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(0.0f, 0.0f, 0.0f),
 		0.99f,
 		Vector4(1.0f, 1.0f, 1.0f, 1.0f),
-		1.0f,
+		3.0f,
 		0,
 		0,
 		Vector3(1.0f, 1.0f, 1.0f),
@@ -91,7 +91,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(0.0f, -6.0f, 0.0f),
 		0.9f,
 		Vector4(0.2f, 0.2f, 0.2f, 1.0f),
-		1.0f,
+		3.0f,
 		0,
 		0,
 		Vector3(1.0f, 1.0f, 1.0f),
@@ -103,7 +103,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(0.0f, -20.0f, 0.0f),
 		0.99f,
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-		1.0f,
+		3.0f,
 		0,
 		0,
 		Vector3(1.0f, 1.0f, 1.0f),
@@ -115,7 +115,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(0.0f, -1.0f, 0.0f),
 		0.99f,
 		Vector4(1.0f, 0.8f, 0.2f, 1.0f),
-		1.0f,
+		3.0f,
 		0,
 		0,
 		Vector3(1.0f, 1.0f, 1.0f),
@@ -127,7 +127,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(0.0f, 0.0f, 0.0f),
 		0.99f,
 		Vector4(0.0f, 0.0f, 1.0f, 1.0f),
-		1.0f,
+		3.0f,
 		0,
 		0,
 		Vector3(1.0f, 1.0f, 1.0f),
@@ -135,11 +135,13 @@ vector<particleInfo> ParticlesInfo = {
 	}
 };
 
-Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible, bool Active) : particleType(Type), transform(Transform), dir(Dir), velc(ParticlesInfo[particleType].velc), visible(Visible), active(Active) {
+Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible, bool Active) : particleType(Type), 
+transform(Transform), dir(Dir), velc(ParticlesInfo[particleType].velc), visible(Visible), active(Active) {
 
 	setMass(ParticlesInfo[particleType].mass);
 	setVel(dir * velc);
-	setAcc(ParticlesInfo[particleType].acc);
+	//setAcc(ParticlesInfo[particleType].acc);
+	setInitialForce(ParticlesInfo[particleType].acc); setForce(getInitialForce());
 	setDamping(ParticlesInfo[particleType].damp);
 	setSize(ParticlesInfo[particleType].size);
 	setTime(ParticlesInfo[particleType].time);
@@ -200,4 +202,8 @@ Particle* Particle::clone() const {
 
 void Particle::addForce(Vector3 f) {
 	force += f;
+}
+
+void Particle::clearForces() {
+	force = initialForce;
 }

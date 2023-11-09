@@ -19,6 +19,7 @@ public:
 	virtual ~ForceGenerator() {}
 
 	virtual void updateForce(Particle* particle) = 0;
+	virtual void removeForce(Particle* particle) = 0;
 
 	bool updateTime(double t);
 
