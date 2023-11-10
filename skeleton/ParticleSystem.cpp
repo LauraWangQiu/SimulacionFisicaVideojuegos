@@ -24,18 +24,69 @@ ParticleSystem::ParticleSystem(const Vector3& g) : gravity(g), numMaxParticles(M
 		addOrigin();
 	#endif // GIZMO
 
+	// GENERADORES DE PARTICULAS
 	generateFireworkSystem();
 	generateFireSystem();
 	generateWaterfallSystem();
 	generateSteamSystem();
 	generateSquirtSystem();
+
+	// GENERADORES DE FUERZAS
+	generateWindSystem();
+	generateWhirlWindsSystem();
+	generateExplosionsSystem();
 }
 
 ParticleSystem::~ParticleSystem() {
 
-	while (!listOfParticles.empty()) listOfParticles.pop_back();
+#ifdef GIZMO
+	delete originParticle; originParticle = nullptr;
+#endif
 
-	while (!listOfParticleGenerators.empty()) listOfParticleGenerators.pop_back();
+	for (auto it = listOfParticles.begin(); it != listOfParticles.end(); ++it) {
+		delete* it; *it = nullptr;
+	}
+	listOfParticles.clear();
+	
+	for (auto it = listOfParticleGenerators.begin(); it != listOfParticleGenerators.end(); ++it) {
+		delete* it; *it = nullptr;
+	}
+	listOfParticleGenerators.clear();
+
+	fireworkGenerator = nullptr;
+	fireGenerator = nullptr;
+	waterfallGenerator = nullptr;
+	steamGenerator = nullptr;
+	squirtGenerator = nullptr;
+
+	for (auto it = listOfForceGenerators.begin(); it != listOfForceGenerators.end(); ++it) {
+		delete* it; *it = nullptr;
+	}
+	listOfForceGenerators.clear();
+
+	gravityForceGenerator = nullptr;
+	gravityForceGenerator2 = nullptr;
+	particleDragForceGenerator = nullptr;
+
+	windForceGenerator = nullptr;
+	whirlWindsForceGenerator = nullptr;
+	explosionsForceGenerator = nullptr;
+}
+
+void ParticleSystem::addGeneratorName(string name) {
+	listOfGeneratorNames.push_back(name);
+}
+
+void ParticleSystem::addParticleGenerator(ParticleGenerator* pg) {
+	listOfParticleGenerators.push_back(pg);
+}
+
+void ParticleSystem::addForceGenerator(ForceGenerator* fg) {
+	listOfForceGenerators.push_back(fg);
+}
+
+void ParticleSystem::addOrigin() {
+	originParticle = new Particle(BASIC, origin, Vector3(0.0f, 0.0f, 0.0f), true, true);
 }
 
 void ParticleSystem::addParticles(list<Particle*> list) {
@@ -118,51 +169,63 @@ ParticleGenerator* ParticleSystem::getParticleGenerator(const string& name) {
 }
 
 void ParticleSystem::generateFireworkSystem() {
-	Firework* model = new Firework(FIREWORK, origin, Vector3(0.0f, 1.0f, 0.0f), FIREWORK_MODEL_ACTIVE);
-	fireworkGenerator = new GaussianParticleGenerator("Fireworks", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.1, 1,
-		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
-	listOfParticleGenerators.push_back(fireworkGenerator);
+	if (fireworkGenerator == nullptr) {
+		Firework* model = new Firework(FIREWORK, origin, Vector3(0.0f, 1.0f, 0.0f), FIREWORK_MODEL_ACTIVE);
+		fireworkGenerator = new GaussianParticleGenerator("Fireworks", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.1, 1,
+			model, Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
+		addParticleGenerator(fireworkGenerator);
+		addGeneratorName(fireworkGenerator->getName());
+	}
 }
 
 void ParticleSystem::generateFireSystem() {
-	Particle* model = new Particle(FIRE, origin, Vector3(0.0f, 1.0f, 0.0f), FIRE_MODEL_ACTIVE);
-	fireGenerator = new GaussianParticleGenerator("Fire", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 1,
-		model, Vector3(2.0f, 2.0f, 2.0f), Vector3(1.0f, 1.0f, 1.0f));
-	listOfParticleGenerators.push_back(fireGenerator);
+	if (fireGenerator == nullptr) {
+		Particle* model = new Particle(FIRE, origin, Vector3(0.0f, 1.0f, 0.0f), FIRE_MODEL_ACTIVE);
+		fireGenerator = new GaussianParticleGenerator("Fire", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 1,
+			model, Vector3(2.0f, 2.0f, 2.0f), Vector3(1.0f, 1.0f, 1.0f));
+		addParticleGenerator(fireGenerator);
+		addGeneratorName(fireGenerator->getName());
+	}
 }
 
 void ParticleSystem::generateWaterfallSystem() {
-	Particle* model = new Particle(WATER, origin, Vector3(0.0f,-1.0f,0.0f), WATERFALL_MODEL_ACTIVE);
-	waterfallGenerator = new UniformParticleGenerator("Waterfall", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.3, 1,
-		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(50.0f, 0.0f, 0.0f));
-	listOfParticleGenerators.push_back(waterfallGenerator);
+	if (waterfallGenerator == nullptr) {
+		Particle* model = new Particle(WATER, origin, Vector3(0.0f, -1.0f, 0.0f), WATERFALL_MODEL_ACTIVE);
+		waterfallGenerator = new UniformParticleGenerator("Waterfall", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.3, 1,
+			model, Vector3(0.0f, 0.0f, 0.0f), Vector3(50.0f, 0.0f, 0.0f));
+		addParticleGenerator(waterfallGenerator);
+		addGeneratorName(waterfallGenerator->getName());
+	}
 }
 
 void ParticleSystem::generateSteamSystem() {
-	Particle* model = new Particle(STEAM, origin, Vector3(0.0f, 1.0f, 0.0f), STEAM_MODEL_ACTIVE);
-	steamGenerator = new GaussianParticleGenerator("Steam", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 100,
-		model, Vector3(10.0f, 10.0f, 10.0f), Vector3(0.0f, 0.0f, 0.0f));
-	listOfParticleGenerators.push_back(steamGenerator);
+	if (steamGenerator == nullptr) {
+		Particle* model = new Particle(STEAM, origin, Vector3(0.0f, 1.0f, 0.0f), STEAM_MODEL_ACTIVE);
+		steamGenerator = new GaussianParticleGenerator("Steam", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 100,
+			model, Vector3(10.0f, 10.0f, 10.0f), Vector3(0.0f, 0.0f, 0.0f));
+		addParticleGenerator(steamGenerator);
+		addGeneratorName(steamGenerator->getName());
+	}
 }
 
 void ParticleSystem::generateSquirtSystem() {
-	Particle* model = new Particle(WATER, origin, Vector3(0.3f, SQUIRT_INITIAL_VEL, 0.0f), SQUIRT_MODEL_ACTIVE);
-	squirtGenerator = new GaussianParticleGenerator("Squirt", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 50,
-		model, Vector3(1.0f, 1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f));
-	listOfParticleGenerators.push_back(squirtGenerator);
+	if (squirtGenerator == nullptr) {
+		Particle* model = new Particle(WATER, origin, Vector3(0.3f, SQUIRT_INITIAL_VEL, 0.0f), SQUIRT_MODEL_ACTIVE);
+		squirtGenerator = new GaussianParticleGenerator("Squirt", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 50,
+			model, Vector3(1.0f, 1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f));
+		addParticleGenerator(squirtGenerator);
+		addGeneratorName(squirtGenerator->getName());
+	}
 }
 
 void ParticleSystem::addFirework(ParticleType Type, PxTransform Transform, Vector3 Dir) {
 	Firework* model = new Firework(Type, Transform, Dir, FIREWORK_MODEL_ACTIVE);
 	Firework* p = new Firework(Type, Transform, Dir);
 	addParticle(p);
-	GaussianParticleGenerator* g = new GaussianParticleGenerator("Fireworks", Transform.p, Dir, 0.1, 1,
+	GaussianParticleGenerator* g = new GaussianParticleGenerator("Firework", Transform.p, Dir, 0.1, 1,
 		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
 	p->addGenerator(g);
-}
-
-void ParticleSystem::addOrigin() {
-	originParticle = new Particle(BASIC, origin, Vector3(0.0f, 0.0f, 0.0f), true, true);
+	addGeneratorName(g->getName());
 }
 
 void ParticleSystem::addForces(Particle* p) {
@@ -188,11 +251,13 @@ void ParticleSystem::addGravityForce() {
 #ifdef GRAVITY_FORCE
 	if (gravityForceGenerator == nullptr) {
 		gravityForceGenerator = new GravityForceGenerator(GRAVITY_FORCE1, "GravityForce1", GRAVITY_FORCE1_DURATION);
-		listOfForceGenerators.push_back(gravityForceGenerator);
+		addForceGenerator(gravityForceGenerator);
+		addGeneratorName(gravityForceGenerator->getName());
 	}
 	else if (gravityForceGenerator2 == nullptr) {
 		gravityForceGenerator2 = new GravityForceGenerator(GRAVITY_FORCE2, "GravityForce2", GRAVITY_FORCE2_DURATION);
-		listOfForceGenerators.push_back(gravityForceGenerator2);
+		addForceGenerator(gravityForceGenerator2);
+		addGeneratorName(gravityForceGenerator2->getName());
 	}
 #endif // GRAVITY_FORCE
 }
@@ -229,7 +294,8 @@ void ParticleSystem::addDragForce() {
 #ifdef DRAG_FORCE
 	if (particleDragForceGenerator == nullptr) {
 		particleDragForceGenerator = new ParticleDragGenerator("DragForce", DRAG_FORCE_DURATION);
-		listOfForceGenerators.push_back(particleDragForceGenerator);
+		addForceGenerator(particleDragForceGenerator);
+		addGeneratorName(particleDragForceGenerator->getName());
 	}
 #endif // DRAG_FORCE
 }
@@ -246,5 +312,23 @@ void ParticleSystem::removeDragForce() {
 			++it;
 		}
 		particleDragForceGenerator = nullptr;
+	}
+}
+
+void ParticleSystem::generateWindSystem() {
+	if (windForceGenerator == nullptr) {
+
+	}
+}
+
+void ParticleSystem::generateWhirlWindsSystem() {
+	if (whirlWindsForceGenerator == nullptr) {
+
+	}
+}
+
+void ParticleSystem::generateExplosionsSystem() {
+	if (explosionsForceGenerator == nullptr) {
+
 	}
 }

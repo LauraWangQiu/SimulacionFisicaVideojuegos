@@ -13,6 +13,7 @@ using namespace physx;
 
 class ParticleSystem {
 protected:
+	list<string> listOfGeneratorNames;
 	list<Particle*> listOfParticles;
 	list<ParticleGenerator*> listOfParticleGenerators;
 	Particle* originParticle;
@@ -33,9 +34,16 @@ protected:
 	GravityForceGenerator* gravityForceGenerator2 = nullptr;
 	ParticleDragGenerator* particleDragForceGenerator = nullptr;
 
+	ParticleDragGenerator* windForceGenerator = nullptr;
+	ParticleDragGenerator* whirlWindsForceGenerator = nullptr;
+	ParticleDragGenerator* explosionsForceGenerator = nullptr;
+
 public:
 	ParticleSystem(const Vector3& g = { 0.0f, -9.8f, 0.0f});
 	~ParticleSystem();
+	void addGeneratorName(string name);
+	void addParticleGenerator(ParticleGenerator* pg);
+	void addForceGenerator(ForceGenerator* fg);
 
 	// GIZMO
 	void addOrigin();
@@ -115,4 +123,8 @@ public:
 	void removeGravityForce();
 	void addDragForce();
 	void removeDragForce();
+
+	void generateWindSystem();
+	void generateWhirlWindsSystem();
+	void generateExplosionsSystem();
 };

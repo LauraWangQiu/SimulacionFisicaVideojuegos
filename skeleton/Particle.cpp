@@ -164,11 +164,12 @@ Particle::Particle(PxTransform Transform, Vector3 Dir, float Mass, float Velc, V
 
 	setVel(dir * velc);
 	shape = CreateShape(PxSphereGeometry(size.x));
+
 	if (visible) renderItem = new RenderItem(shape, &transform, color);
 }
 
 Particle::~Particle() {
-	if (visible) DeregisterRenderItem(renderItem);
+	renderItem = nullptr;
 }
 
 bool Particle::integrate(double t) {
