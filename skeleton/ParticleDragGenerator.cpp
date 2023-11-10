@@ -1,4 +1,4 @@
-#include "ParticleDragGenerator.h"
+﻿#include "ParticleDragGenerator.h"
 
 ParticleDragGenerator::ParticleDragGenerator(string Name, double Duration, bool Active) : 
 	ForceGenerator(Name, Duration, Active), k1(0.5f), k2(0.5f) {}
@@ -11,6 +11,7 @@ void ParticleDragGenerator::updateForce(Particle* particle) {
 		if (fabs(particle->getInverseMass()) < 1e-10)
 			return;
 
+		// 𝑓𝑑𝑟𝑎𝑔 = -𝒗 * (𝑘1 * |𝒗| + 𝑘2 * |𝒗|^2)
 		Vector3 v = particle->getVel();
 		float drag_coef = v.normalize();
 		Vector3 dragF;
@@ -18,7 +19,7 @@ void ParticleDragGenerator::updateForce(Particle* particle) {
 		dragF = -v * drag_coef;
 
 #ifdef _DEBUG
-		cout << dragF.x << "\t" << dragF.y << "\t" << dragF.z << "\n";
+		//cout << dragF.x << "\t" << dragF.y << "\t" << dragF.z << "\n";
 #endif
 		particle->addForce(dragF);
 	}

@@ -7,6 +7,7 @@
 #include "UniformParticleGenerator.h"
 #include "GravityForceGenerator.h"
 #include "ParticleDragGenerator.h"
+#include "WindGenerator.h"
 #include "ParticleForceRegistry.h"
 using namespace std;
 using namespace physx;
@@ -34,7 +35,7 @@ protected:
 	GravityForceGenerator* gravityForceGenerator2 = nullptr;
 	ParticleDragGenerator* particleDragForceGenerator = nullptr;
 
-	ParticleDragGenerator* windForceGenerator = nullptr;
+	WindGenerator* windForceGenerator = nullptr;
 	ParticleDragGenerator* whirlWindsForceGenerator = nullptr;
 	ParticleDragGenerator* explosionsForceGenerator = nullptr;
 
@@ -119,12 +120,12 @@ public:
 	inline ParticleForceRegistry getParticleForceRegistry() const { return particleForceRegistry; }
 	void addForces(Particle* p);
 
-	void addGravityForce();
+	void generateGravityForce();
 	void removeGravityForce();
-	void addDragForce();
+	void generateDragForce();
 	void removeDragForce();
 
-	void generateWindSystem();
-	void generateWhirlWindsSystem();
-	void generateExplosionsSystem();
+	void generateWindForce();
+	void generateWhirlWindsForce();
+	void generateExplosionsForce();
 };
