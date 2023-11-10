@@ -13,10 +13,10 @@
 #define GRAVITY_FORCE
 #define GRAVITY_FORCE1 Vector3(0.0f, -1.0f, 0.0f)
 #define GRAVITY_FORCE2 Vector3(0.0f, 1.0f, 0.0f)
-#define GRAVITY_FORCE1_DURATION 5.0f
-#define GRAVITY_FORCE2_DURATION 5.0f
+#define GRAVITY_FORCE1_DURATION 0.0f
+#define GRAVITY_FORCE2_DURATION 0.0f
 #define DRAG_FORCE
-#define DRAG_FORCE_DURATION 5.0f
+#define DRAG_FORCE_DURATION 0.0f
 
 ParticleSystem::ParticleSystem(const Vector3& g) : gravity(g), numMaxParticles(MAX_PARTICLES), originParticle(nullptr), numParticles(0), origin(PxTransform(Vector3(0.0f, 0.0f, 0.0f))) {
 
@@ -43,22 +43,26 @@ void ParticleSystem::addParticles(list<Particle*> list) {
 		listOfParticles.push_back(p);
 		addForces(p);
 	}
-	numParticles += list.size();
+	updateNumParticles(list.size());
+	updateNumParticlesText();
 }
 
 void ParticleSystem::addParticle(ParticleType Type, PxTransform Transform, Vector3 Dir) {
 	Particle* p = new Particle(Type, Transform, Dir);
-	listOfParticles.push_back(p);
-	addForces(p);
-	++numParticles;
+	addParticle(p);
 }
 
 void ParticleSystem::addParticle(PxTransform Transform, Vector3 Dir, float Mass, float Velc, Vector3 Acc, float Damping, Vector3 Size,
 	float Time, Vector4 Color, int NumDivisions) {
 	Particle* p = new Particle(Transform, Dir, Mass, Velc, Acc, Damping, Size, Time, Color, NumDivisions);
+	addParticle(p);
+}
+
+void ParticleSystem::addParticle(Particle* p) {
 	listOfParticles.push_back(p);
 	addForces(p);
-	++numParticles;
+	increaseNumParticles();
+	updateNumParticlesText();
 }
 
 void ParticleSystem::update(double t) {
@@ -93,6 +97,7 @@ void ParticleSystem::update(double t) {
 			particleForceRegistry.deleteParticleRegistry(*p);
 			p = listOfParticles.erase(p);
 			decreaseNumParticles();
+			updateNumParticlesText();
 		} else ++p;
 	}
 }
@@ -150,7 +155,7 @@ void ParticleSystem::generateSquirtSystem() {
 void ParticleSystem::addFirework(ParticleType Type, PxTransform Transform, Vector3 Dir) {
 	Firework* model = new Firework(Type, Transform, Dir, FIREWORK_MODEL_ACTIVE);
 	Firework* p = new Firework(Type, Transform, Dir);
-	listOfParticles.push_back(p);
+	addParticle(p);
 	GaussianParticleGenerator* g = new GaussianParticleGenerator("Fireworks", Transform.p, Dir, 0.1, 1,
 		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
 	p->addGenerator(g);
@@ -163,27 +168,19 @@ void ParticleSystem::addOrigin() {
 void ParticleSystem::addForces(Particle* p) {
 	// Se le añaden todas las fuerzas existentes a las particulas deseadas
 	for (auto fg : listOfForceGenerators) {
-		switch (p->getParticleType()) {
-		case BASIC:
-			particleForceRegistry.addRegistry(fg, p);
-			break;
+		/*switch (p->getParticleType()) {
+		case BASIC: break;
 		case FIREWORK: case FIREWORK2: case FIREWORK3: break;
 		case FIRE: break;
-		case WATER:
-			particleForceRegistry.addRegistry(fg, p);
-			break;
+		case WATER:break;
 		case STEAM: break;
-		case CANNON_BALL:
-			particleForceRegistry.addRegistry(fg, p);
-			break;
-		case TANK_BALL:
-			particleForceRegistry.addRegistry(fg, p);
-			break;
-		case GUN_BULLET:
-			particleForceRegistry.addRegistry(fg, p);
-			break;
+		case CANNON_BALL: break;
+		case TANK_BALL: break;
+		case GUN_BULLET: break;
 		case LASER: break;
-		}
+		default: break;
+		}*/
+		particleForceRegistry.addRegistry(fg, p);
 	}
 }
 

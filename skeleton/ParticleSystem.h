@@ -44,6 +44,7 @@ public:
 	void addParticle(PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), float Mass = 1.0f, float Velc = 10.0f,
 		Vector3 Acc = Vector3(0.0f, 0.0f, 0.0f), float Damping = 0.99f, Vector3 Size = Vector3(1.0f, 1.0f, 1.0f),
 		float Time = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f), int NumDivisions = 0);
+	void addParticle(Particle* p);
 	void addParticles(list<Particle*> list);
 
 	void update(double t);
@@ -51,6 +52,8 @@ public:
 
 	inline void increaseNumParticles() { ++numParticles; }
 	inline void decreaseNumParticles() { --numParticles; }
+	inline void updateNumParticles(int n) { numParticles += n; }
+	inline void updateNumParticlesText() { num_particles = to_string(numParticles); }
 	inline void setNumMaxParticles(int max) { numMaxParticles = max; }
 
 	inline int getNumMaxParticles() { return numMaxParticles; }

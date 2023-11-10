@@ -8,7 +8,7 @@
 #include "ParticleSystem.h"
 
 std::string display_text = "Simulacion Fisica para Videojuegos - Laura Wang Qiu";
-
+std::string num_particles = "0";
 
 using namespace physx;
 
