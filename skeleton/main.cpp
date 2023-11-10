@@ -126,8 +126,9 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case '6': particleSys->addFirework(FIREWORK2, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
 	//case '7': particleSys->addFirework(FIREWORK3, camera, GetCamera()->getDir()); break;
 	case '7': particleSys->addFirework(FIREWORK3, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
-	case '8': particleSys->addGravityForce(); break;
-	case '9': particleSys->removeGravityForce(); break;
+
+	case 'U': particleSys->addGravityForce(); break;
+	case 'I': particleSys->removeGravityForce(); break;
 	case 'O': particleSys->addDragForce(); break;
 	case 'P': particleSys->removeDragForce(); break;
 

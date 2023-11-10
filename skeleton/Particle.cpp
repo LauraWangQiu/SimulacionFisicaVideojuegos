@@ -3,7 +3,7 @@
 vector<particleInfo> ParticlesInfo = {
 	{ // BASIC
 		1.0f,
-		10.0f,
+		20.0f,
 		Vector3(0.0f, 0.0f, 0.0f),
 		0.99f,
 		Vector4(1.0f, 1.0f, 1.0f, 1.0f),
@@ -52,7 +52,7 @@ vector<particleInfo> ParticlesInfo = {
 	{ // FIRE
 		1.0f,
 		10.0f,
-		Vector3(0.0f, -2.0f, 0.0f),
+		Vector3(0.0f, 0.0f, 0.0f),
 		0.99f,
 		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
 		1.0f,
@@ -86,7 +86,7 @@ vector<particleInfo> ParticlesInfo = {
 		"Cube"
 	},
 	{ // CANNON_BALL
-		1.0f,
+		100.0f,
 		10.0f,
 		Vector3(0.0f, -6.0f, 0.0f),
 		0.9f,
@@ -136,12 +136,13 @@ vector<particleInfo> ParticlesInfo = {
 };
 
 Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible, bool Active) : particleType(Type), 
-transform(Transform), dir(Dir), velc(ParticlesInfo[particleType].velc), visible(Visible), active(Active) {
+transform(Transform), dir(Dir), velc(ParticlesInfo[particleType].velc), 
+force(Vector3(0.0f, 0.0f, 0.0f)), initialForce(force),
+visible(Visible), active(Active) {
 
 	setMass(ParticlesInfo[particleType].mass);
 	setVel(dir * velc);
-	//setAcc(ParticlesInfo[particleType].acc);
-	setInitialForce(ParticlesInfo[particleType].acc); setForce(getInitialForce());
+	setAcc(ParticlesInfo[particleType].acc);
 	setDamping(ParticlesInfo[particleType].damp);
 	setSize(ParticlesInfo[particleType].size);
 	setTime(ParticlesInfo[particleType].time);
@@ -205,5 +206,5 @@ void Particle::addForce(Vector3 f) {
 }
 
 void Particle::clearForces() {
-	force = initialForce;
+	force *= 0.0f;
 }

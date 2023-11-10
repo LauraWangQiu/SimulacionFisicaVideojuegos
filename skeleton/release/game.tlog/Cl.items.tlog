@@ -1,10 +1,14 @@
 C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\callbacks.cpp;C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\release\callbacks.obj
+C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\Firework.cpp;C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\release\Firework.obj
+C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\ForceGenerator.cpp;C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\release\ForceGenerator.obj
 C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\GaussianParticleGenerator.cpp;C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\release\GaussianParticleGenerator.obj
+C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\GravityForceGenerator.cpp;C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\release\GravityForceGenerator.obj
 C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\main.cpp;C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\release\main.obj
 C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\Particle.cpp;C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\release\Particle.obj
+C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\ParticleDragGenerator.cpp;C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\release\ParticleDragGenerator.obj
+C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\ParticleForceRegistry.cpp;C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\release\ParticleForceRegistry.obj
 C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\ParticleGenerator.cpp;C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\release\ParticleGenerator.obj
 C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\ParticleSystem.cpp;C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\release\ParticleSystem.obj
-C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\Projectile.cpp;C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\release\Projectile.obj
 C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\RenderUtils.cpp;C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\release\RenderUtils.obj
 C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\Render\Camera.cpp;C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\release\Camera.obj
 C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\Render\Render.cpp;C:\Users\lwq20\OneDrive\Documentos\GitHub\SimulacionFisicaVideojuegos\skeleton\release\Render.obj

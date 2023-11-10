@@ -15,13 +15,12 @@ protected:
 	bool active;
 
 public:
-	ForceGenerator(string Name, double Time, double Duration, bool Active = true);
+	ForceGenerator(string Name, double Duration, bool Active = true);
 	virtual ~ForceGenerator() {}
 
 	virtual void updateForce(Particle* particle) = 0;
-	virtual void removeForce(Particle* particle) = 0;
-
 	bool updateTime(double t);
+	virtual void clearForce(Particle* particle) = 0;
 
 	// Getters y setters
 	inline string getName() const { return name; }

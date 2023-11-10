@@ -1,9 +1,11 @@
 #include "ForceGenerator.h"
 
-ForceGenerator::ForceGenerator(string Name, double Time, double Duration, bool Active) : 
-	name(Name), time(Time), duration(Duration), active(Active) {}
+ForceGenerator::ForceGenerator(string Name, double Duration, bool Active) : 
+	name(Name), time(0.0f), duration(Duration), active(Active) {}
 
 bool ForceGenerator::updateTime(double t) {
-	time += t;
-	return t < duration || duration < 0.0;
+	if (active) {
+		time += t;
+	}
+	return time < duration || duration <= 0.0;
 }

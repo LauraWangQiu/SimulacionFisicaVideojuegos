@@ -10,11 +10,11 @@ protected:
 	float k1, k2;
 
 public:
-	ParticleDragGenerator(string Name, double Time, double Duration, bool Active = true);
-	ParticleDragGenerator(const float k1, const float k2, string Name, double Time, double Duration, bool Active = true);
+	ParticleDragGenerator(string Name, double Duration, bool Active = true);
+	ParticleDragGenerator(const float k1, const float k2, string Name, double Duration, bool Active = true);
 
 	virtual void updateForce(Particle* particle);
-	virtual void removeForce(Particle* particle);
+	virtual void clearForce(Particle* particle);
 
 	// Getters y setters
 	inline float getK1() const { return k1; }

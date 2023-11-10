@@ -24,10 +24,12 @@ void ParticleForceRegistry::deleteParticleRegistry(Particle* p) {
 }
 
 void ParticleForceRegistry::removeForceGenerator(ForceGenerator* fg) {
-	for (auto it = begin(); it != end(); ++it) {
+	auto it = begin();
+	while (it != end()) {
 		if (it->first == fg) {
-			it->first->removeForce(it->second);
+			it->first->clearForce(it->second);
 			it = erase(it);
 		}
+		else ++it;
 	}
 }
