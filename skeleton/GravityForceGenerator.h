@@ -9,10 +9,15 @@ protected:
 	Vector3 gravity;
 
 public:
-	GravityForceGenerator(const Vector3& g, string Name, double Duration, bool Active = true);
+	GravityForceGenerator(const Vector3& g, string Name, double Duration);
+	~GravityForceGenerator() { 
+#ifdef _DEBUG 
+		cout << "Se ha eliminado un generador de fuerza de gravedad\n"; 
+#endif
+	}
+	virtual void print() { cout << "Se ha generado un generador de fuerza de gravedad\n"; }
 
-	virtual void updateForce(Particle* particle);
-	virtual void clearForce(Particle* particle);
+	virtual Vector3 calculateForce(Particle* particle);
 
 	// Getters y setters
 	inline Vector3 getGravity() const { return gravity; }

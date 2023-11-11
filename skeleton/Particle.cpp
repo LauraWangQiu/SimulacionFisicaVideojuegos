@@ -73,7 +73,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Sphere"
 	},
-	{ // FOG
+	{ // STEAM
 		1.0f,
 		100.0f,
 		Vector3(0.0f, 0.0f, 0.0f),
@@ -132,6 +132,18 @@ vector<particleInfo> ParticlesInfo = {
 		0,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Cube"
+	},
+	{ // WIND
+		0.5f,
+		50.0f,
+		Vector3(0.0f, 0.0f, 0.0f),
+		0.99f,
+		Vector4(0.8f, 0.9f, 1.0f, 1.0f),
+		10.0f,
+		0,
+		0,
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Sphere"
 	}
 };
 
@@ -149,11 +161,9 @@ visible(Visible), active(Active) {
 	setColor(ParticlesInfo[particleType].col);
 	setNumDivisions(ParticlesInfo[particleType].numDiv);
 	setNumExplodes(ParticlesInfo[particleType].numExp);
+	setShapeName(ParticlesInfo[particleType].geometryType);
+	setShape(getShape(ParticlesInfo[particleType].geometryType, ParticlesInfo[particleType].size));
 
-	if (ParticlesInfo[particleType].geometryType == "Sphere") shape = CreateShape(PxSphereGeometry(size.x));
-	else if (ParticlesInfo[particleType].geometryType == "Cube") shape = CreateShape(PxBoxGeometry(size));
-	else shape = CreateShape(PxSphereGeometry(size.x));
-	
 	if (visible) renderItem = new RenderItem(shape, &transform, color);
 }
 
@@ -169,6 +179,7 @@ Particle::Particle(PxTransform Transform, Vector3 Dir, float Mass, float Velc, V
 }
 
 Particle::~Particle() {
+	DeregisterRenderItem(renderItem);
 	renderItem = nullptr;
 }
 
@@ -208,4 +219,5 @@ void Particle::addForce(Vector3 f) {
 
 void Particle::clearForces() {
 	force *= 0.0f;
+	vel = velc * dir;
 }

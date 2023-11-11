@@ -27,17 +27,18 @@ protected:
 	ParticleGenerator* waterfallGenerator = nullptr;
 	ParticleGenerator* steamGenerator = nullptr;
 	ParticleGenerator* squirtGenerator = nullptr;
+	ParticleGenerator* windGenerator = nullptr;
 
 	list<ForceGenerator*> listOfForceGenerators;
 	ParticleForceRegistry particleForceRegistry;
 
-	GravityForceGenerator* gravityForceGenerator = nullptr;
-	GravityForceGenerator* gravityForceGenerator2 = nullptr;
-	ParticleDragGenerator* particleDragForceGenerator = nullptr;
+	ForceGenerator* gravityForceGenerator = nullptr;
+	ForceGenerator* gravityForceGenerator2 = nullptr;
+	ForceGenerator* particleDragForceGenerator = nullptr;
 
-	WindGenerator* windForceGenerator = nullptr;
-	ParticleDragGenerator* whirlWindsForceGenerator = nullptr;
-	ParticleDragGenerator* explosionsForceGenerator = nullptr;
+	ForceGenerator* windForceGenerator = nullptr;
+	ForceGenerator* whirlWindsForceGenerator = nullptr;
+	ForceGenerator* explosionsForceGenerator = nullptr;
 
 public:
 	ParticleSystem(const Vector3& g = { 0.0f, -9.8f, 0.0f});
@@ -66,8 +67,8 @@ public:
 	inline void setNumMaxParticles(int max) { numMaxParticles = max; }
 
 	inline int getNumMaxParticles() { return numMaxParticles; }
-	// GENERADORES DE PARTICULAS
 
+	// GENERADORES DE PARTICULAS
 	ParticleGenerator *getParticleGenerator(const string& name);
 	inline void activateParticleGenerator(const string& name) {
 		getParticleGenerator(name)->setActive(true);
@@ -81,6 +82,7 @@ public:
 	void generateWaterfallSystem();
 	void generateSteamSystem();
 	void generateSquirtSystem();
+	void generateWindSystem();
 
 	inline void switchFireworkSystem() { 
 		if (!fireworkGenerator->getActive()) {
@@ -95,10 +97,12 @@ public:
 			}
 		}
 	}
+
 	inline void activateFireSystem() { fireGenerator->setActive(!fireGenerator->getActive()); }
 	inline void activateWaterfallSystem() { waterfallGenerator->setActive(!waterfallGenerator->getActive()); }
 	inline void activateSteamSystem() { steamGenerator->setActive(!steamGenerator->getActive()); }
 	inline void activateSquirtSystem() { squirtGenerator->setActive(!squirtGenerator->getActive()); }
+	inline void activateWindSystem() { windGenerator->setActive(!windGenerator->getActive()); }
 
 	inline void increaseSquirtVel() {
 		Vector3 newVel = Vector3(squirtGenerator->getModel()->getVel().x, squirtGenerator->getModel()->getVel().y + SQUIRT_INCREASE_VEL, squirtGenerator->getModel()->getVel().z);
@@ -116,16 +120,21 @@ public:
 	void addFirework(ParticleType Type, PxTransform Transform, Vector3 Dir);
 	
 	// GENERADORES DE FUERZAS
-
 	inline ParticleForceRegistry getParticleForceRegistry() const { return particleForceRegistry; }
 	void addForces(Particle* p);
 
-	void generateGravityForce();
-	void removeGravityForce();
-	void generateDragForce();
-	void removeDragForce();
+	void removeForceGenerator(ForceGenerator* fg);
 
+	void generateGravityForce();
+	void generateGravityForce2();
+	void generateDragForce();
 	void generateWindForce();
 	void generateWhirlWindsForce();
 	void generateExplosionsForce();
+
+	void switchGravityForce();
+	void activateDragForce();
+	void activateWindForce();
+	void activateWhirlWindsForce();
+	void activateExplosionsForce();
 };

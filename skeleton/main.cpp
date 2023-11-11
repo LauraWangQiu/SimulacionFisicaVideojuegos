@@ -102,6 +102,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case 'F': GetCamera()->setView(PxVec3(0.0f, 0.0f, 0.0f), PxVec3(0.0f, 0.0f, 1.0f)); break;
 	case 'L': GetCamera()->setView(PxVec3(-100.0f, 0.0f, 0.0f), PxVec3(1.0f, 0.0f, 0.0f)); break;
 
+	// GENERADORES DE PARTICULAS
 	case 'Z': particleSys->switchFireworkSystem(); break;
 	case 'X': particleSys->activateFireSystem();  break;
 	case 'C': particleSys->activateWaterfallSystem(); break;
@@ -109,7 +110,16 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case 'B': particleSys->activateSquirtSystem(); break;
 	case 'N': particleSys->increaseSquirtVel(); break;
 	case 'M': particleSys->decreaseSquirtVel(); break;
+	case ',': particleSys->activateWindSystem(); break;
 
+	// GENERADORES DE FUERZAS
+	case 'Y': particleSys->switchGravityForce(); break;
+	case 'U': particleSys->activateDragForce(); break;
+	case 'I': particleSys->activateWindForce(); break;
+	case 'O': particleSys->activateWhirlWindsForce(); break;
+	case 'P': particleSys->activateExplosionsForce(); break;
+
+	// PARTICULAS UNICAS
 	//case '0': particleSys->addParticle(BASIC, camera, GetCamera()->getDir()); break;
 	case '0': particleSys->addParticle(BASIC, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
 	//case '1': particleSys->addParticle(CANNON_BALL, camera, GetCamera()->getDir()); break;
@@ -126,11 +136,6 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case '6': particleSys->addFirework(FIREWORK2, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
 	//case '7': particleSys->addFirework(FIREWORK3, camera, GetCamera()->getDir()); break;
 	case '7': particleSys->addFirework(FIREWORK3, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
-
-	case 'U': particleSys->generateGravityForce(); break;
-	case 'I': particleSys->removeGravityForce(); break;
-	case 'O': particleSys->generateDragForce(); break;
-	case 'P': particleSys->removeDragForce(); break;
 
 	case ' ': break; // Para casos de prueba
 	default: break;

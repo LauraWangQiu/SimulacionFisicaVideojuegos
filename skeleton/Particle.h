@@ -9,6 +9,7 @@ using namespace physx;
 enum ParticleType {
 	BASIC, FIREWORK, FIREWORK2, FIREWORK3, FIRE, WATER, STEAM,
 	CANNON_BALL, TANK_BALL, GUN_BULLET, LASER,
+	WIND,
 	NONE
 };
 
@@ -92,11 +93,11 @@ protected:
 	Vector3 dir, vel, acc, size;
 	Vector4 color;
 	float mass, velc, damping, time;
+	string shapeName;
 	PxShape* shape;
 	RenderItem* renderItem;
 	int numDivisions, numExplodes;
 	bool visible, active;
-
 	Vector3 initialForce, force;
 
 public:
@@ -109,6 +110,7 @@ public:
 	inline float getPosZ() const { return getPos().z; }
 	inline float getMass() const { return mass; }
 	inline float getInverseMass() const { return 1 / mass; }
+	inline float getVelc() const { return velc; }
 	inline Vector3 getDir() const { return dir; }
 	inline Vector3 getVel() const { return vel; }
 	inline Vector3 getAcc() const { return acc; }
@@ -122,6 +124,12 @@ public:
 	inline bool getActive() const { return active; }
 	inline Vector3 getInitialForce() const { return initialForce; }
 	inline Vector3 getForce() const { return force; }
+	inline string getShapeName() const { return shapeName; }
+	inline PxShape* getShape(string name, Vector3 size) const {
+		if (name == "Sphere") return CreateShape(PxSphereGeometry(size.x));
+		else if (name == "Cube") return CreateShape(PxBoxGeometry(size));
+		else return CreateShape(PxSphereGeometry(size.x));
+	}
 
 	// Setters
 	inline void setParticleType(ParticleType Type) { particleType = Type; }
@@ -132,6 +140,7 @@ public:
 	inline void setPosY(float Y) { transform.p.y = Y; }
 	inline void setPosZ(float Z) { transform.p.z = Z; }
 	inline void setMass(float Mass) { mass = Mass; }
+	inline void setVelc(float VelC) { velc = VelC; }
 	inline void setDir(Vector3 Dir) { dir = Dir; }
 	inline void setDir(float X, float Y, float Z) { dir = Vector3(X, Y, Z); }
 	inline void setVel(Vector3 Vel) { vel = Vel; }
@@ -164,5 +173,6 @@ public:
 	inline void setInitialForce(float X, float Y, float Z) { initialForce = Vector3(X, Y, Z); }
 	inline void setForce(Vector3 Force) { force = Force; }
 	inline void setForce(float X, float Y, float Z) { force = Vector3(X, Y, Z); }
-	
+	inline void setShapeName(string name) { shapeName = name; }
+	inline void setShape(PxShape* g) { shape = g; }
 };

@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <string>
 #include <list>
 #include <random>
@@ -12,15 +13,16 @@ class ForceGenerator {
 protected:
 	string name;
 	double time, duration;
-	bool active;
 
 public:
-	ForceGenerator(string Name, double Duration, bool Active = true);
+	ForceGenerator(string Name, double Duration);
 	virtual ~ForceGenerator() {}
+	virtual void print() {}
 
-	virtual void updateForce(Particle* particle) = 0;
+	virtual Vector3 calculateForce(Particle* particle) = 0;
+	virtual void updateForce(Particle* particle);
+	virtual void clearForce(Particle* particle);
 	bool updateTime(double t);
-	virtual void clearForce(Particle* particle) = 0;
 
 	// Getters y setters
 	inline string getName() const { return name; }
@@ -29,7 +31,5 @@ public:
 	inline void setTime(double Time) { time = Time; }
 	inline double getDuration() const { return duration; }
 	inline void setDuration(double Duration) { duration = Duration; }
-	inline bool getActive() const { return active; }
-	inline void setActive(bool active) { active = active; }
 };
 

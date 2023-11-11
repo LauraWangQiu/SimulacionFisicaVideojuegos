@@ -1,19 +1,11 @@
 #include "GravityForceGenerator.h"
 
-GravityForceGenerator::GravityForceGenerator(const Vector3& g, string Name, double Duration, bool Active) : ForceGenerator(Name, Duration, Active), gravity(g) {}
-
-void GravityForceGenerator::updateForce(Particle* particle) {
-	if (active) {
-		if (fabs(particle->getInverseMass()) < 1e-10)
-			return;
-
-		particle->addForce(gravity * particle->getMass());
-	}
+GravityForceGenerator::GravityForceGenerator(const Vector3& g, string Name, double Duration) : ForceGenerator(Name, Duration), gravity(g) {
+#ifdef _DEBUG
+	print();
+#endif
 }
 
-void GravityForceGenerator::clearForce(Particle* particle) {
-	if (fabs(particle->getInverseMass()) < 1e-10)
-		return;
-
-	particle->addForce(-gravity * particle->getMass());
+Vector3 GravityForceGenerator::calculateForce(Particle* particle) {
+	return gravity * particle->getMass();
 }

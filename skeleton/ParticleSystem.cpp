@@ -8,16 +8,18 @@
 #define WATERFALL_MODEL_VISIBLE false
 #define STEAM_MODEL_VISIBLE false
 #define SQUIRT_MODEL_VISIBLE false
+#define WIND_MODEL_VISIBLE false
 
 // GENERADORES DE FUERZAS
-#define GRAVITY_FORCE
 #define GRAVITY_FORCE1 Vector3(0.0f, -1.0f, 0.0f)
 #define GRAVITY_FORCE2 Vector3(0.0f, 1.0f, 0.0f)
 #define GRAVITY_FORCE1_DURATION 0.0f
 #define GRAVITY_FORCE2_DURATION 0.0f
-#define DRAG_FORCE
 #define DRAG_FORCE_DURATION 0.0f
 #define WIND_FORCE_DURATION 0.0f
+
+#define WIND_NO_K2
+#define WIND_SPECIFIC_SPACE
 
 ParticleSystem::ParticleSystem(const Vector3& g) : gravity(g), numMaxParticles(MAX_PARTICLES), originParticle(nullptr), numParticles(0), origin(PxTransform(Vector3(0.0f, 0.0f, 0.0f))) {
 
@@ -31,28 +33,15 @@ ParticleSystem::ParticleSystem(const Vector3& g) : gravity(g), numMaxParticles(M
 	generateWaterfallSystem();
 	generateSteamSystem();
 	generateSquirtSystem();
-
-	// GENERADORES DE FUERZAS
-	generateWindForce();
-	generateWhirlWindsForce();
-	generateExplosionsForce();
+	generateWindSystem();
 }
 
 ParticleSystem::~ParticleSystem() {
 
-#ifdef GIZMO
-	delete originParticle; originParticle = nullptr;
-#endif
-
-	for (auto it = listOfParticles.begin(); it != listOfParticles.end(); ++it) {
-		delete* it; *it = nullptr;
-	}
 	listOfParticles.clear();
-	
-	for (auto it = listOfParticleGenerators.begin(); it != listOfParticleGenerators.end(); ++it) {
-		delete* it; *it = nullptr;
-	}
 	listOfParticleGenerators.clear();
+
+	originParticle = nullptr;
 
 	fireworkGenerator = nullptr;
 	fireGenerator = nullptr;
@@ -163,6 +152,7 @@ void ParticleSystem::onParticleDeath(Particle* p) {
 	}
 }
 
+// GENERADORES DE PARTICULAS
 ParticleGenerator* ParticleSystem::getParticleGenerator(const string& name) {
 	auto it = listOfParticleGenerators.begin();
 	while (it != listOfParticleGenerators.end()) {
@@ -212,11 +202,21 @@ void ParticleSystem::generateSteamSystem() {
 
 void ParticleSystem::generateSquirtSystem() {
 	if (squirtGenerator == nullptr) {
-		Particle* model = new Particle(WATER, origin, Vector3(0.3f, SQUIRT_INITIAL_VEL, 0.0f), SQUIRT_MODEL_VISIBLE);
+		Particle* model = new Particle(WATER, origin, Vector3(0.3f, SQUIRT_INITIAL_VEL, 0.3f), SQUIRT_MODEL_VISIBLE);
 		squirtGenerator = new GaussianParticleGenerator("Squirt", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 50,
 			model, Vector3(1.0f, 1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f));
 		addParticleGenerator(squirtGenerator);
 		addGeneratorName(squirtGenerator->getName());
+	}
+}
+
+void ParticleSystem::generateWindSystem() {
+	if (windGenerator == nullptr) {
+		Particle* model = new Particle(WIND, origin, Vector3(0.0f, -1.0f, 0.0f), WIND_MODEL_VISIBLE);
+		windGenerator = new UniformParticleGenerator("Wind", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.5, 1,
+			model, Vector3(0.0f, 0.0f, 0.0f), Vector3(50.0f, 0.0f, 50.0f));
+		addParticleGenerator(windGenerator);
+		addGeneratorName(windGenerator->getName());
 	}
 }
 
@@ -230,112 +230,137 @@ void ParticleSystem::addFirework(ParticleType Type, PxTransform Transform, Vecto
 	addGeneratorName(g->getName());
 }
 
+// GENERADORES DE FUERZAS
 void ParticleSystem::addForces(Particle* p) {
+
 	// Se le añaden todas las fuerzas existentes a las particulas deseadas
 	for (auto fg : listOfForceGenerators) {
-		/*switch (p->getParticleType()) {
-		case BASIC: break;
-		case FIREWORK: case FIREWORK2: case FIREWORK3: break;
-		case FIRE: break;
-		case WATER:break;
-		case STEAM: break;
-		case CANNON_BALL: break;
-		case TANK_BALL: break;
-		case GUN_BULLET: break;
-		case LASER: break;
-		default: break;
-		}*/
 		particleForceRegistry.addRegistry(fg, p);
+
+		/*if (static_cast<WindGenerator*>(fg) != nullptr) {
+			switch (p->getParticleType()) {
+			case ...: particleForceRegistry.addRegistry(fg, p); break;
+			}
+		}
+		else if (static_cast<GravityForceGenerator*>(fg) != nullptr) {
+			switch (p->getParticleType()) {
+			case ...: particleForceRegistry.addRegistry(fg, p); break;
+			}
+		}
+		else if (static_cast<ParticleDragGenerator*>(fg) != nullptr) {
+			switch (p->getParticleType()) {
+			case ...: particleForceRegistry.addRegistry(fg, p); break;
+			}
+		}*/
+	}
+}
+
+void ParticleSystem::removeForceGenerator(ForceGenerator* fg) {
+	if (fg != nullptr) {
+		particleForceRegistry.removeForceGenerator(fg);
+		auto it = listOfForceGenerators.begin();
+		while (it != listOfForceGenerators.end()) {
+			if (*it == fg) {
+				listOfGeneratorNames.remove((*it)->getName());
+				delete* it;
+				listOfForceGenerators.erase(it);
+				fg = nullptr;
+				break;
+			}
+			++it;
+		}
 	}
 }
 
 void ParticleSystem::generateGravityForce() {
-#ifdef GRAVITY_FORCE
-	if (gravityForceGenerator == nullptr) {
-		gravityForceGenerator = new GravityForceGenerator(GRAVITY_FORCE1, "GravityForce1", GRAVITY_FORCE1_DURATION);
-		addForceGenerator(gravityForceGenerator);
-		addGeneratorName(gravityForceGenerator->getName());
-	}
-	else if (gravityForceGenerator2 == nullptr) {
-		gravityForceGenerator2 = new GravityForceGenerator(GRAVITY_FORCE2, "GravityForce2", GRAVITY_FORCE2_DURATION);
-		addForceGenerator(gravityForceGenerator2);
-		addGeneratorName(gravityForceGenerator2->getName());
-	}
-#endif // GRAVITY_FORCE
+	gravityForceGenerator = new GravityForceGenerator(GRAVITY_FORCE1, "GravityForce1", GRAVITY_FORCE1_DURATION);
+	addForceGenerator(gravityForceGenerator);
+	addGeneratorName(gravityForceGenerator->getName());
 }
 
-void ParticleSystem::removeGravityForce() {
-	if (gravityForceGenerator != nullptr) {
-		particleForceRegistry.removeForceGenerator(gravityForceGenerator);
-		auto it = listOfForceGenerators.begin();
-		while (it != listOfForceGenerators.end()) {
-			if (*it == gravityForceGenerator) {
-				listOfGeneratorNames.remove((*it)->getName());
-				listOfForceGenerators.erase(it);
-				break;
-			}
-			++it;
-		}
-		gravityForceGenerator = nullptr;
-	}
+void ParticleSystem::generateGravityForce2() {
+	gravityForceGenerator2 = new GravityForceGenerator(GRAVITY_FORCE2, "GravityForce2", GRAVITY_FORCE2_DURATION);
+	addForceGenerator(gravityForceGenerator2);
+	addGeneratorName(gravityForceGenerator2->getName());
+}
 
-	if (gravityForceGenerator2 != nullptr) {
-		particleForceRegistry.removeForceGenerator(gravityForceGenerator2);
-		auto it = listOfForceGenerators.begin();
-		while (it != listOfForceGenerators.end()) {
-			if (*it == gravityForceGenerator2) {
-				listOfGeneratorNames.remove((*it)->getName());
-				listOfForceGenerators.erase(it);
-				break;
-			}
-			++it;
-		}
+void ParticleSystem::generateDragForce() {
+	particleDragForceGenerator = new ParticleDragGenerator(0.5f, 0.0f, "DragForce", DRAG_FORCE_DURATION);
+	addForceGenerator(particleDragForceGenerator);
+	addGeneratorName(particleDragForceGenerator->getName());
+}
+
+void ParticleSystem::generateWindForce() {
+	windForceGenerator = new WindGenerator(
+#ifdef WIND_NO_K2
+		0.05f, 0.0f,
+#else
+		0.0f, 0.01f,
+#endif
+		Vector3(-10.0f, 0.0f, 0.0f),
+#ifdef WIND_SPECIFIC_SPACE
+		Vector3(0.0f, -50.0f, 0.0f), Vector3(50.0f, 50.0f, 50.0f),
+#endif
+		"WindForce", WIND_FORCE_DURATION);
+	addForceGenerator(windForceGenerator);
+	addGeneratorName(windForceGenerator->getName());
+}
+
+void ParticleSystem::generateWhirlWindsForce() {
+
+}
+
+void ParticleSystem::generateExplosionsForce() {
+
+}
+
+void ParticleSystem::switchGravityForce() {
+	if (gravityForceGenerator == nullptr) {
+		generateGravityForce();
+	}
+	else if (gravityForceGenerator2 == nullptr) {
+		generateGravityForce2();
+	}
+	else {
+		removeForceGenerator(gravityForceGenerator);
+		removeForceGenerator(gravityForceGenerator2);
+		gravityForceGenerator = nullptr;
 		gravityForceGenerator2 = nullptr;
 	}
 }
 
-void ParticleSystem::generateDragForce() {
-#ifdef DRAG_FORCE
+void ParticleSystem::activateDragForce() {
 	if (particleDragForceGenerator == nullptr) {
-		particleDragForceGenerator = new ParticleDragGenerator(0.5f, 0.0f, "DragForce", DRAG_FORCE_DURATION);
-		addForceGenerator(particleDragForceGenerator);
-		addGeneratorName(particleDragForceGenerator->getName());
-	}
-#endif // DRAG_FORCE
-}
-
-void ParticleSystem::removeDragForce() {
-	if (particleDragForceGenerator != nullptr) {
-		particleForceRegistry.removeForceGenerator(particleDragForceGenerator);
-		auto it = listOfForceGenerators.begin();
-		while (it != listOfForceGenerators.end()) {
-			if (*it == particleDragForceGenerator) {
-				listOfGeneratorNames.remove((*it)->getName());
-				listOfForceGenerators.erase(it);
-				break;
-			}
-			++it;
-		}
+		generateDragForce();
+	} else {
+		removeForceGenerator(particleDragForceGenerator);
 		particleDragForceGenerator = nullptr;
 	}
 }
 
-void ParticleSystem::generateWindForce() {
+void ParticleSystem::activateWindForce() {
 	if (windForceGenerator == nullptr) {
-		windForceGenerator = new WindGenerator(0.5f, 0.0f, Vector3(-10.0f, 0.0f, 0.0f), "WindForce", WIND_FORCE_DURATION);
-		addForceGenerator(windForceGenerator);
-		addGeneratorName(windForceGenerator->getName());
+		generateWindForce();
+	} else {
+		removeForceGenerator(windForceGenerator);
+		windForceGenerator = nullptr;
 	}
 }
 
-void ParticleSystem::generateWhirlWindsForce() {
+void ParticleSystem::activateWhirlWindsForce() {
 	if (whirlWindsForceGenerator == nullptr) {
-
+		generateWhirlWindsForce();
+	} else {
+		removeForceGenerator(whirlWindsForceGenerator);
+		whirlWindsForceGenerator = nullptr;
 	}
 }
 
-void ParticleSystem::generateExplosionsForce() {
+void ParticleSystem::activateExplosionsForce() {
 	if (explosionsForceGenerator == nullptr) {
-
+		generateExplosionsForce();
+	} else {
+		removeForceGenerator(explosionsForceGenerator);
+		explosionsForceGenerator = nullptr;
 	}
 }
