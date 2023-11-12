@@ -188,7 +188,7 @@ bool Particle::integrate(double t) {
 	if (getInverseMass() <= 0.0f) return false;
 
 	// Actualizamos la aceleracion en funcion de la fuerza
-	acc = force * getInverseMass();
+	acc += force * getInverseMass();
 
 	// Actualizamos la velocidad de la particula
 	vel += acc * t;
@@ -219,5 +219,4 @@ void Particle::addForce(Vector3 f) {
 
 void Particle::clearForces() {
 	force *= 0.0f;
-	vel = velc * dir;
 }
