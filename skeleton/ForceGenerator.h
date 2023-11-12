@@ -13,11 +13,10 @@ class ForceGenerator {
 protected:
 	string name;
 	double time, duration;
+	bool active;
 
 public:
-	ForceGenerator(string Name, double Duration);
-	virtual ~ForceGenerator() {}
-	virtual void print() {}
+	ForceGenerator(string Name, double Duration, bool Active = false);
 
 	virtual Vector3 calculateForce(Particle* particle) = 0;
 	virtual void updateForce(Particle* particle);
@@ -31,5 +30,7 @@ public:
 	inline void setTime(double Time) { time = Time; }
 	inline double getDuration() const { return duration; }
 	inline void setDuration(double Duration) { duration = Duration; }
+	inline bool getActive() const { return active; }
+	inline void setActive(bool Active) { active = Active; }
 };
 

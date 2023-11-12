@@ -1,18 +1,10 @@
 #include "WhirlWindForce.h"
 
-WhirlWindForce::WhirlWindForce(Vector3 WhirlPos, string Name, double Duration) : 
-ParticleDragGenerator(7.0f, 0.0f, Name, Duration), whirlPos(WhirlPos) {
-#ifdef _DEBUG
-	print();
-#endif
-}
+WhirlWindForce::WhirlWindForce(Vector3 WhirlPos, string Name, double Duration, bool Active) :
+ParticleDragGenerator(7.0f, 0.0f, Name, Duration), whirlPos(WhirlPos) {}
 
-WhirlWindForce::WhirlWindForce(const float k, Vector3 WhirlPos, string Name, double Duration) :
-ParticleDragGenerator(k, 0.0f, Name, Duration), whirlPos(WhirlPos) {
-#ifdef _DEBUG
-	print();
-#endif
-}
+WhirlWindForce::WhirlWindForce(const float k, Vector3 WhirlPos, string Name, double Duration, bool Active) :
+ParticleDragGenerator(k, 0.0f, Name, Duration), whirlPos(WhirlPos) {}
 
 Vector3 WhirlWindForce::calculateForce(Particle* particle) {
 

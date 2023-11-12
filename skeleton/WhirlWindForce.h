@@ -10,15 +10,8 @@ protected:
 	Vector3 whirlPos;
 
 public:
-	WhirlWindForce(Vector3 WhirlPos, string Name, double Duration);
-	WhirlWindForce(const float k, Vector3 WhirlPos, string Name, double Duration);
-	~WhirlWindForce() {
-#ifdef _DEBUG 
-		cout << "Se ha eliminado un generador de fuerza de torbellinos\n";
-#endif
-	}
-
-	virtual void print() { cout << "Se ha generado un generador de fuerza de torbellinos\n"; }
+	WhirlWindForce(Vector3 WhirlPos, string Name, double Duration, bool Active = false);
+	WhirlWindForce(const float k, Vector3 WhirlPos, string Name, double Duration, bool Active = false);
 
 	virtual Vector3 calculateForce(Particle* particle);
 };

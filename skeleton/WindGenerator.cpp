@@ -1,34 +1,18 @@
 #include "WindGenerator.h"
 
-WindGenerator::WindGenerator(Vector3 WindVel, string Name, double Duration) :
-	ParticleDragGenerator(Name, Duration), windVel(WindVel), 
-	origin(Vector3(0.0f, 0.0f, 0.0f)), size(Vector3(0.0f, 0.0f, 0.0f)) {
-#ifdef _DEBUG
-	print();
-#endif
-}
+WindGenerator::WindGenerator(Vector3 WindVel, string Name, double Duration, bool Active) :
+	ParticleDragGenerator(Name, Duration, Active), windVel(WindVel), 
+	origin(Vector3(0.0f, 0.0f, 0.0f)), size(Vector3(0.0f, 0.0f, 0.0f)) {}
 
-WindGenerator::WindGenerator(const float k1, const float k2, Vector3 WindVel, string Name, double Duration) :
-	ParticleDragGenerator(k1, k2, Name, Duration), windVel(WindVel), 
-	origin(Vector3(0.0f, 0.0f, 0.0f)), size(Vector3(0.0f, 0.0f, 0.0f)) {
-#ifdef _DEBUG
-	print();
-#endif
-}
+WindGenerator::WindGenerator(const float k1, const float k2, Vector3 WindVel, string Name, double Duration, bool Active) :
+	ParticleDragGenerator(k1, k2, Name, Duration, Active), windVel(WindVel), 
+	origin(Vector3(0.0f, 0.0f, 0.0f)), size(Vector3(0.0f, 0.0f, 0.0f)) {}
 
-WindGenerator::WindGenerator(Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration) :
-	ParticleDragGenerator(Name, Duration), windVel(WindVel), origin(Origin), size(Size) {
-#ifdef _DEBUG
-	print();
-#endif
-}
+WindGenerator::WindGenerator(Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration, bool Active) :
+	ParticleDragGenerator(Name, Duration, Active), windVel(WindVel), origin(Origin), size(Size) {}
 
-WindGenerator::WindGenerator(const float k1, const float k2, Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration) :
-	ParticleDragGenerator(k1, k2, Name, Duration), windVel(WindVel), origin(Origin), size(Size) {
-#ifdef _DEBUG
-	print();
-#endif
-}
+WindGenerator::WindGenerator(const float k1, const float k2, Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration, bool Active) :
+	ParticleDragGenerator(k1, k2, Name, Duration, Active), windVel(WindVel), origin(Origin), size(Size) {}
 
 float WindGenerator::getCdByShape(string shapeName) {
 	if (shapeName == "Sphere") return 0.5f;

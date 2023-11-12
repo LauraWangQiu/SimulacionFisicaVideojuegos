@@ -9,13 +9,7 @@ protected:
 	Vector3 gravity;
 
 public:
-	GravityForceGenerator(const Vector3& g, string Name, double Duration);
-	~GravityForceGenerator() { 
-#ifdef _DEBUG 
-		cout << "Se ha eliminado un generador de fuerza de gravedad\n"; 
-#endif
-	}
-	virtual void print() { cout << "Se ha generado un generador de fuerza de gravedad\n"; }
+	GravityForceGenerator(const Vector3& g, string Name, double Duration, bool Active = false);
 
 	virtual Vector3 calculateForce(Particle* particle);
 

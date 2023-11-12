@@ -16,16 +16,10 @@ protected:
 	float getCdByShape(string shapeName);
 	
 public:
-	WindGenerator(Vector3 WindVel, string Name, double Duration);
-	WindGenerator(const float k1, const float k2, Vector3 WindVel, string Name, double Duration);
-	WindGenerator(Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration);
-	WindGenerator(const float k1, const float k2, Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration);
-	~WindGenerator() {
-#ifdef _DEBUG 
-		cout << "Se ha eliminado un generador de fuerza de viento\n";
-#endif
-	}
-	virtual void print() { cout << "Se ha generado un generador de fuerza de viento\n"; }
+	WindGenerator(Vector3 WindVel, string Name, double Duration, bool Active = false);
+	WindGenerator(const float k1, const float k2, Vector3 WindVel, string Name, double Duration, bool Active = false);
+	WindGenerator(Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration, bool Active = false);
+	WindGenerator(const float k1, const float k2, Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration, bool Active = false);
 
 	virtual Vector3 calculateForce(Particle* particle);
 	virtual void updateForce(Particle* particle);

@@ -9,14 +9,8 @@ protected:
 	float k1, k2;
 
 public:
-	ParticleDragGenerator(string Name, double Duration);
-	ParticleDragGenerator(const float k1, const float k2, string Name, double Duration);
-	~ParticleDragGenerator() {
-#ifdef _DEBUG 
-		cout << "Se ha eliminado un generador de fuerza de arrastre\n";
-#endif
-	}
-	virtual void print() { cout << "Se ha generado un generador de fuerza de arrastre\n"; }
+	ParticleDragGenerator(string Name, double Duration, bool Active = false);
+	ParticleDragGenerator(const float k1, const float k2, string Name, double Duration, bool Active = false);
 
 	virtual Vector3 calculateForce(Particle* particle);
 

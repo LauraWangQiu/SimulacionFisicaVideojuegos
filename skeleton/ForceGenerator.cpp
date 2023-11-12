@@ -1,7 +1,7 @@
 #include "ForceGenerator.h"
 
-ForceGenerator::ForceGenerator(string Name, double Duration) : 
-	name(Name), time(0.0f), duration(Duration) {}
+ForceGenerator::ForceGenerator(string Name, double Duration, bool Active) :
+	name(Name), time(0.0f), duration(Duration), active(Active) {}
 
 void ForceGenerator::updateForce(Particle* particle) {
 	if (fabs(particle->getInverseMass()) < 1e-10)

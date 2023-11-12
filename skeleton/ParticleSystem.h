@@ -136,9 +136,23 @@ public:
 	void generateWhirlWindsForce();
 	void generateExplosionsForce();
 
-	void switchGravityForce();
-	void activateDragForce();
-	void activateWindForce();
-	void activateWhirlWindsForce();
-	void activateExplosionsForce();
+	void switchGravityForce() {
+		if (!gravityForceGenerator->getActive()) {
+			cout << "Se activó el primer generador de gravedad\n";
+			gravityForceGenerator->setActive(true);
+		}
+		else if (gravityForceGenerator->getActive() && !gravityForceGenerator2->getActive()) {
+			cout << "Se activó el segundo generador de gravedad\n";
+			gravityForceGenerator2->setActive(true);
+		}
+		else if (gravityForceGenerator->getActive() && gravityForceGenerator2->getActive()) {
+			cout << "Se desactivaron los generadores de gravedad\n";
+			gravityForceGenerator->setActive(false);
+			gravityForceGenerator2->setActive(false);
+		}
+	}
+	void activateDragForce() { particleDragForceGenerator->setActive(!particleDragForceGenerator->getActive()); }
+	void activateWindForce() { windForceGenerator->setActive(!windForceGenerator->getActive()); }
+	void activateWhirlWindsForce() { whirlWindsForceGenerator->setActive(!whirlWindsForceGenerator->getActive()); }
+	void activateExplosionsForce() { explosionsForceGenerator->setActive(!explosionsForceGenerator->getActive()); }
 };
