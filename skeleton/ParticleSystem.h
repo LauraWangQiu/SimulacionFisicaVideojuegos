@@ -8,6 +8,7 @@
 #include "GravityForceGenerator.h"
 #include "ParticleDragGenerator.h"
 #include "WindGenerator.h"
+#include "WhirlWindForce.h"
 #include "ParticleForceRegistry.h"
 using namespace std;
 using namespace physx;
@@ -28,6 +29,7 @@ protected:
 	ParticleGenerator* steamGenerator = nullptr;
 	ParticleGenerator* squirtGenerator = nullptr;
 	ParticleGenerator* windGenerator = nullptr;
+	ParticleGenerator* whirlWindGenerator = nullptr;
 
 	list<ForceGenerator*> listOfForceGenerators;
 	ParticleForceRegistry particleForceRegistry;
@@ -83,6 +85,7 @@ public:
 	void generateSteamSystem();
 	void generateSquirtSystem();
 	void generateWindSystem();
+	void generateWhirlWindSystem();
 
 	inline void switchFireworkSystem() { 
 		if (!fireworkGenerator->getActive()) {
@@ -103,6 +106,7 @@ public:
 	inline void activateSteamSystem() { steamGenerator->setActive(!steamGenerator->getActive()); }
 	inline void activateSquirtSystem() { squirtGenerator->setActive(!squirtGenerator->getActive()); }
 	inline void activateWindSystem() { windGenerator->setActive(!windGenerator->getActive()); }
+	inline void activateWhirlWindSystem() { whirlWindGenerator->setActive(!whirlWindGenerator->getActive()); }
 
 	inline void increaseSquirtVel() {
 		Vector3 newVel = Vector3(squirtGenerator->getModel()->getVel().x, squirtGenerator->getModel()->getVel().y + SQUIRT_INCREASE_VEL, squirtGenerator->getModel()->getVel().z);

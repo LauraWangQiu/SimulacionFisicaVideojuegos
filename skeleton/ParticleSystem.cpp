@@ -9,6 +9,7 @@
 #define STEAM_MODEL_VISIBLE false
 #define SQUIRT_MODEL_VISIBLE false
 #define WIND_MODEL_VISIBLE false
+#define WHIRL_WIND_MODEL_VISIBLE false
 
 // GENERADORES DE FUERZAS
 #define GRAVITY_FORCE1 Vector3(0.0f, -1.0f, 0.0f)
@@ -17,9 +18,11 @@
 #define GRAVITY_FORCE2_DURATION 0.0f
 #define DRAG_FORCE_DURATION 0.0f
 #define WIND_FORCE_DURATION 0.0f
-
 #define WIND_NO_K2
 #define WIND_SPECIFIC_SPACE
+#define WIND_SIDE
+#define WHIRL_WIND_FORCE_DURATION 5.0f
+#define EXPLOSION_FORCE_DURATION 0.0f
 
 ParticleSystem::ParticleSystem(const Vector3& g) : gravity(g), numMaxParticles(MAX_PARTICLES), originParticle(nullptr), numParticles(0), origin(PxTransform(Vector3(0.0f, 0.0f, 0.0f))) {
 
@@ -34,6 +37,7 @@ ParticleSystem::ParticleSystem(const Vector3& g) : gravity(g), numMaxParticles(M
 	generateSteamSystem();
 	generateSquirtSystem();
 	generateWindSystem();
+	generateWhirlWindSystem();
 }
 
 ParticleSystem::~ParticleSystem() {
@@ -121,6 +125,7 @@ void ParticleSystem::update(double t) {
 		if (!(*fg)->updateTime(t)) {
 			particleForceRegistry.removeForceGenerator(*fg);
 			listOfGeneratorNames.remove((*fg)->getName());
+			delete* fg;
 			fg = listOfForceGenerators.erase(fg);
 		}
 		else ++fg;
@@ -220,6 +225,16 @@ void ParticleSystem::generateWindSystem() {
 	}
 }
 
+void ParticleSystem::generateWhirlWindSystem() {
+	if (whirlWindGenerator == nullptr) {
+		Particle* model = new Particle(WIND, origin, Vector3(0.0f, 1.0f, 0.0f), WHIRL_WIND_MODEL_VISIBLE);
+		whirlWindGenerator = new GaussianParticleGenerator("WhirlWind", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 1,
+			model, Vector3(1.0f, 1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f));
+		addParticleGenerator(whirlWindGenerator);
+		addGeneratorName(whirlWindGenerator->getName());
+	}
+}
+
 void ParticleSystem::addFirework(ParticleType Type, PxTransform Transform, Vector3 Dir) {
 	Firework* model = new Firework(Type, Transform, Dir, FIREWORK_MODEL_VISIBLE);
 	Firework* p = new Firework(Type, Transform, Dir);
@@ -297,7 +312,11 @@ void ParticleSystem::generateWindForce() {
 #else
 		0.0f, 0.01f,
 #endif
+#ifdef WIND_SIDE
 		Vector3(-10.0f, 0.0f, 0.0f),
+#else
+		Vector3(0.0f, -10.0f, 0.0f),
+#endif
 #ifdef WIND_SPECIFIC_SPACE
 		Vector3(0.0f, -50.0f, 0.0f), Vector3(50.0f, 50.0f, 50.0f),
 #endif
@@ -307,7 +326,10 @@ void ParticleSystem::generateWindForce() {
 }
 
 void ParticleSystem::generateWhirlWindsForce() {
-
+	whirlWindsForceGenerator = new WhirlWindForce(1.0f, Vector3(-25.0f, 25.0f, -25.0f), 
+		"WhirlWind", WHIRL_WIND_FORCE_DURATION);
+	addForceGenerator(whirlWindsForceGenerator);
+	addGeneratorName(whirlWindsForceGenerator->getName());
 }
 
 void ParticleSystem::generateExplosionsForce() {

@@ -111,6 +111,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case 'N': particleSys->increaseSquirtVel(); break;
 	case 'M': particleSys->decreaseSquirtVel(); break;
 	case ',': particleSys->activateWindSystem(); break;
+	case '.': particleSys->activateWhirlWindSystem(); break;
 
 	// GENERADORES DE FUERZAS
 	case 'Y': particleSys->switchGravityForce(); break;

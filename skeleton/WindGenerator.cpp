@@ -1,7 +1,7 @@
 #include "WindGenerator.h"
 
 WindGenerator::WindGenerator(Vector3 WindVel, string Name, double Duration) :
-	ParticleDragGenerator(0.5f, 0.0f, Name, Duration), windVel(WindVel), 
+	ParticleDragGenerator(Name, Duration), windVel(WindVel), 
 	origin(Vector3(0.0f, 0.0f, 0.0f)), size(Vector3(0.0f, 0.0f, 0.0f)) {
 #ifdef _DEBUG
 	print();
@@ -17,16 +17,14 @@ WindGenerator::WindGenerator(const float k1, const float k2, Vector3 WindVel, st
 }
 
 WindGenerator::WindGenerator(Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration) :
-	ParticleDragGenerator(0.5f, 0.0f, Name, Duration), windVel(WindVel), 
-	origin(Origin), size(Size) {
+	ParticleDragGenerator(Name, Duration), windVel(WindVel), origin(Origin), size(Size) {
 #ifdef _DEBUG
 	print();
 #endif
 }
 
 WindGenerator::WindGenerator(const float k1, const float k2, Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration) :
-	ParticleDragGenerator(k1, k2, Name, Duration), windVel(WindVel), 
-	origin(Origin), size(Size) {
+	ParticleDragGenerator(k1, k2, Name, Duration), windVel(WindVel), origin(Origin), size(Size) {
 #ifdef _DEBUG
 	print();
 #endif
@@ -45,11 +43,12 @@ Vector3 WindGenerator::calculateForce(Particle* particle) {
 	Vector3 dragF;
 
 	if (k2 == 0) {
-		// F = k1 * (windVel - v) + k2 * |windVel - v| * (windVel - v)
+		// F = k1 * (windVel - v) + k2 * ||windVel - v|| * (windVel - v)
 		// como k2 = 0, la segunda parte no haria falta
 		dragF = k1 * diff + k2 * diff.magnitude() * diff;
 	}
 	else {
+		// Tarea opcional
 		// F = aeff * cd * p * v^2, donde k2 = aeff
 		cd = getCdByShape(particle->getShapeName());
 		dragF = k2 * cd * p * Vector3(v.y * v.y, v.x * v.x, v.z * v.z);
