@@ -12,8 +12,8 @@
 #define WHIRL_WIND_MODEL_VISIBLE false
 
 // GENERADORES DE FUERZAS
-#define GRAVITY_FORCE1 Vector3(0.0f, -1.0f, 0.0f)
-#define GRAVITY_FORCE2 Vector3(0.0f, 1.0f, 0.0f)
+#define GRAVITY_FORCE1 Vector3(0.0f, -9.8f, 0.0f)
+#define GRAVITY_FORCE2 Vector3(0.0f, 9.8f, 0.0f)
 #define GRAVITY_FORCE1_DURATION 0.0f
 #define GRAVITY_FORCE2_DURATION 0.0f
 #define DRAG_FORCE_DURATION 0.0f
@@ -21,7 +21,7 @@
 #define WIND_NO_K2
 #define WIND_SPECIFIC_SPACE
 #define WIND_SIDE
-#define WHIRL_WIND_FORCE_DURATION 5.0f
+#define WHIRL_WIND_FORCE_DURATION 0.0f
 #define EXPLOSION_FORCE_DURATION 0.0f
 
 ParticleSystem::ParticleSystem(const Vector3& g) : gravity(g), numMaxParticles(MAX_PARTICLES), originParticle(nullptr), numParticles(0), origin(PxTransform(Vector3(0.0f, 0.0f, 0.0f))) {
@@ -86,7 +86,6 @@ void ParticleSystem::addOrigin() {
 void ParticleSystem::addParticles(list<Particle*> list) {
 	for (auto p : list) {
 		listOfParticles.push_back(p);
-		addForces(p);
 	}
 	updateNumParticles(list.size());
 	updateNumParticlesText();
@@ -105,7 +104,6 @@ void ParticleSystem::addParticle(PxTransform Transform, Vector3 Dir, float Mass,
 
 void ParticleSystem::addParticle(Particle* p) {
 	listOfParticles.push_back(p);
-	addForces(p);
 	increaseNumParticles();
 	updateNumParticlesText();
 }
@@ -140,12 +138,17 @@ void ParticleSystem::update(double t) {
 		// Si se termina su tiempo de vida, se elimina
 		if (!(*p)->integrate(t)) {
 			onParticleDeath(*p);
-			delete* p;
+			(*p)->setDelete(true);
+			(*p)->release();
 			particleForceRegistry.deleteParticleRegistry(*p);
 			p = listOfParticles.erase(p);
 			decreaseNumParticles();
 			updateNumParticlesText();
-		} else ++p;
+		}
+		else {
+			addForces(*p);
+			++p;
+		}
 	}
 }
 

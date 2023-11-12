@@ -137,6 +137,8 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case '6': particleSys->addFirework(FIREWORK2, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
 	//case '7': particleSys->addFirework(FIREWORK3, camera, GetCamera()->getDir()); break;
 	case '7': particleSys->addFirework(FIREWORK3, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
+	//case '8': particleSys->addParticle(WIND, camera, GetCamera()->getDir()); break;
+	case '8': particleSys->addParticle(WIND, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
 
 	case ' ': break; // Para casos de prueba
 	default: break;

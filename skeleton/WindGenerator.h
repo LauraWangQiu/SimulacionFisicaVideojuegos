@@ -29,5 +29,6 @@ public:
 
 	virtual Vector3 calculateForce(Particle* particle);
 	virtual void updateForce(Particle* particle);
+	virtual void clearForce(Particle* particle);
 };
 

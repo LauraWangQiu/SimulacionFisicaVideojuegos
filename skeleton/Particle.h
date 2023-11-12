@@ -85,7 +85,7 @@ public:
 	virtual Particle* clone() const;
 
 	void addForce(Vector3 f);
-	void clearForces();
+	void clearForce();
 
 protected: 
 	ParticleType particleType;
@@ -99,6 +99,7 @@ protected:
 	int numDivisions, numExplodes;
 	bool visible, active;
 	Vector3 initialForce, force;
+	bool toDelete; int refCount;
 
 public:
 	// Getters
@@ -130,6 +131,8 @@ public:
 		else if (name == "Cube") return CreateShape(PxBoxGeometry(size));
 		else return CreateShape(PxSphereGeometry(size.x));
 	}
+	inline bool getDelete() const { return toDelete; }
+	inline int getRefCount() const { return refCount; }
 
 	// Setters
 	inline void setParticleType(ParticleType Type) { particleType = Type; }
@@ -175,4 +178,12 @@ public:
 	inline void setForce(float X, float Y, float Z) { force = Vector3(X, Y, Z); }
 	inline void setShapeName(string name) { shapeName = name; }
 	inline void setShape(PxShape* g) { shape = g; }
+	inline void setDelete(bool toDelete) { this->toDelete = toDelete; }
+	inline void release() { 
+		if (--refCount == 0) {
+			delete this;
+		}
+	}
+	inline void increaseRefCount() { ++refCount; }
+	inline void decreaseRefCount() { --refCount; }
 };

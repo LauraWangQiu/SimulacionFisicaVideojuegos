@@ -150,7 +150,7 @@ vector<particleInfo> ParticlesInfo = {
 Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible, bool Active) : particleType(Type), 
 transform(Transform), dir(Dir), velc(ParticlesInfo[particleType].velc), 
 force(Vector3(0.0f, 0.0f, 0.0f)), initialForce(force),
-visible(Visible), active(Active) {
+visible(Visible), active(Active), toDelete(false), refCount(1) {
 
 	setMass(ParticlesInfo[particleType].mass);
 	setVel(dir * velc);
@@ -170,7 +170,8 @@ visible(Visible), active(Active) {
 Particle::Particle(PxTransform Transform, Vector3 Dir, float Mass, float Velc, Vector3 Acc, float Damping, Vector3 Size, 
 	float Time, Vector4 Color, int NumDivisions, int NumExplodes, bool Visible, bool Active) :
 	particleType(NONE), transform(Transform), dir(Dir), mass(Mass), velc(Velc), acc(Acc), damping(Damping), size(Size), time(Time), color(Color), 
-	numDivisions(NumDivisions), numExplodes(NumExplodes), visible(Visible), active(Active) {
+	numDivisions(NumDivisions), numExplodes(NumExplodes), visible(Visible), active(Active),
+	toDelete(false), refCount(1) {
 
 	setVel(dir * velc);
 	shape = CreateShape(PxSphereGeometry(size.x));
@@ -188,10 +189,10 @@ bool Particle::integrate(double t) {
 	if (getInverseMass() <= 0.0f) return false;
 
 	// Actualizamos la aceleracion en funcion de la fuerza
-	acc += force * getInverseMass();
+	Vector3 totalAcc = acc + force * getInverseMass();
 
 	// Actualizamos la velocidad de la particula
-	vel += acc * t;
+	vel += totalAcc * t;
 
 	// Aplicamos el damping
 	vel *= powf(damping, t);
@@ -201,6 +202,8 @@ bool Particle::integrate(double t) {
 
 	// Le vamos restando tiempo de vida
 	time -= t;
+
+	clearForce();
 
 	if (active) return false;
 	else return time > 0.0f;
@@ -217,6 +220,6 @@ void Particle::addForce(Vector3 f) {
 	force += f;
 }
 
-void Particle::clearForces() {
+void Particle::clearForce() {
 	force *= 0.0f;
 }

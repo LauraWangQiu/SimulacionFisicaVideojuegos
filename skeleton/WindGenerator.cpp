@@ -67,9 +67,19 @@ void WindGenerator::updateForce(Particle* particle) {
 		(particle->getPosX() > (origin.x + size.x / 2) || particle->getPosX() < (origin.x - size.x / 2) ||
 			particle->getPosY() > (origin.y + size.y / 2) || particle->getPosY() < (origin.y - size.y / 2) ||
 			particle->getPosZ() > (origin.z + size.z / 2) || particle->getPosZ() < (origin.z - size.z / 2))) {
-		particle->clearForces();
 		return;
 	}
 
 	ParticleDragGenerator::updateForce(particle);
+}
+
+void WindGenerator::clearForce(Particle* particle) {
+	if ((size.x != 0 && size.y != 0 && size.z != 0) &&
+		(particle->getPosX() > (origin.x + size.x / 2) || particle->getPosX() < (origin.x - size.x / 2) ||
+			particle->getPosY() > (origin.y + size.y / 2) || particle->getPosY() < (origin.y - size.y / 2) ||
+			particle->getPosZ() > (origin.z + size.z / 2) || particle->getPosZ() < (origin.z - size.z / 2))) {
+		return;
+	}
+
+	ParticleDragGenerator::clearForce(particle);
 }
