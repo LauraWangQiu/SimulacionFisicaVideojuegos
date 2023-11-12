@@ -303,7 +303,7 @@ void ParticleSystem::generateGravityForce2() {
 }
 
 void ParticleSystem::generateDragForce() {
-	particleDragForceGenerator = new ParticleDragGenerator(0.5f, 0.0f, "DragForce", DRAG_FORCE_DURATION);
+	particleDragForceGenerator = new ParticleDragGenerator(0.2f, 0.0f, "DragForce", DRAG_FORCE_DURATION);
 	addForceGenerator(particleDragForceGenerator);
 	addGeneratorName(particleDragForceGenerator->getName());
 }
@@ -311,9 +311,9 @@ void ParticleSystem::generateDragForce() {
 void ParticleSystem::generateWindForce() {
 	windForceGenerator = new WindGenerator(
 #ifdef WIND_NO_K2
-		0.05f, 0.0f,
+		5.0f, 0.0f,
 #else
-		0.0f, 0.01f,
+		0.0f, 5.0f,
 #endif
 #ifdef WIND_SIDE
 		Vector3(-10.0f, 0.0f, 0.0f),
@@ -329,7 +329,7 @@ void ParticleSystem::generateWindForce() {
 }
 
 void ParticleSystem::generateWhirlWindsForce() {
-	whirlWindsForceGenerator = new WhirlWindForce(1.0f, Vector3(-25.0f, 25.0f, -25.0f), 
+	whirlWindsForceGenerator = new WhirlWindForce(7.0f, Vector3(0.0f, 40.0f, 0.0f), 
 		"WhirlWind", WHIRL_WIND_FORCE_DURATION);
 	addForceGenerator(whirlWindsForceGenerator);
 	addGeneratorName(whirlWindsForceGenerator->getName());
