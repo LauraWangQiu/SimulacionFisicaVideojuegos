@@ -10,6 +10,8 @@
 using namespace std;
 using namespace physx;
 
+typedef std::pair<ForceGenerator*, Particle*> FRPair;
+
 class ParticleForceRegistry : public multimap<ForceGenerator*, Particle*> {
 public:
 	void updateForces();

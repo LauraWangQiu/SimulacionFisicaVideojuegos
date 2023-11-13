@@ -9,6 +9,7 @@
 #include "ParticleDragGenerator.h"
 #include "WindGenerator.h"
 #include "WhirlWindForce.h"
+#include "ExplosionForceGenerator.h"
 #include "ParticleForceRegistry.h"
 using namespace std;
 using namespace physx;
@@ -41,6 +42,7 @@ protected:
 	ForceGenerator* windForceGenerator = nullptr;
 	ForceGenerator* whirlWindsForceGenerator = nullptr;
 	ForceGenerator* explosionsForceGenerator = nullptr;
+	Vector3 explosionOrigin;
 
 public:
 	ParticleSystem(const Vector3& g = { 0.0f, -9.8f, 0.0f});
@@ -155,4 +157,7 @@ public:
 	void activateWindForce() { windForceGenerator->setActive(!windForceGenerator->getActive()); }
 	void activateWhirlWindsForce() { whirlWindsForceGenerator->setActive(!whirlWindsForceGenerator->getActive()); }
 	void activateExplosionsForce() { explosionsForceGenerator->setActive(!explosionsForceGenerator->getActive()); }
+
+	void addCircle(Vector3 center = Vector3(0.0f, 0.0f, 0.0f));
+	void addSphere(Vector3 center = Vector3(0.0f, 0.0f, 0.0f));
 };

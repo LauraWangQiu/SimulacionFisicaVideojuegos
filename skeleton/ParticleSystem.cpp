@@ -13,16 +13,20 @@
 
 // GENERADORES DE FUERZAS
 #define GRAVITY_FORCE1 Vector3(0.0f, -9.8f, 0.0f)
-#define GRAVITY_FORCE2 Vector3(0.0f, 9.8f, 0.0f)
+#define GRAVITY_FORCE2 Vector3(0.0f, 12.0f, 0.0f)
 #define GRAVITY_FORCE1_DURATION 0.0f
 #define GRAVITY_FORCE2_DURATION 0.0f
 #define DRAG_FORCE_DURATION 0.0f
 #define WIND_FORCE_DURATION 0.0f
 #define WIND_NO_K2
-#define WIND_SPECIFIC_SPACE
+//#define WIND_SPECIFIC_SPACE
 #define WIND_SIDE
 #define WHIRL_WIND_FORCE_DURATION 0.0f
 #define EXPLOSION_FORCE_DURATION 0.0f
+#define CHANGE_CIRCLE_CENTER
+
+//#define ADD_CIRCLES
+//#define ADD_SPHERES
 
 ParticleSystem::ParticleSystem(const Vector3& g) : gravity(g), numMaxParticles(MAX_PARTICLES), originParticle(nullptr), numParticles(0), origin(PxTransform(Vector3(0.0f, 0.0f, 0.0f))) {
 
@@ -117,6 +121,24 @@ void ParticleSystem::addParticle(Particle* p) {
 }
 
 void ParticleSystem::update(double t) {
+	
+#ifdef ADD_CIRCLES
+	static double elapsedTime = 0;
+	elapsedTime += t;
+	if (elapsedTime >= CIRCLE_INTERVAL) {
+		addCircle();
+		elapsedTime = 0;
+	}
+#endif
+#ifdef ADD_SPHERES
+	static double elapsedTime2 = 0;
+	elapsedTime2 += t;
+	if (elapsedTime2 >= SPHERE_INTERVAL) {
+		addSphere();
+		elapsedTime2 = 0;
+	}
+#endif
+
 	// Recorro todos los generadores de particulas y genero particulas anadiendolas a listOfParticles
 	for (auto pg : listOfParticleGenerators) {
 		if ((pg->getNumParticles() + numParticles) < numMaxParticles && pg->getActive()) {
@@ -301,13 +323,15 @@ void ParticleSystem::removeForceGenerator(ForceGenerator* fg) {
 }
 
 void ParticleSystem::generateGravityForce() {
-	gravityForceGenerator = new GravityForceGenerator(GRAVITY_FORCE1, "GravityForce1", GRAVITY_FORCE1_DURATION);
+	gravityForceGenerator = new GravityForceGenerator(GRAVITY_FORCE1, 
+		"GravityForce1", GRAVITY_FORCE1_DURATION);
 	addForceGenerator(gravityForceGenerator);
 	addGeneratorName(gravityForceGenerator->getName());
 }
 
 void ParticleSystem::generateGravityForce2() {
-	gravityForceGenerator2 = new GravityForceGenerator(GRAVITY_FORCE2, "GravityForce2", GRAVITY_FORCE2_DURATION);
+	gravityForceGenerator2 = new GravityForceGenerator(GRAVITY_FORCE2, 
+		"GravityForce2", GRAVITY_FORCE2_DURATION);
 	addForceGenerator(gravityForceGenerator2);
 	addGeneratorName(gravityForceGenerator2->getName());
 }
@@ -323,7 +347,7 @@ void ParticleSystem::generateWindForce() {
 #ifdef WIND_NO_K2
 		5.0f, 0.0f,
 #else
-		0.0f, 5.0f,
+		0.0f, 0.05f,
 #endif
 #ifdef WIND_SIDE
 		Vector3(-10.0f, 0.0f, 0.0f),
@@ -346,5 +370,54 @@ void ParticleSystem::generateWhirlWindsForce() {
 }
 
 void ParticleSystem::generateExplosionsForce() {
+	explosionOrigin = Vector3(0.0f, 50.0f, 0.0f);
+	explosionsForceGenerator = new ExplosionForceGenerator(explosionOrigin, 1.0, 50000.0f, 1000.0f,
+		"Explosions", EXPLOSION_FORCE_DURATION);
+	addForceGenerator(explosionsForceGenerator);
+	addGeneratorName(explosionsForceGenerator->getName());
+}
 
+void ParticleSystem::addCircle(Vector3 center) {
+
+#ifdef CHANGE_CIRCLE_CENTER
+	center = explosionOrigin;
+#endif
+
+	for (int i = 0; i < NUM_PARTICLES_CIRCLE; ++i) {
+		float angle = 2.0f * M_PI * i / NUM_PARTICLES_CIRCLE;
+		float x = center.x + RADIUS_CIRCLE * cos(angle);
+		float y = center.y + RADIUS_CIRCLE * sin(angle);
+		float z = center.z;
+
+		Vector3 particlePosition(x, y, z);
+		Vector3 particleDirection = (center - particlePosition);
+		particleDirection.normalize();
+
+		addParticle(new Particle(EXPLOSION, PxTransform(particlePosition), particleDirection));
+	}
+}
+
+void ParticleSystem::addSphere(Vector3 center) {
+
+#ifdef CHANGE_CIRCLE_CENTER
+	center = explosionOrigin;
+#endif
+
+	for (int i = 0; i < NUM_PARTICLES_SPHERE; ++i) {
+		float latitud = ((float)rand() / RAND_MAX) * 180.0f - 90.0f;
+		float longitud = ((float)rand() / RAND_MAX) * 360.0f;
+
+		float latitudRad = latitud * M_PI / 180.0f;
+		float longitudRad = longitud * M_PI / 180.0f;
+
+		float x = RADIUS_SPHERE * std::sin(latitudRad) * std::cos(longitudRad) + center.x;
+		float y = RADIUS_SPHERE * std::sin(latitudRad) * std::sin(longitudRad) + center.y;
+		float z = RADIUS_SPHERE * std::cos(latitudRad) + center.z;
+
+		Vector3 particlePosition(x, y, z);
+		Vector3 particleDirection = (center - particlePosition);
+		particleDirection.normalize();
+
+		addParticle(new Particle(EXPLOSION, PxTransform(particlePosition), particleDirection));
+	}
 }

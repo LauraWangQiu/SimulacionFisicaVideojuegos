@@ -13,6 +13,6 @@ public:
 	WhirlWindForce(Vector3 WhirlPos, string Name, double Duration, bool Active = false);
 	WhirlWindForce(const float k, Vector3 WhirlPos, string Name, double Duration, bool Active = false);
 
-	virtual Vector3 calculateForce(Particle* particle);
+	virtual Vector3 calculateForce(Particle* particle) override;
 };
 

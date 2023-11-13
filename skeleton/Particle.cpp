@@ -7,7 +7,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(0.0f, 0.0f, 0.0f),
 		0.99f,
 		Vector4(1.0f, 1.0f, 1.0f, 1.0f),
-		3.0f,
+		5.0f,
 		0,
 		0,
 		Vector3(1.0f, 1.0f, 1.0f),
@@ -144,6 +144,18 @@ vector<particleInfo> ParticlesInfo = {
 		0,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Sphere"
+	},
+	{ // EXPLOSION
+		1.0f,
+		33.75f,
+		Vector3(0.0f, 0.0f, 0.0f),
+		0.99f,
+		Vector4(1.0f, 1.0f, 1.0f, 1.0f),
+		3.0f,
+		0,
+		0,
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Cube"
 	}
 };
 
@@ -205,6 +217,8 @@ bool Particle::integrate(double t) {
 
 	clearForce();
 
+	changeColorWithTime();
+
 	if (active) return false;
 	else return time > 0.0f;
 }
@@ -222,4 +236,20 @@ void Particle::addForce(Vector3 f) {
 
 void Particle::clearForce() {
 	force *= 0.0f;
+}
+
+void Particle::changeColorWithTime() {
+	switch (particleType) {
+	case EXPLOSION:
+		if (time >= (ParticlesInfo[particleType].time / 2)) {
+			setColor2(palettes.explosionPalette[0]);
+		}
+		else if (time >= (ParticlesInfo[particleType].time / 3)) {
+			setColor2(palettes.explosionPalette[1]);
+		}
+		else if (time >= (ParticlesInfo[particleType].time / 4)) {
+			setColor2(palettes.explosionPalette[2]);
+		}
+		break;
+	}
 }

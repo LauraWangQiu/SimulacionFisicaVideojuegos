@@ -24,7 +24,7 @@ void ParticleForceRegistry::addRegistry(ForceGenerator* fg, Particle* p) {
 
 		// Si no existe, insertar y aumentar refCount
 		if (!exists) {
-			insert(pair<ForceGenerator*, Particle*>(fg, p));
+			insert(FRPair(fg, p));
 			p->increaseRefCount();
 		}
 	}

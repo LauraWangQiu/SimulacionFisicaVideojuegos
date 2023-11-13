@@ -9,7 +9,7 @@ using namespace physx;
 enum ParticleType {
 	BASIC, FIREWORK, FIREWORK2, FIREWORK3, FIRE, WATER, STEAM,
 	CANNON_BALL, TANK_BALL, GUN_BULLET, LASER,
-	WIND,
+	WIND, EXPLOSION,
 	NONE
 };
 
@@ -70,6 +70,13 @@ struct particlePalettes {
 		Vector4(0.1f, 0.3f, 0.5f, 1.0f),
 	};
 	int waterPaletteSize = sizeof(waterPalette) / sizeof(waterPalette[0]);
+
+	Vector4 explosionPalette[4] = {
+		Vector4(1.0f, 1.0f, 0.0f, 1.0f),	// Amarillo
+		Vector4(1.0f, 0.65f, 0.0f, 1.0f),	// Naranja
+		Vector4(0.4f, 0.2f, 0.1f, 1.0f)		// Marron
+	};
+	int explosionPaletteSize = sizeof(explosionPalette) / sizeof(explosionPalette[0]);
 };
 
 class Particle {
@@ -92,6 +99,7 @@ protected:
 	PxTransform transform;
 	Vector3 dir, vel, acc, size;
 	Vector4 color;
+	particlePalettes palettes;
 	float mass, velc, damping, time;
 	string shapeName;
 	PxShape* shape;
@@ -100,6 +108,8 @@ protected:
 	bool visible, active;
 	Vector3 initialForce, force;
 	bool toDelete; int refCount;
+
+	void changeColorWithTime();
 
 public:
 	// Getters
@@ -156,7 +166,7 @@ public:
 	inline void setColor(Vector4 Color) { color = Color; }
 	inline void setColor(float R, float G, float B, float A = 1.0f) { color = Vector4(R, G, B, A); }
 	inline void setColor2(Vector4 Color) { renderItem->color = Color; }
-	inline void setColor2(float R, float G, float B, float A = 255.0f) { renderItem->color = Vector4(R, G, B, A); }
+	inline void setColor2(float R, float G, float B, float A = 1.0f) { renderItem->color = Vector4(R, G, B, A); }
 	inline void setTime(float Time) { time = Time; }
 	inline void increaseTime(float Time) { time += Time; }
 	inline void setNumDivisions(int Num) { numDivisions = Num; }
