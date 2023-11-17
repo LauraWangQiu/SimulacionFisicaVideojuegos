@@ -11,7 +11,7 @@ Sigue los siguientes pasos para probar el código:
 
 1. Descarga este repositorio.
 2. Descarga `resources.zip`desde el siguiente
-[link](https://ucomplutense-my.sharepoint.com/:u:/g/personal/davalejo_ucm_es/EZcsdyIoqTFOrF4hdfkVYk0BJZ9IycJ3QqXQFwaXVrlSKg?e=pfs6IO).
+[link](https://ucomplutense-my.sharepoint.com/:f:/g/personal/liagar05_ucm_es/ElNxHPmZVj9Ni9-8FKTKp7cBJHAarnL3vvEvG50z0QMrzg).
 3. Descomprime `resources.zip`.
 4. Deja las carpetas `bin` y `common` en la raíz del repositorio.
 5. Accede a `.../SimulacionFisicaVideojuegos/skeleton/game.sln` y ejecútalo.

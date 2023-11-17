@@ -6,9 +6,9 @@
 #include "GaussianParticleGenerator.h"
 #include "UniformParticleGenerator.h"
 #include "GravityForceGenerator.h"
-#include "ParticleDragGenerator.h"
-#include "WindGenerator.h"
-#include "WhirlWindForce.h"
+#include "ParticleDragForceGenerator.h"
+#include "WindForceGenerator.h"
+#include "WhirlWindForceGenerator.h"
 #include "ExplosionForceGenerator.h"
 #include "ParticleForceRegistry.h"
 using namespace std;

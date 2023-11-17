@@ -19,9 +19,9 @@
     <ClCompile Include="ForceGenerator.cpp" />
     <ClCompile Include="ParticleForceRegistry.cpp" />
     <ClCompile Include="GravityForceGenerator.cpp" />
-    <ClCompile Include="ParticleDragGenerator.cpp" />
-    <ClCompile Include="WindGenerator.cpp" />
-    <ClCompile Include="WhirlWindForce.cpp" />
+    <ClCompile Include="ParticleDragForceGenerator.cpp" />
+    <ClCompile Include="WindForceGenerator.cpp" />
+    <ClCompile Include="WhirlWindForceGenerator.cpp" />
     <ClCompile Include="ExplosionForceGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -44,9 +44,9 @@
     <ClInclude Include="ForceGenerator.h" />
     <ClInclude Include="ParticleForceRegistry.h" />
     <ClInclude Include="GravityForceGenerator.h" />
-    <ClInclude Include="ParticleDragGenerator.h" />
-    <ClInclude Include="WindGenerator.h" />
-    <ClInclude Include="WhirlWindForce.h" />
+    <ClInclude Include="ParticleDragForceGenerator.h" />
+    <ClInclude Include="WindForceGenerator.h" />
+    <ClInclude Include="WhirlWindForceGenerator.h" />
     <ClInclude Include="ExplosionForceGenerator.h" />
   </ItemGroup>
   <ItemGroup>

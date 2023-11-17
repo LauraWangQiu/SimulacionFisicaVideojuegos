@@ -4,13 +4,13 @@
 using namespace std;
 using namespace physx;
 
-class ParticleDragGenerator : public ForceGenerator {
+class ParticleDragForceGenerator : public ForceGenerator {
 protected:
 	float k1, k2;
 
 public:
-	ParticleDragGenerator(string Name, double Duration, bool Active = false);
-	ParticleDragGenerator(const float k1, const float k2, string Name, double Duration, bool Active = false);
+	ParticleDragForceGenerator(string Name, double Duration, bool Active = false);
+	ParticleDragForceGenerator(const float k1, const float k2, string Name, double Duration, bool Active = false);
 
 	virtual Vector3 calculateForce(Particle* particle);
 

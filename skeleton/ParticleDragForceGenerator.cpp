@@ -1,12 +1,12 @@
-﻿#include "ParticleDragGenerator.h"
+﻿#include "ParticleDragForceGenerator.h"
 
-ParticleDragGenerator::ParticleDragGenerator(string Name, double Duration, bool Active) : 
+ParticleDragForceGenerator::ParticleDragForceGenerator(string Name, double Duration, bool Active) : 
 	ForceGenerator(Name, Duration, Active), k1(0.5f), k2(0.5f) {}
 
-ParticleDragGenerator::ParticleDragGenerator(const float k1, const float k2, string Name, double Duration, bool Active) : 
+ParticleDragForceGenerator::ParticleDragForceGenerator(const float k1, const float k2, string Name, double Duration, bool Active) : 
 	ForceGenerator(Name, Duration, Active), k1(k1), k2(k2) {}
 
-Vector3 ParticleDragGenerator::calculateForce(Particle* particle) {
+Vector3 ParticleDragForceGenerator::calculateForce(Particle* particle) {
 	// 𝑓𝑑𝑟𝑎𝑔 = -𝒗 * (𝑘1 * |𝒗| + 𝑘2 * |𝒗|^2)
 	Vector3 v = particle->getVel();
 	float drag_coef = v.normalize();

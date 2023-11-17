@@ -286,7 +286,7 @@ void ParticleSystem::addForces(Particle* p) {
 		if (fg->getActive()) {
 			particleForceRegistry.addRegistry(fg, p);
 
-			/*if (static_cast<WindGenerator*>(fg) != nullptr) {
+			/*if (static_cast<WindForceGenerator*>(fg) != nullptr) {
 				switch (p->getParticleType()) {
 				case ...: particleForceRegistry.addRegistry(fg, p); break;
 				}
@@ -296,7 +296,7 @@ void ParticleSystem::addForces(Particle* p) {
 				case ...: particleForceRegistry.addRegistry(fg, p); break;
 				}
 			}
-			else if (static_cast<ParticleDragGenerator*>(fg) != nullptr) {
+			else if (static_cast<ParticleDragForceGenerator*>(fg) != nullptr) {
 				switch (p->getParticleType()) {
 				case ...: particleForceRegistry.addRegistry(fg, p); break;
 				}
@@ -337,13 +337,13 @@ void ParticleSystem::generateGravityForce2() {
 }
 
 void ParticleSystem::generateDragForce() {
-	particleDragForceGenerator = new ParticleDragGenerator(0.2f, 0.0f, "DragForce", DRAG_FORCE_DURATION);
+	particleDragForceGenerator = new ParticleDragForceGenerator(0.2f, 0.0f, "DragForce", DRAG_FORCE_DURATION);
 	addForceGenerator(particleDragForceGenerator);
 	addGeneratorName(particleDragForceGenerator->getName());
 }
 
 void ParticleSystem::generateWindForce() {
-	windForceGenerator = new WindGenerator(
+	windForceGenerator = new WindForceGenerator(
 #ifdef WIND_NO_K2
 		5.0f, 0.0f,
 #else
@@ -363,7 +363,7 @@ void ParticleSystem::generateWindForce() {
 }
 
 void ParticleSystem::generateWhirlWindsForce() {
-	whirlWindsForceGenerator = new WhirlWindForce(7.0f, Vector3(0.0f, 40.0f, 0.0f), 
+	whirlWindsForceGenerator = new WhirlWindForceGenerator(7.0f, Vector3(0.0f, 40.0f, 0.0f), 
 		"WhirlWind", WHIRL_WIND_FORCE_DURATION);
 	addForceGenerator(whirlWindsForceGenerator);
 	addGeneratorName(whirlWindsForceGenerator->getName());

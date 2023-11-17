@@ -1,26 +1,26 @@
-#include "WindGenerator.h"
+#include "WindForceGenerator.h"
 
-WindGenerator::WindGenerator(Vector3 WindVel, string Name, double Duration, bool Active) :
-	ParticleDragGenerator(Name, Duration, Active), windVel(WindVel), 
+WindForceGenerator::WindForceGenerator(Vector3 WindVel, string Name, double Duration, bool Active) :
+	ParticleDragForceGenerator(Name, Duration, Active), windVel(WindVel), 
 	origin(Vector3(0.0f, 0.0f, 0.0f)), size(Vector3(0.0f, 0.0f, 0.0f)) {}
 
-WindGenerator::WindGenerator(const float k1, const float k2, Vector3 WindVel, string Name, double Duration, bool Active) :
-	ParticleDragGenerator(k1, k2, Name, Duration, Active), windVel(WindVel), 
+WindForceGenerator::WindForceGenerator(const float k1, const float k2, Vector3 WindVel, string Name, double Duration, bool Active) :
+	ParticleDragForceGenerator(k1, k2, Name, Duration, Active), windVel(WindVel), 
 	origin(Vector3(0.0f, 0.0f, 0.0f)), size(Vector3(0.0f, 0.0f, 0.0f)) {}
 
-WindGenerator::WindGenerator(Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration, bool Active) :
-	ParticleDragGenerator(Name, Duration, Active), windVel(WindVel), origin(Origin), size(Size) {}
+WindForceGenerator::WindForceGenerator(Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration, bool Active) :
+	ParticleDragForceGenerator(Name, Duration, Active), windVel(WindVel), origin(Origin), size(Size) {}
 
-WindGenerator::WindGenerator(const float k1, const float k2, Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration, bool Active) :
-	ParticleDragGenerator(k1, k2, Name, Duration, Active), windVel(WindVel), origin(Origin), size(Size) {}
+WindForceGenerator::WindForceGenerator(const float k1, const float k2, Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration, bool Active) :
+	ParticleDragForceGenerator(k1, k2, Name, Duration, Active), windVel(WindVel), origin(Origin), size(Size) {}
 
-float WindGenerator::getCdByShape(string shapeName) {
+float WindForceGenerator::getCdByShape(string shapeName) {
 	if (shapeName == "Sphere") return 0.5f;
 	else if (shapeName == "Cube") return 1.0f;
 	else return 0.1f;
 }
 
-Vector3 WindGenerator::calculateForce(Particle* particle) {
+Vector3 WindForceGenerator::calculateForce(Particle* particle) {
 
 	Vector3 v = particle->getVel();
 	Vector3 diff = windVel - v;
@@ -46,7 +46,7 @@ Vector3 WindGenerator::calculateForce(Particle* particle) {
 	return dragF;
 }
 
-void WindGenerator::updateForce(Particle* particle) {
+void WindForceGenerator::updateForce(Particle* particle) {
 	if ((size.x != 0 && size.y != 0 && size.z != 0) &&
 		(particle->getPosX() > (origin.x + size.x / 2) || particle->getPosX() < (origin.x - size.x / 2) ||
 			particle->getPosY() > (origin.y + size.y / 2) || particle->getPosY() < (origin.y - size.y / 2) ||
@@ -54,10 +54,10 @@ void WindGenerator::updateForce(Particle* particle) {
 		return;
 	}
 
-	ParticleDragGenerator::updateForce(particle);
+	ParticleDragForceGenerator::updateForce(particle);
 }
 
-void WindGenerator::clearForce(Particle* particle) {
+void WindForceGenerator::clearForce(Particle* particle) {
 	if ((size.x != 0 && size.y != 0 && size.z != 0) &&
 		(particle->getPosX() > (origin.x + size.x / 2) || particle->getPosX() < (origin.x - size.x / 2) ||
 			particle->getPosY() > (origin.y + size.y / 2) || particle->getPosY() < (origin.y - size.y / 2) ||
@@ -65,5 +65,5 @@ void WindGenerator::clearForce(Particle* particle) {
 		return;
 	}
 
-	ParticleDragGenerator::clearForce(particle);
+	ParticleDragForceGenerator::clearForce(particle);
 }

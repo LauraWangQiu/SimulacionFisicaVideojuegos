@@ -1,11 +1,11 @@
 #pragma once
 #include <string>
-#include "ParticleDragGenerator.h"
+#include "ParticleDragForceGenerator.h"
 #include "core.hpp"
 using namespace std;
 using namespace physx;
 
-class WindGenerator : public ParticleDragGenerator {
+class WindForceGenerator : public ParticleDragForceGenerator {
 protected:
 	float p = AIR_DENSITY;	// densidad del aire en condiciones normales
 	float cd;				// coeficiente aerodinamico (dependiente de la forma del objeto)
@@ -16,10 +16,10 @@ protected:
 	float getCdByShape(string shapeName);
 	
 public:
-	WindGenerator(Vector3 WindVel, string Name, double Duration, bool Active = false);
-	WindGenerator(const float k1, const float k2, Vector3 WindVel, string Name, double Duration, bool Active = false);
-	WindGenerator(Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration, bool Active = false);
-	WindGenerator(const float k1, const float k2, Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration, bool Active = false);
+	WindForceGenerator(Vector3 WindVel, string Name, double Duration, bool Active = false);
+	WindForceGenerator(const float k1, const float k2, Vector3 WindVel, string Name, double Duration, bool Active = false);
+	WindForceGenerator(Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration, bool Active = false);
+	WindForceGenerator(const float k1, const float k2, Vector3 WindVel, Vector3 Origin, Vector3 Size, string Name, double Duration, bool Active = false);
 
 	virtual Vector3 calculateForce(Particle* particle) override;
 	virtual void updateForce(Particle* particle) override;
