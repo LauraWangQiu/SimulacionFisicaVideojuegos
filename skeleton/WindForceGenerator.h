@@ -24,5 +24,13 @@ public:
 	virtual Vector3 calculateForce(Particle* particle) override;
 	virtual void updateForce(Particle* particle) override;
 	virtual void clearForce(Particle* particle) override;
+
+	// Getters y setters
+	inline Vector3 getWindVel() const { return windVel; }
+	inline void setWindVel(Vector3 WindVel) { windVel = WindVel; }
+	inline Vector3 getOrigin() const { return origin; }
+	inline void setOrigin(Vector3 Origin) { origin = Origin; }
+	inline Vector3 getSize() const { return size; }
+	inline void setSize(Vector3 Size) { size = Size; }
 };
 

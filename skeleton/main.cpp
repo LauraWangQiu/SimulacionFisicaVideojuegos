@@ -114,11 +114,13 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case '.': particleSys->activateWhirlWindSystem(); break;
 
 	// GENERADORES DE FUERZAS
-	case 'Y': particleSys->switchGravityForce(); break;
-	case 'U': particleSys->activateDragForce(); break;
-	case 'I': particleSys->activateWindForce(); break;
-	case 'O': particleSys->activateWhirlWindsForce(); break;
-	case 'P': particleSys->activateExplosionsForce(); break;
+	case 'T': particleSys->switchGravityForce(); break;
+	case 'Y': particleSys->activateDragForce(); break;
+	case 'U': particleSys->activateWindForce(); break;
+	case 'I': particleSys->activateWhirlWindsForce(); break;
+	case 'O': particleSys->activateExplosionsForce(); break;
+	// MUELLES
+	case 'P': particleSys->activateSpringForce(); break;
 
 	// PARTICULAS UNICAS
 	//case '0': particleSys->addParticle(BASIC, camera, GetCamera()->getDir()); break;
@@ -140,8 +142,8 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	//case '8': particleSys->addParticle(WIND, camera, GetCamera()->getDir()); break;
 	case '8': particleSys->addParticle(WIND, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
 
-	case '9': particleSys->addCircle(); break;
-	case '-': particleSys->addSphere(); break;
+	case '-': particleSys->addCircle(); break;
+	case '+': particleSys->addSphere(); break;
 
 	case ' ': break; // Para casos de prueba
 	default: break;

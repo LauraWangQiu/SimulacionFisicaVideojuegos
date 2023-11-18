@@ -1,16 +1,21 @@
 #pragma once
 #include <list>
 #include "RenderUtils.hpp"
+// PARTICULAS
 #include "Particle.h"
 #include "Firework.h"
+// GENERADORES DE PARTICULAS
 #include "GaussianParticleGenerator.h"
 #include "UniformParticleGenerator.h"
+// GENERADORES DE FUERZAS
+#include "ParticleForceRegistry.h"
 #include "GravityForceGenerator.h"
 #include "ParticleDragForceGenerator.h"
 #include "WindForceGenerator.h"
 #include "WhirlWindForceGenerator.h"
 #include "ExplosionForceGenerator.h"
-#include "ParticleForceRegistry.h"
+// MUELLES
+#include "SpringForceGenerator.h"
 using namespace std;
 using namespace physx;
 
@@ -18,41 +23,68 @@ class ParticleSystem {
 protected:
 	list<string> listOfGeneratorNames;
 	list<Particle*> listOfParticles;
-	list<ParticleGenerator*> listOfParticleGenerators;
-	Particle* originParticle;
 	int numParticles, numMaxParticles;
+	Particle* originParticle = nullptr;
 	Vector3 gravity;
 	PxTransform origin;
 
-	ParticleGenerator* fireworkGenerator = nullptr;
-	ParticleGenerator* fireGenerator = nullptr;
-	ParticleGenerator* waterfallGenerator = nullptr;
-	ParticleGenerator* steamGenerator = nullptr;
-	ParticleGenerator* squirtGenerator = nullptr;
-	ParticleGenerator* windGenerator = nullptr;
-	ParticleGenerator* whirlWindGenerator = nullptr;
+	// GENERADORES DE PARTICULAS
+	list<ParticleGenerator*> listOfParticleGenerators;
 
+	ParticleGenerator* fireworkGenerator = nullptr;
+	Firework* fireworkModel = nullptr;
+	ParticleGenerator* fireGenerator = nullptr;
+	Particle* fireModel = nullptr;
+	ParticleGenerator* waterfallGenerator = nullptr;
+	Particle* waterfallModel = nullptr;
+	ParticleGenerator* steamGenerator = nullptr;
+	Particle* steamModel = nullptr;
+	ParticleGenerator* squirtGenerator = nullptr;
+	Particle* squirtModel = nullptr;
+	ParticleGenerator* windGenerator = nullptr;
+	Particle* windModel = nullptr;
+	ParticleGenerator* whirlWindGenerator = nullptr;
+	Particle* whirlWindModel = nullptr;
+
+	// GENERADORES DE FUERZAS
 	list<ForceGenerator*> listOfForceGenerators;
 	ParticleForceRegistry particleForceRegistry;
 
 	ForceGenerator* gravityForceGenerator = nullptr;
 	ForceGenerator* gravityForceGenerator2 = nullptr;
 	ForceGenerator* particleDragForceGenerator = nullptr;
-
 	ForceGenerator* windForceGenerator = nullptr;
 	ForceGenerator* whirlWindsForceGenerator = nullptr;
-	ForceGenerator* explosionsForceGenerator = nullptr;
-	Vector3 explosionOrigin;
+	ForceGenerator* explosionsForceGenerator = nullptr; Vector3 explosionOrigin;
+	// MUELLES
+	ForceGenerator* springForceGenerator = nullptr;	Particle* springModel = nullptr;
+	ForceGenerator* springForceGeneratorPair1 = nullptr;
+	ForceGenerator* springForceGeneratorPair2 = nullptr;
+	ForceGenerator* springForceGenerator1 = nullptr;
+	ForceGenerator* springForceGenerator2 = nullptr;
+	ForceGenerator* springForceGenerator3 = nullptr;
+	ForceGenerator* springForceGenerator4 = nullptr;
+	ForceGenerator* springForceGenerator5 = nullptr;
+	ForceGenerator* springForceGenerator6 = nullptr;
 
 public:
 	ParticleSystem(const Vector3& g = { 0.0f, -9.8f, 0.0f});
 	~ParticleSystem();
+
+	void update(double t);
+	void onParticleDeath(Particle* p);
+
+	// LISTAS
 	void addGeneratorName(string name);
 	void addParticleGenerator(ParticleGenerator* pg);
 	void addForceGenerator(ForceGenerator* fg);
 
 	// GIZMO
 	void addOrigin();
+
+	// FIGURAS
+	void addCircle(Vector3 center = Vector3(0.0f, 0.0f, 0.0f));
+	void addSphere(Vector3 center = Vector3(0.0f, 0.0f, 0.0f));
 
 	void addParticle(ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 0.0f, 1.0f));
 	void addParticle(PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), float Mass = 1.0f, float Velc = 10.0f,
@@ -61,16 +93,12 @@ public:
 	void addParticle(Particle* p);
 	void addParticles(list<Particle*> list);
 
-	void update(double t);
-	void onParticleDeath(Particle* p);
-
 	inline void increaseNumParticles() { ++numParticles; }
 	inline void decreaseNumParticles() { --numParticles; }
 	inline void updateNumParticles(int n) { numParticles += n; }
 	inline void updateNumParticlesText() { num_particles = to_string(numParticles); }
+	inline int getNumMaxParticles() const { return numMaxParticles; }
 	inline void setNumMaxParticles(int max) { numMaxParticles = max; }
-
-	inline int getNumMaxParticles() { return numMaxParticles; }
 
 	// GENERADORES DE PARTICULAS
 	ParticleGenerator *getParticleGenerator(const string& name);
@@ -102,7 +130,6 @@ public:
 			}
 		}
 	}
-
 	inline void activateFireSystem() { fireGenerator->setActive(!fireGenerator->getActive()); }
 	inline void activateWaterfallSystem() { waterfallGenerator->setActive(!waterfallGenerator->getActive()); }
 	inline void activateSteamSystem() { steamGenerator->setActive(!steamGenerator->getActive()); }
@@ -128,7 +155,6 @@ public:
 	// GENERADORES DE FUERZAS
 	inline ParticleForceRegistry getParticleForceRegistry() const { return particleForceRegistry; }
 	void addForces(Particle* p);
-
 	void removeForceGenerator(ForceGenerator* fg);
 
 	void generateGravityForce();
@@ -138,7 +164,7 @@ public:
 	void generateWhirlWindsForce();
 	void generateExplosionsForce();
 
-	void switchGravityForce() {
+	inline void switchGravityForce() {
 		if (!gravityForceGenerator->getActive()) {
 			cout << "Se activó el primer generador de gravedad\n";
 			gravityForceGenerator->setActive(true);
@@ -153,11 +179,14 @@ public:
 			gravityForceGenerator2->setActive(false);
 		}
 	}
-	void activateDragForce() { particleDragForceGenerator->setActive(!particleDragForceGenerator->getActive()); }
-	void activateWindForce() { windForceGenerator->setActive(!windForceGenerator->getActive()); }
-	void activateWhirlWindsForce() { whirlWindsForceGenerator->setActive(!whirlWindsForceGenerator->getActive()); }
-	void activateExplosionsForce() { explosionsForceGenerator->setActive(!explosionsForceGenerator->getActive()); }
+	inline void activateDragForce() { particleDragForceGenerator->setActive(!particleDragForceGenerator->getActive()); }
+	inline void activateWindForce() { windForceGenerator->setActive(!windForceGenerator->getActive()); }
+	inline void activateWhirlWindsForce() { whirlWindsForceGenerator->setActive(!whirlWindsForceGenerator->getActive()); }
+	inline void activateExplosionsForce() { explosionsForceGenerator->setActive(!explosionsForceGenerator->getActive()); }
 
-	void addCircle(Vector3 center = Vector3(0.0f, 0.0f, 0.0f));
-	void addSphere(Vector3 center = Vector3(0.0f, 0.0f, 0.0f));
+	// MUELLES
+	void generateSpringForce();
+	inline void activateSpringForce() { springForceGenerator->setActive(!springForceGenerator->getActive()); }
+	void generateSpringDemo();
+	void generateSpringSlinky();
 };

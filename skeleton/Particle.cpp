@@ -156,6 +156,30 @@ vector<particleInfo> ParticlesInfo = {
 		0,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Cube"
+	},
+	{ // SPRING
+		20.0f,
+		0.0f,
+		Vector3(0.0f, 0.0f, 0.0f),
+		0.99f,
+		Vector4(1.0f, 0.0f, 0.8f, 1.0f),
+		0.0f,
+		0,
+		0,
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Sphere"
+	},
+	{ // SPRING_BASE
+		1.0f,
+		0.0f,
+		Vector3(0.0f, 0.0f, 0.0f),
+		0.99f,
+		Vector4(1.0f, 0.0f, 0.8f, 1.0f),
+		0.0f,
+		0,
+		0,
+		Vector3(3.0f, 0.5f, 3.0f),
+		"Cube"
 	}
 };
 
@@ -219,7 +243,7 @@ bool Particle::integrate(double t) {
 
 	changeColorWithTime();
 
-	if (active) return false;
+	if (active) return true;
 	else return time > 0.0f;
 }
 

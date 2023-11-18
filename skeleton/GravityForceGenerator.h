@@ -17,4 +17,3 @@ public:
 	inline Vector3 getGravity() const { return gravity; }
 	inline void setGravity(Vector3 g) { gravity = g; }
 };
-
