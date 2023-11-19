@@ -180,7 +180,19 @@ vector<particleInfo> ParticlesInfo = {
 		0,
 		Vector3(3.0f, 0.5f, 3.0f),
 		"Cube"
-	}
+	},
+	{ // SLINKY
+		20.0f,
+		0.0f,
+		Vector3(0.0f, 0.0f, 0.0f),
+		0.99f,
+		Vector4(1.0f, 0.0f, 0.8f, 1.0f),
+		0.0f,
+		0,
+		0,
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Sphere"
+	},
 };
 
 Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible, bool Active) : particleType(Type), 

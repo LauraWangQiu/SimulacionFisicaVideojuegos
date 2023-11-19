@@ -60,12 +60,16 @@ protected:
 	ForceGenerator* springForceGenerator = nullptr;	Particle* springModel = nullptr;
 	ForceGenerator* springForceGeneratorPair1 = nullptr;
 	ForceGenerator* springForceGeneratorPair2 = nullptr;
-	ForceGenerator* springForceGenerator1 = nullptr;
-	ForceGenerator* springForceGenerator2 = nullptr;
-	ForceGenerator* springForceGenerator3 = nullptr;
-	ForceGenerator* springForceGenerator4 = nullptr;
-	ForceGenerator* springForceGenerator5 = nullptr;
-	ForceGenerator* springForceGenerator6 = nullptr;
+	ForceGenerator* springForceGenerator12 = nullptr;
+	ForceGenerator* springForceGenerator21 = nullptr;
+	ForceGenerator* springForceGenerator23 = nullptr;
+	ForceGenerator* springForceGenerator32 = nullptr;
+	ForceGenerator* springForceGenerator34 = nullptr;
+	ForceGenerator* springForceGenerator43 = nullptr;
+	ForceGenerator* springForceGenerator45 = nullptr;
+	ForceGenerator* springForceGenerator54 = nullptr;
+	ForceGenerator* springForceGenerator56 = nullptr;
+	ForceGenerator* springForceGenerator65 = nullptr;
 
 public:
 	ParticleSystem(const Vector3& g = { 0.0f, -9.8f, 0.0f});
