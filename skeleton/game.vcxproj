@@ -262,6 +262,7 @@
     <ClCompile Include="GravityForceGenerator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="ParticleBungeeForceGenerator.cpp" />
     <ClCompile Include="ParticleDragForceGenerator.cpp" />
     <ClCompile Include="ParticleForceRegistry.cpp" />
     <ClCompile Include="ParticleGenerator.cpp" />
@@ -285,6 +286,7 @@
     <ClInclude Include="GaussianParticleGenerator.h" />
     <ClInclude Include="GravityForceGenerator.h" />
     <ClInclude Include="Particle.h" />
+    <ClInclude Include="ParticleBungeeForceGenerator.h" />
     <ClInclude Include="ParticleDragForceGenerator.h" />
     <ClInclude Include="ParticleForceRegistry.h" />
     <ClInclude Include="ParticleGenerator.h" />

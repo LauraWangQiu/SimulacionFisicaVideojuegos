@@ -25,6 +25,7 @@
     <ClCompile Include="ExplosionForceGenerator.cpp" />
     <ClCompile Include="SpringForceGenerator.cpp" />
     <ClCompile Include="BuoyancyForceGenerator.cpp" />
+    <ClCompile Include="ParticleBungeeForceGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -52,6 +53,7 @@
     <ClInclude Include="ExplosionForceGenerator.h" />
     <ClInclude Include="SpringForceGenerator.h" />
     <ClInclude Include="BuoyancyForceGenerator.h" />
+    <ClInclude Include="ParticleBungeeForceGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">
