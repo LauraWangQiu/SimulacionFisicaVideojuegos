@@ -157,8 +157,8 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Cube"
 	},
-	{ // SPRING
-		20.0f,
+	{ // SPRING_STATIC
+		1.0f,
 		0.0f,
 		Vector3(0.0f, 0.0f, 0.0f),
 		0.99f,
@@ -180,6 +180,18 @@ vector<particleInfo> ParticlesInfo = {
 		0,
 		Vector3(3.0f, 0.5f, 3.0f),
 		"Cube"
+	},
+	{ // SPRING_STATIC
+		1.0f,
+		0.0f,
+		Vector3(0.0f, 0.0f, 0.0f),
+		0.99f,
+		Vector4(1.0f, 0.0f, 0.8f, 1.0f),
+		0.0f,
+		0,
+		0,
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Sphere"
 	},
 	{ // SLINKY
 		20.0f,

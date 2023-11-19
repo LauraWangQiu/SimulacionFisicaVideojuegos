@@ -363,57 +363,9 @@ void ParticleSystem::addForces(Particle* p) {
 	}
 	if (springForceGenerator != nullptr && springForceGenerator->getActive()) {
 		switch (p->getParticleType()) {
-		case SPRING: particleForceRegistry.addRegistry(springForceGenerator, p); break;
+		case SPRING_STATIC: particleForceRegistry.addRegistry(springForceGenerator, p); break;
 		}
 	}
-
-	//// Se le añaden todas las fuerzas existentes a las particulas deseadas
-	//for (auto fg : listOfForceGenerators) {
-	//	if (fg->getActive()) {
-	//		if (dynamic_cast<GravityForceGenerator*>(fg) != nullptr) {
-	//			particleForceRegistry.addRegistry(fg, p);
-
-	//			//switch (p->getParticleType()) {
-	//			////case ...: particleForceRegistry.addRegistry(fg, p); break;
-	//			//}
-	//		}
-	//		else if (dynamic_cast<ParticleDragForceGenerator*>(fg) != nullptr) {
-	//			particleForceRegistry.addRegistry(fg, p);
-
-	//			//switch (p->getParticleType()) {
-	//			////case ...: particleForceRegistry.addRegistry(fg, p); break;
-	//			//}
-	//		}
-	//		else if (dynamic_cast<WindForceGenerator*>(fg) != nullptr) {
-	//			particleForceRegistry.addRegistry(fg, p);
-
-	//			//switch (p->getParticleType()) {
-	//			////case ...: particleForceRegistry.addRegistry(fg, p); break;
-	//			//}
-	//		}
-	//		else if (dynamic_cast<WhirlWindForceGenerator*>(fg) != nullptr) {
-	//			particleForceRegistry.addRegistry(fg, p);
-
-	//			//switch (p->getParticleType()) {
-	//			////case ...: particleForceRegistry.addRegistry(fg, p); break;
-	//			//}
-	//		}
-	//		else if (dynamic_cast<ExplosionForceGenerator*>(fg) != nullptr) {
-	//			particleForceRegistry.addRegistry(fg, p);
-
-	//			//switch (p->getParticleType()) {
-	//			////case ...: particleForceRegistry.addRegistry(fg, p); break;
-	//			//}
-	//		}
-	//		else if (dynamic_cast<SpringForceGenerator*>(fg) != nullptr) {
-
-	//			switch (p->getParticleType()) {
-	//			//case ...: particleForceRegistry.addRegistry(fg, p); break;
-	//			case SPRING: particleForceRegistry.addRegistry(fg, p); break;
-	//			}
-	//		}
-	//	}
-	//}
 }
 
 void ParticleSystem::removeForceGenerator(ForceGenerator* fg) {
@@ -491,18 +443,19 @@ void ParticleSystem::generateExplosionsForce() {
 // MUELLES
 void ParticleSystem::generateSpringForce() {
 	if (springModel == nullptr) {
-		springModel = new Particle(SPRING_BASE, origin, Vector3(0.0f, 0.0f, 0.0f));
-		Particle* other = new Particle(SPRING, origin, Vector3(0.0f, 0.0f, 0.0f), true, true);
+		springModel = new Particle(SPRING_BASE, PxTransform(Vector3(-10.0f, 20.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f));
+		Particle* other = new Particle(SPRING_STATIC, PxTransform(Vector3(-10.0f, 20.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
+		other->setMass(1.0f);
 		addParticle(other);
-		springForceGenerator = new SpringForceGenerator(100.0f, 10.0f, springModel, "SpringForce", SPRING_FORCE_STATIC_DURATION);
+		springForceGenerator = new SpringForceGenerator(1.0f, 10.0f, springModel, "SpringForce", SPRING_FORCE_STATIC_DURATION);
 		addForceGenerator(springForceGenerator);
 		addGeneratorName(springForceGenerator->getName());
 	}
 }
 
 void ParticleSystem::generateSpringDemo() {
-	Particle* p1 = new Particle(SPRING, PxTransform(Vector3(-10.0f, 10.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
-	Particle* p2 = new Particle(SPRING, PxTransform(Vector3(10.0f, 10.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
+	Particle* p1 = new Particle(SPRING_DYNAMIC, PxTransform(Vector3(-10.0f, 10.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
+	Particle* p2 = new Particle(SPRING_DYNAMIC, PxTransform(Vector3(10.0f, 10.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
 	p1->setMass(1.0f);
 	p2->setMass(2.0f);
 	springForceGeneratorPair1 = new SpringForceGenerator(1, 10, p2, "SpringForcePair1", SPRING_FORCE_DYNAMIC_DURATION);
