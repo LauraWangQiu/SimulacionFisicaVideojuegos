@@ -114,13 +114,15 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case '.': particleSys->activateWhirlWindSystem(); break;
 
 	// GENERADORES DE FUERZAS
-	case 'T': particleSys->switchGravityForce(); break;
-	case 'Y': particleSys->activateDragForce(); break;
-	case 'U': particleSys->activateWindForce(); break;
-	case 'I': particleSys->activateWhirlWindsForce(); break;
-	case 'O': particleSys->activateExplosionsForce(); break;
+	case 'R': particleSys->switchGravityForce(); break;
+	case 'T': particleSys->activateDragForce(); break;
+	case 'Y': particleSys->activateWindForce(); break;
+	case 'U': particleSys->activateWhirlWindsForce(); break;
+	case 'I': particleSys->activateExplosionsForce(); break;
 	// MUELLES
-	case 'P': particleSys->activateSpringForce(); break;
+	case 'O': particleSys->activateSpringForce(); break;
+	// FLOTACIÓN
+	case 'P': particleSys->activateBuoyancyForce(); break;
 
 	// PARTICULAS UNICAS
 	//case '0': particleSys->addParticle(BASIC, camera, GetCamera()->getDir()); break;

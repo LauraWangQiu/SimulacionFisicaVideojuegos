@@ -16,6 +16,8 @@
 #include "ExplosionForceGenerator.h"
 // MUELLES
 #include "SpringForceGenerator.h"
+// FLOTACIÓN
+#include "BuoyancyForceGenerator.h"
 using namespace std;
 using namespace physx;
 
@@ -70,6 +72,8 @@ protected:
 	ForceGenerator* springForceGenerator54 = nullptr;
 	ForceGenerator* springForceGenerator56 = nullptr;
 	ForceGenerator* springForceGenerator65 = nullptr;
+	// FLOTACIÓN
+	ForceGenerator* buoyancyForceGenerator = nullptr; Particle* liquidModel = nullptr;
 
 public:
 	ParticleSystem(const Vector3& g = { 0.0f, -9.8f, 0.0f});
@@ -193,4 +197,7 @@ public:
 	inline void activateSpringForce() { springForceGenerator->setActive(!springForceGenerator->getActive()); }
 	void generateSpringDemo();
 	void generateSpringSlinky();
+	// FLOTACION
+	void generateBuoyancyForce();
+	inline void activateBuoyancyForce() { buoyancyForceGenerator->setActive(!buoyancyForceGenerator->getActive()); }
 };

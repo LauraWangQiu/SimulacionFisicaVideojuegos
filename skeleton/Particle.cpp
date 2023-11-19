@@ -205,6 +205,30 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Sphere"
 	},
+	{ // IMMERSE
+		3.0f,
+		0.0f,
+		Vector3(0.0f, 0.0f, 0.0f),
+		0.99f,
+		Vector4(1.0f, 1.0f, 0.0f, 1.0f),
+		0.0f,
+		0,
+		0,
+		Vector3(3.0f, 5.0f, 3.0f),
+		"Cube"
+	},
+	{ // WATER_PLANE
+		1350.0f,
+		0.0f,
+		Vector3(0.0f, 0.0f, 0.0f),
+		0.99f,
+		Vector4(0.0f, 0.8f, 1.0f, 1.0f),
+		0.0f,
+		0,
+		0,
+		Vector3(15.0f, 6.0f, 15.0f),
+		"Cube"
+	}
 };
 
 Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible, bool Active) : particleType(Type), 
