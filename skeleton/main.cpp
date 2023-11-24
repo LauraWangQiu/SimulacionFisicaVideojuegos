@@ -99,7 +99,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 
 	switch(toupper(key)) {
 	// Cambiar vista de la camara
-	case 'F': GetCamera()->setView(PxVec3(0.0f, 0.0f, 0.0f), PxVec3(0.0f, 0.0f, 1.0f)); break;
+	case 'F': GetCamera()->setView(PxVec3(0.0f, 0.0f, -100.0f), PxVec3(0.0f, 0.0f, 1.0f)); break;
 	case 'L': GetCamera()->setView(PxVec3(-100.0f, 0.0f, 0.0f), PxVec3(1.0f, 0.0f, 0.0f)); break;
 
 	// GENERADORES DE PARTICULAS
@@ -121,6 +121,8 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case 'I': particleSys->activateExplosionsForce(); break;
 	// MUELLES
 	case 'O': particleSys->activateSpringForce(); break;
+	case 'J': particleSys->increaseSpringForceK(); break;
+	case 'K': particleSys->decreaseSpringForceK(); break;
 	// FLOTACIÓN
 	case 'P': particleSys->activateBuoyancyForce(); break;
 
@@ -147,7 +149,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case '-': particleSys->addCircle(); break;
 	case '+': particleSys->addSphere(); break;
 
-	case ' ': break; // Para casos de prueba
+	case ' ': GetCamera()->setView(PxVec3(0.0f, 0.0f, 0.0f), PxVec3(0.0f, 0.0f, 1.0f)); break;
 	default: break;
 	}
 }

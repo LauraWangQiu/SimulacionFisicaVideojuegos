@@ -52,28 +52,24 @@ protected:
 	list<ForceGenerator*> listOfForceGenerators;
 	ParticleForceRegistry particleForceRegistry;
 
-	ForceGenerator* gravityForceGenerator = nullptr;
-	ForceGenerator* gravityForceGenerator2 = nullptr;
-	ForceGenerator* particleDragForceGenerator = nullptr;
-	ForceGenerator* windForceGenerator = nullptr;
-	ForceGenerator* whirlWindsForceGenerator = nullptr;
-	ForceGenerator* explosionsForceGenerator = nullptr; Vector3 explosionOrigin;
+	GravityForceGenerator* gravityForceGenerator = nullptr;
+	GravityForceGenerator* gravityForceGenerator2 = nullptr;
+	ParticleDragForceGenerator* particleDragForceGenerator = nullptr;
+	WindForceGenerator* windForceGenerator = nullptr;
+	WhirlWindForceGenerator* whirlWindsForceGenerator = nullptr;
+	ExplosionForceGenerator* explosionsForceGenerator = nullptr; Vector3 explosionOrigin;
 	// MUELLES
-	ForceGenerator* springForceGenerator = nullptr;	Particle* springModel = nullptr;
-	ForceGenerator* springForceGeneratorPair1 = nullptr;
-	ForceGenerator* springForceGeneratorPair2 = nullptr;
-	ForceGenerator* springForceGenerator12 = nullptr;
-	ForceGenerator* springForceGenerator21 = nullptr;
-	ForceGenerator* springForceGenerator23 = nullptr;
-	ForceGenerator* springForceGenerator32 = nullptr;
-	ForceGenerator* springForceGenerator34 = nullptr;
-	ForceGenerator* springForceGenerator43 = nullptr;
-	ForceGenerator* springForceGenerator45 = nullptr;
-	ForceGenerator* springForceGenerator54 = nullptr;
-	ForceGenerator* springForceGenerator56 = nullptr;
-	ForceGenerator* springForceGenerator65 = nullptr;
+	SpringForceGenerator* springForceGenerator = nullptr;	Particle* springModel = nullptr;
+	SpringForceGenerator* springForceGeneratorPair1 = nullptr;
+	SpringForceGenerator* springForceGeneratorPair2 = nullptr;
+	SpringForceGenerator* springForceGenerator1 = nullptr;
+	SpringForceGenerator* springForceGenerator2 = nullptr;
+	SpringForceGenerator* springForceGenerator3 = nullptr;
+	SpringForceGenerator* springForceGenerator4 = nullptr;
+	SpringForceGenerator* springForceGenerator5 = nullptr;
+	SpringForceGenerator* springForceGenerator6 = nullptr;
 	// FLOTACIÓN
-	ForceGenerator* buoyancyForceGenerator = nullptr; Particle* liquidModel = nullptr;
+	BuoyancyForceGenerator* buoyancyForceGenerator = nullptr; Particle* liquidModel = nullptr;
 
 public:
 	ParticleSystem(const Vector3& g = { 0.0f, -9.8f, 0.0f});
@@ -195,6 +191,8 @@ public:
 	// MUELLES
 	void generateSpringForce();
 	inline void activateSpringForce() { springForceGenerator->setActive(!springForceGenerator->getActive()); }
+	inline void increaseSpringForceK() { springForceGenerator->setK(springForceGenerator->getK() + 0.1f); }
+	inline void decreaseSpringForceK() { springForceGenerator->setK(springForceGenerator->getK() - 0.1f); }
 	void generateSpringDemo();
 	void generateSpringSlinky();
 	// FLOTACION

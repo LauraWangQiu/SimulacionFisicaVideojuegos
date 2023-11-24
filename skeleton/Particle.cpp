@@ -275,6 +275,15 @@ bool Particle::integrate(double t) {
 	// Actualizamos la aceleracion en funcion de la fuerza
 	Vector3 totalAcc = acc + force * getInverseMass();
 
+#pragma region EULER
+	//// Actualizamos la posicion de la particula
+	//transform.p += vel * t;
+
+	//// Actualizamos la posicion de la particula
+	//vel += totalAcc * t;
+#pragma endregion
+
+#pragma region EULER-SEMIIMPLICITO
 	// Actualizamos la velocidad de la particula
 	vel += totalAcc * t;
 
@@ -283,6 +292,7 @@ bool Particle::integrate(double t) {
 
 	// Actualizamos la posicion de la particula
 	transform.p += vel * t;
+#pragma endregion
 
 	// Le vamos restando tiempo de vida
 	time -= t;

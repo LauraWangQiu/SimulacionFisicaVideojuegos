@@ -439,18 +439,18 @@ void ParticleSystem::generateExplosionsForce() {
 // MUELLES
 void ParticleSystem::generateSpringForce() {
 	if (springModel == nullptr) {
-		springModel = new Particle(SPRING_BASE, PxTransform(Vector3(-10.0f, 20.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f));
-		Particle* other = new Particle(SPRING_STATIC, PxTransform(Vector3(-10.0f, 20.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
+		springModel = new Particle(SPRING_BASE, PxTransform(Vector3(-30.0f, 20.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f));
+		Particle* other = new Particle(SPRING_STATIC, PxTransform(Vector3(-30.0f, 20.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
 		other->setMass(1.0f);
 		addParticle(other);
-		springForceGenerator = new SpringForceGenerator(1.0f, 10.0f, springModel, "SpringForce", SPRING_FORCE_STATIC_DURATION);
+		springForceGenerator = new SpringForceGenerator(1.0f, 1.0f, springModel, "SpringForce", SPRING_FORCE_STATIC_DURATION);
 		addForceGenerator(springForceGenerator);
 	}
 }
 
 void ParticleSystem::generateSpringDemo() {
-	Particle* p1 = new Particle(SPRING_DYNAMIC, PxTransform(Vector3(-10.0f, 10.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
-	Particle* p2 = new Particle(SPRING_DYNAMIC, PxTransform(Vector3(-30.0f, 10.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
+	Particle* p1 = new Particle(SPRING_DYNAMIC, PxTransform(Vector3(10.0f, -20.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
+	Particle* p2 = new Particle(SPRING_DYNAMIC, PxTransform(Vector3(-10.0f, -20.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
 	p1->setMass(1.0f);
 	p2->setMass(2.0f);
 	springForceGeneratorPair1 = new SpringForceGenerator(1, 10, p2, "SpringForcePair1", SPRING_FORCE_DYNAMIC_DURATION);
@@ -482,36 +482,28 @@ void ParticleSystem::generateSpringSlinky() {
 	p4->setColor2(0.0f, 1.0f, 0.0f);
 	p5->setColor2(0.0f, 1.0f, 1.0f);
 	p6->setColor2(0.0f, 0.0f, 1.0f);
-	springForceGenerator12 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p2, "SpringForce12", SPRING_FORCE_SLINKY_DURATION);
-	springForceGenerator21 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p1, "SpringForce21", SPRING_FORCE_SLINKY_DURATION);
-	springForceGenerator23 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p3, "SpringForce23", SPRING_FORCE_SLINKY_DURATION);
-	springForceGenerator32 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p2, "SpringForce32", SPRING_FORCE_SLINKY_DURATION);
-	springForceGenerator34 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p4, "SpringForce34", SPRING_FORCE_SLINKY_DURATION);
-	springForceGenerator43 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p3, "SpringForce43", SPRING_FORCE_SLINKY_DURATION);
-	springForceGenerator45 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p5, "SpringForce45", SPRING_FORCE_SLINKY_DURATION);
-	springForceGenerator54 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p4, "SpringForce54", SPRING_FORCE_SLINKY_DURATION);
-	springForceGenerator56 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p6, "SpringForce56", SPRING_FORCE_SLINKY_DURATION);
-	springForceGenerator65 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p5, "SpringForce65", SPRING_FORCE_SLINKY_DURATION);
-	addForceGenerator(springForceGenerator12);
-	addForceGenerator(springForceGenerator21);
-	addForceGenerator(springForceGenerator23);
-	addForceGenerator(springForceGenerator32);
-	addForceGenerator(springForceGenerator34);
-	addForceGenerator(springForceGenerator43);
-	addForceGenerator(springForceGenerator45);
-	addForceGenerator(springForceGenerator54);
-	addForceGenerator(springForceGenerator56);
-	addForceGenerator(springForceGenerator65);
-	particleForceRegistry.addRegistry(springForceGenerator12, p1);
-	particleForceRegistry.addRegistry(springForceGenerator21, p2);
-	particleForceRegistry.addRegistry(springForceGenerator23, p2);
-	particleForceRegistry.addRegistry(springForceGenerator32, p3);
-	particleForceRegistry.addRegistry(springForceGenerator34, p3);
-	particleForceRegistry.addRegistry(springForceGenerator43, p4);
-	particleForceRegistry.addRegistry(springForceGenerator45, p4);
-	particleForceRegistry.addRegistry(springForceGenerator54, p5);
-	particleForceRegistry.addRegistry(springForceGenerator56, p5);
-	particleForceRegistry.addRegistry(springForceGenerator65, p6);
+	springForceGenerator1 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p1, "SpringForce1", SPRING_FORCE_SLINKY_DURATION);
+	springForceGenerator2 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p2, "SpringForce2", SPRING_FORCE_SLINKY_DURATION);
+	springForceGenerator3 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p3, "SpringForce3", SPRING_FORCE_SLINKY_DURATION);
+	springForceGenerator4 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p4, "SpringForce4", SPRING_FORCE_SLINKY_DURATION);
+	springForceGenerator5 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p5, "SpringForce5", SPRING_FORCE_SLINKY_DURATION);
+	springForceGenerator6 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p6, "SpringForce6", SPRING_FORCE_SLINKY_DURATION);
+	addForceGenerator(springForceGenerator1);
+	addForceGenerator(springForceGenerator2);
+	addForceGenerator(springForceGenerator3);
+	addForceGenerator(springForceGenerator4);
+	addForceGenerator(springForceGenerator5);
+	addForceGenerator(springForceGenerator6);
+	particleForceRegistry.addRegistry(springForceGenerator2, p1);
+	particleForceRegistry.addRegistry(springForceGenerator1, p2);
+	particleForceRegistry.addRegistry(springForceGenerator3, p2);
+	particleForceRegistry.addRegistry(springForceGenerator2, p3);
+	particleForceRegistry.addRegistry(springForceGenerator4, p3);
+	particleForceRegistry.addRegistry(springForceGenerator3, p4);
+	particleForceRegistry.addRegistry(springForceGenerator5, p4);
+	particleForceRegistry.addRegistry(springForceGenerator4, p5);
+	particleForceRegistry.addRegistry(springForceGenerator6, p5);
+	particleForceRegistry.addRegistry(springForceGenerator5, p6);
 	addParticle(p1);
 	addParticle(p2);
 	addParticle(p3);
