@@ -94,6 +94,18 @@ ParticleSystem::~ParticleSystem() {
 	windForceGenerator = nullptr;
 	whirlWindsForceGenerator = nullptr;
 	explosionsForceGenerator = nullptr;
+
+	springForceGenerator = nullptr;	springModel = nullptr;
+	springForceGeneratorPair1 = nullptr;
+	springForceGeneratorPair2 = nullptr;
+	springForceGenerator1 = nullptr;
+	springForceGenerator2 = nullptr;
+	springForceGenerator3 = nullptr;
+	springForceGenerator4 = nullptr;
+	springForceGenerator5 = nullptr;
+	springForceGenerator6 = nullptr;
+
+	buoyancyForceGenerator = nullptr; liquidModel = nullptr;
 }
 
 void ParticleSystem::update(double t) {
