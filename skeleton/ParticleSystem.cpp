@@ -59,12 +59,12 @@ ParticleSystem::ParticleSystem(const Vector3& g) : gravity(g), numMaxParticles(M
 	generateWindForce();
 	generateWhirlWindsForce();
 	generateExplosionsForce();
-	//// MUELLES
-	//generateSpringForce();
-	//generateSpringDemo();
-	//generateSpringSlinky();
-	//// FLOTACIÓN
-	//generateBuoyancyForce();
+	// MUELLES
+	generateSpringForce();
+	generateSpringDemo();
+	generateSpringSlinky();
+	// FLOTACIÓN
+	generateBuoyancyForce();
 }
 
 ParticleSystem::~ParticleSystem() {
