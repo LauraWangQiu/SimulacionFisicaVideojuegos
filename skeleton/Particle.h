@@ -10,6 +10,7 @@ enum ParticleType {
 	BASIC, FIREWORK, FIREWORK2, FIREWORK3, FIRE, WATER, STEAM,
 	CANNON_BALL, TANK_BALL, GUN_BULLET, LASER,
 	WIND, EXPLOSION, SPRING_STATIC, SPRING_BASE, SPRING_DYNAMIC, SLINKY, IMMERSE, WATER_PLANE,
+	RANDOM,
 	NONE
 };
 
@@ -85,8 +86,13 @@ public:
 	Particle(ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), bool Visible = true, bool Active = false);
 	Particle(PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), float Mass = 1.0f, float Velc = 10.0f,
 		Vector3 Acc = Vector3(0.0f, 0.0f, 0.0f), float Damping = 0.99f, Vector3 Size = Vector3(1.0f, 1.0f, 1.0f),
-		float Time = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f), int NumDivisions = 0, int NumExplodes = 0, bool Visible = true, bool Active = false);
+		float Time = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f), string ShapeName = "Sphere",
+		int NumDivisions = 0, int NumExplodes = 0, float Density = 1000.0f, bool Visible = true, bool Active = false);
 	Particle(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), bool Visible = true, bool Active = false);
+	Particle(PxPhysics* GPhysics, PxScene* GScene, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), float Mass = 1.0f, float Velc = 10.0f,
+		Vector3 Acc = Vector3(0.0f, 0.0f, 0.0f), float Damping = 0.99f, Vector3 Size = Vector3(1.0f, 1.0f, 1.0f),
+		float Time = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f), string ShapeName = "Sphere",
+		int NumDivisions = 0, int NumExplodes = 0, float Density = 1000.0f, bool Visible = true, bool Active = false);
 
 	virtual ~Particle();
 
@@ -111,6 +117,7 @@ protected:
 	Vector3 initialForce, force;
 	bool toDelete; int refCount;
 
+	float density;
 	PxPhysics*	gPhysics	= nullptr;
 	PxScene*	gScene		= nullptr;
 	PxRigidDynamic* rigid	= nullptr;
@@ -157,10 +164,12 @@ public:
 	inline PxShape* getShape(string name, Vector3 size) const {
 		if (name == "Sphere") return CreateShape(PxSphereGeometry(size.x));
 		else if (name == "Cube") return CreateShape(PxBoxGeometry(size));
+		else if (name == "Capsule") return CreateShape(PxCapsuleGeometry(size.x, size.y));
 		else return CreateShape(PxSphereGeometry(size.x));
 	}
 	inline bool getDelete() const { return toDelete; }
 	inline int getRefCount() const { return refCount; }
+	inline float getDensity() const { return density; }
 	inline bool isRigid() const { return rigid != nullptr; }
 	inline PxRigidDynamic* getRigid() const { return rigid; }
 
@@ -192,10 +201,19 @@ public:
 	inline void setDamping(float Damp) { damping = Damp; }
 	inline void setSize(Vector3 Size) { size = Size; }
 	inline void setSize(float X, float Y, float Z) { size = Vector3(X, Y, Z); }
+	inline void setRandomSize() {
+		setSize(generateRandomValue(1, MAX_SIZE), generateRandomValue(1, MAX_SIZE), generateRandomValue(1, MAX_SIZE));
+	}
 	inline void setColor(Vector4 Color) { color = Color; }
 	inline void setColor(float R, float G, float B, float A = 1.0f) { color = Vector4(R, G, B, A); }
-	inline void setColor2(Vector4 Color) { renderItem->color = Color; }
-	inline void setColor2(float R, float G, float B, float A = 1.0f) { renderItem->color = Vector4(R, G, B, A); }
+	inline void setColor2(Vector4 Color) { if (renderItem != nullptr) renderItem->color = Color; }
+	inline void setColor2(float R, float G, float B, float A = 1.0f) { if (renderItem != nullptr) renderItem->color = Vector4(R, G, B, A); }
+	inline void setRandomColor() {
+		float R = static_cast<float>(rand()) / RAND_MAX; // Componente Rojo
+		float G = static_cast<float>(rand()) / RAND_MAX; // Componente Verde
+		float B = static_cast<float>(rand()) / RAND_MAX; // Componente Azul
+		setColor(R, G, B);
+	}
 	inline void setTime(float Time) { time = Time; }
 	inline void increaseTime(float Time) { time += Time; }
 	inline void setNumDivisions(int Num) { numDivisions = Num; }
@@ -216,9 +234,31 @@ public:
 	inline void setForce(Vector3 Force) { force = Force; }
 	inline void setForce(float X, float Y, float Z) { force = Vector3(X, Y, Z); }
 	inline void setShapeName(string name) { shapeName = name; }
+	inline void setRandomShapeName() {
+
+		int g = rand() % 3;
+		switch (g) {
+		case 0: setShapeName("Cube"); break;
+		case 1: setShapeName("Sphere"); break;
+		case 2: setShapeName("Capsule"); break;
+		default: setShapeName("Cube"); break;
+		}
+	}
 	inline void setShape(PxShape* g) { shape = g; }
 	inline void setDelete(bool toDelete) { this->toDelete = toDelete; }
 	virtual void release();
 	inline void increaseRefCount() { ++refCount; }
 	inline void decreaseRefCount() { --refCount; }
+	inline void setDensity(float Density) { density = Density; }
+	inline void setRandomDensity() { setDensity(generateRandomValue(1, 1000)); }
+
+	inline double generateRandomValue(int min, int max) { return min + (rand() % (max - min + 1)); }
+	inline double generateRandomValueWithPrecision(int precision = 2) { return (double)(rand() % (int)pow(10, precision)) / pow(10, precision); }
+
+	inline void setRandom() {
+		setRandomSize();
+		setRandomDensity();
+		setRandomShapeName();
+		setRandomColor();
+	}
 };

@@ -12,6 +12,11 @@ ParticleGenerator::~ParticleGenerator() {
 	delete model;
 }
 
+void ParticleGenerator::randomize() {
+
+	if (model->getParticleType() == RANDOM) model->setRandom();
+}
+
 void ParticleGenerator::setParticleColor(Particle* p) {
 	switch (model->getParticleType()) {
 	case FIREWORK:

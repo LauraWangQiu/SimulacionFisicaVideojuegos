@@ -12,3 +12,4 @@
 #define NUM_PARTICLES_SPHERE 500
 #define RADIUS_SPHERE 50.0f
 #define SPHERE_INTERVAL 3.0f
+#define MAX_SIZE 5.0f

@@ -30,6 +30,8 @@ public:
 	virtual list<Particle*> generateParticles() = 0;
 	virtual list<Particle*> generateParticles(Particle* deadP) = 0;
 
+	void randomize();
+
 	// Getters
 	inline string getName() const { return name; }
 	inline Vector3 getMeanPos() const { return meanPos; }

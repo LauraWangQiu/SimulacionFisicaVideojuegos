@@ -98,7 +98,8 @@ void keyPress(unsigned char key, const PxTransform& camera)
 
 	switch(toupper(key)) {
 	// Cambiar vista de la camara
-	case 'F': GetCamera()->setView(PxVec3(0.0f, 0.0f, -100.0f), PxVec3(0.0f, 0.0f, 1.0f)); break;
+	case 'F': GetCamera()->setView(PxVec3(0.0f, 200.0f, -100.0f), PxVec3(0.0f, -1.0f, 1.0f)); break;
+	//case 'F': GetCamera()->setView(PxVec3(0.0f, 0.0f, -100.0f), PxVec3(0.0f, 0.0f, 1.0f)); break;
 	case 'L': GetCamera()->setView(PxVec3(-100.0f, 0.0f, 0.0f), PxVec3(1.0f, 0.0f, 0.0f)); break;
 
 	// GENERADORES DE PARTICULAS
@@ -151,7 +152,8 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case '-': particleSys->addCircle(); break;
 	case '+': particleSys->addSphere(); break;
 
-	case ' ': GetCamera()->setView(PxVec3(0.0f, 200.0f, -100.0f), PxVec3(0.0f, -1.0f, 1.0f)); break;
+	//case ' ': particleSys->addParticle(gPhysics, gScene, LASER, PxTransform(camera.p - Vector3(0, 10, 0)), GetCamera()->getDir() + Vector3(0, 0, 10)); break;
+	case ' ': particleSys->addParticle(gPhysics, gScene, RANDOM, PxTransform(camera.p - Vector3(0, 10, 0)), GetCamera()->getDir() + Vector3(0, 0, 10)); break;
 	default: break;
 	}
 }

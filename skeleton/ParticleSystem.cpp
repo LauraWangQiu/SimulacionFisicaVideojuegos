@@ -1,10 +1,10 @@
 #include "ParticleSystem.h"
 
 #define ORIGIN
-//#define ADD_CIRCLES
-//#define ADD_SPHERES
 
 // GENERADORES DE PARTICULAS
+//#define ADD_CIRCLES
+//#define ADD_SPHERES
 #define FIREWORK_MODEL_VISIBLE false
 #define FIRE_MODEL_VISIBLE false
 #define WATERFALL_MODEL_VISIBLE false
@@ -12,6 +12,20 @@
 #define SQUIRT_MODEL_VISIBLE false
 #define WIND_MODEL_VISIBLE false
 #define WHIRL_WIND_MODEL_VISIBLE false
+#define RANDOM_MODEL_VISIBLE false
+
+// SOLIDOS RIGIDOS
+#define CREATE_RIGID_BODIES_SCENE
+#define ADD_CIRCLE_RIGIDBODY true
+#define ADD_SPHERE_RIGIDBODY true
+#define FIREWORK_GEN_RIGIDBODY true
+#define FIRE_GEN_RIGIDBODY true
+#define WATERFALL_GEN_RIGIDBODY true
+#define STEAM_GEN_RIGIDBODY true
+#define SQUIRT_GEN_RIGIDBODY true
+#define WIND_GEN_RIGIDBODY true
+#define WHIRL_WIND_GEN_RIGIDBODY true
+#define RANDOM_GEN_RIGIDBODY true
 
 // GENERADORES DE FUERZAS
 #define GRAVITY_FORCE1 Vector3(0.0f, -9.8f /*-1.5f*/, 0.0f)
@@ -37,18 +51,6 @@
 // FLOTACIÓN
 #define BUOYANCY_FORCE_DURATION 0.0f
 
-// SOLIDOS RIGIDOS
-#define CREATE_RIGID_BODIES_SCENE
-#define ADD_CIRCLE_RIGIDBODY true
-#define ADD_SPHERE_RIGIDBODY true
-#define FIREWORK_GEN_RIGIDBODY true
-#define FIRE_GEN_RIGIDBODY true
-#define WATERFALL_GEN_RIGIDBODY true
-#define STEAM_GEN_RIGIDBODY true
-#define SQUIRT_GEN_RIGIDBODY true
-#define WIND_GEN_RIGIDBODY true
-#define WHIRL_WIND_GEN_RIGIDBODY true
-
 ParticleSystem::ParticleSystem(PxPhysics* gPhysics, PxScene* gScene, const Vector3& g) : gravity(g), 
 	numParticles(0),
 	origin(PxTransform(Vector3(0.0f, 0.0f, 0.0f))),
@@ -66,6 +68,7 @@ ParticleSystem::ParticleSystem(PxPhysics* gPhysics, PxScene* gScene, const Vecto
 	generateSquirtSystem();
 	generateWindSystem();
 	generateWhirlWindSystem();
+	generateRandomSystem();
 
 	// GENERADORES DE FUERZAS
 	generateGravityForce();
@@ -315,8 +318,10 @@ void ParticleSystem::addParticle(ParticleType Type, PxTransform Transform, Vecto
 }
 
 void ParticleSystem::addParticle(PxTransform Transform, Vector3 Dir, float Mass, float Velc, Vector3 Acc, float Damping, Vector3 Size,
-	float Time, Vector4 Color, int NumDivisions) {
-	Particle* p = new Particle(Transform, Dir, Mass, Velc, Acc, Damping, Size, Time, Color, NumDivisions);
+	float Time, Vector4 Color, string ShapeName, int NumDivisions, int NumExplodes) {
+	Particle* p = new Particle(Transform, Dir, Mass, Velc, Acc, Damping, Size, Time, Color, ShapeName, NumDivisions, NumExplodes);
+
+	p->setRandom();
 	addParticle(p);
 }
 
@@ -386,7 +391,7 @@ void ParticleSystem::generateSteamSystem() {
 		if (!STEAM_GEN_RIGIDBODY) steamModel = new Particle(STEAM, origin, Vector3(0.0f, 1.0f, 0.0f), STEAM_MODEL_VISIBLE);
 		else steamModel = new Particle(gPhysics, gScene, STEAM, origin, Vector3(0.0f, 1.0f, 0.0f), STEAM_MODEL_VISIBLE);
 
-		steamGenerator = new GaussianParticleGenerator("Steam", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 100,
+		steamGenerator = new GaussianParticleGenerator("Steam", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.1, 1,
 			steamModel, Vector3(10.0f, 10.0f, 10.0f), Vector3(0.0f, 0.0f, 0.0f));
 		addParticleGenerator(steamGenerator);
 	}
@@ -422,6 +427,17 @@ void ParticleSystem::generateWhirlWindSystem() {
 		whirlWindGenerator = new GaussianParticleGenerator("WhirlWind", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 1,
 			whirlWindModel, Vector3(1.0f, 1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f));
 		addParticleGenerator(whirlWindGenerator);
+	}
+}
+
+void ParticleSystem::generateRandomSystem() {
+	if (randomGenerator == nullptr) {
+		if (!RANDOM_GEN_RIGIDBODY) randomModel = new Particle(RANDOM, origin, Vector3(0.0f, 1.0f, 0.0f), RANDOM_MODEL_VISIBLE);
+		else randomModel = new Particle(gPhysics, gScene, RANDOM, origin, Vector3(0.0f, 1.0f, 0.0f), RANDOM_MODEL_VISIBLE);
+
+		randomGenerator = new GaussianParticleGenerator("Random", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.1, 1,
+			randomModel, Vector3(1.0f, 1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f), true);
+		addParticleGenerator(randomGenerator);
 	}
 }
 #pragma endregion

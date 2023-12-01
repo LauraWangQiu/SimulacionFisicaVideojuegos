@@ -14,7 +14,10 @@ list<Particle*> GaussianParticleGenerator::generateParticles() {
 		int num = min(numParticles, MAX_PARTICLES - actualNumParticles);
 
 		for (int i = 0; i < num; ++i) {
-			if (generateRandomValue() <= generationProbability) {
+			if (generateRandomValue() < generationProbability) {
+
+				randomize();
+
 				auto* p = model->clone();
 
 				Vector3 pos, vel;
