@@ -1,6 +1,6 @@
 #include "GaussianParticleGenerator.h"
 
-GaussianParticleGenerator::GaussianParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanVel, double GenerationProbability, int NumParticles, Particle* Model, 
+GaussianParticleGenerator::GaussianParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanVel, double GenerationProbability, int NumParticles, Particle* Model,
 	Vector3 StdDevPos, Vector3 StdDevVel, bool Active) : ParticleGenerator(Name, MeanPos, MeanVel, GenerationProbability, NumParticles, Model, Active),
 	stdDevPos(StdDevPos), stdDevVel(StdDevVel) {}
 
@@ -11,7 +11,9 @@ list<Particle*> GaussianParticleGenerator::generateParticles() {
 	list<Particle*> mGenerator;
 
 	if (active) {
-		for (int i = 0; i < numParticles; i++) {
+		int num = min(numParticles, MAX_PARTICLES - actualNumParticles);
+
+		for (int i = 0; i < num; ++i) {
 			if (generateRandomValue() <= generationProbability) {
 				auto* p = model->clone();
 				p->setPos(model->getPos() + Vector3(n(generator) * stdDevPos.x, n(generator) * stdDevPos.y, n(generator) * stdDevPos.z));
@@ -37,12 +39,14 @@ list<Particle*> GaussianParticleGenerator::generateParticles(Particle* deadP) {
 	list<Particle*> mGenerator;
 
 	if (deadP->getNumExplodes() > 0) {
-		for (int i = 0; i < model->getNumDivisions(); ++i) {
+		int num = min(model->getNumDivisions(), MAX_PARTICLES - actualNumParticles);
+
+		for (int i = 0; i < num; ++i) {
 			auto* p = model->clone();
 			p->setNumExplodes(deadP->getNumExplodes() - 1);
 
 			Vector3 pos, dir;
-			double angle = 2.0 * M_PI * (i + 1) / model->getNumDivisions();
+			double angle = 2.0 * M_PI * (i + 1) / num;
 
 			switch (model->getParticleType()) {
 			case FIREWORK:
@@ -69,6 +73,6 @@ list<Particle*> GaussianParticleGenerator::generateParticles(Particle* deadP) {
 			mGenerator.push_back(p);
 		}
 	}
-	
+
 	return mGenerator;
 }

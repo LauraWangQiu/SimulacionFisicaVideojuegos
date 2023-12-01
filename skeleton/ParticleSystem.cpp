@@ -1,6 +1,6 @@
 #include "ParticleSystem.h"
 
-#define GIZMO
+#define ORIGIN
 //#define ADD_CIRCLES
 //#define ADD_SPHERES
 
@@ -39,9 +39,9 @@
 ParticleSystem::ParticleSystem(const Vector3& g) : gravity(g), numMaxParticles(MAX_PARTICLES), numParticles(0), 
 	origin(PxTransform(Vector3(0.0f, 0.0f, 0.0f))) {
 
-	#ifdef GIZMO
-		addOrigin();
-	#endif // GIZMO
+#ifdef ORIGIN
+	addOrigin();
+#endif // ORIGIN
 
 	// GENERADORES DE PARTICULAS
 	generateFireworkSystem();
@@ -59,12 +59,12 @@ ParticleSystem::ParticleSystem(const Vector3& g) : gravity(g), numMaxParticles(M
 	generateWindForce();
 	generateWhirlWindsForce();
 	generateExplosionsForce();
-	// MUELLES
-	generateSpringForce();
-	generateSpringDemo();
-	generateSpringSlinky();
-	// FLOTACIÓN
-	generateBuoyancyForce();
+	//// MUELLES
+	//generateSpringForce();
+	//generateSpringDemo();
+	//generateSpringSlinky();
+	//// FLOTACIÓN
+	//generateBuoyancyForce();
 }
 
 ParticleSystem::~ParticleSystem() {
@@ -95,7 +95,8 @@ ParticleSystem::~ParticleSystem() {
 	whirlWindsForceGenerator = nullptr;
 	explosionsForceGenerator = nullptr;
 
-	springForceGenerator = nullptr;	springModel = nullptr;
+	springForceGenerator = nullptr;
+	springModel = nullptr;
 	springForceGeneratorPair1 = nullptr;
 	springForceGeneratorPair2 = nullptr;
 	springForceGenerator1 = nullptr;
@@ -105,7 +106,8 @@ ParticleSystem::~ParticleSystem() {
 	springForceGenerator5 = nullptr;
 	springForceGenerator6 = nullptr;
 
-	buoyancyForceGenerator = nullptr; liquidModel = nullptr;
+	buoyancyForceGenerator = nullptr;
+	liquidModel = nullptr;
 }
 
 void ParticleSystem::update(double t) {
@@ -173,7 +175,7 @@ void ParticleSystem::update(double t) {
 void ParticleSystem::onParticleDeath(Particle* p) {
 	switch (p->getParticleType()) {
 	case FIREWORK: case FIREWORK2: case FIREWORK3:
-		addParticles(static_cast<Firework*>(p)->explode());
+		addParticles(static_cast<Firework*>(p)->explode(numParticles));
 		break;
 	}
 }
@@ -205,8 +207,10 @@ void ParticleSystem::addCircle(Vector3 center) {
 	center = explosionOrigin;
 #endif
 
-	for (int i = 0; i < NUM_PARTICLES_CIRCLE; ++i) {
-		float angle = 2.0f * M_PI * i / NUM_PARTICLES_CIRCLE;
+	int num = min(NUM_PARTICLES_CIRCLE, MAX_PARTICLES - numParticles);
+
+	for (int i = 0; i < num; ++i) {
+		float angle = 2.0f * M_PI * i / num;
 		float x = center.x + RADIUS_CIRCLE * cos(angle);
 		float y = center.y + RADIUS_CIRCLE * sin(angle);
 		float z = center.z;
@@ -225,8 +229,10 @@ void ParticleSystem::addSphere(Vector3 center) {
 	center = explosionOrigin;
 #endif
 
-	for (int i = 0; i < NUM_PARTICLES_SPHERE; ++i) {
-		float latitud = ((float)rand() / RAND_MAX) * 180.0f - 90.0f;
+	int num = min(NUM_PARTICLES_SPHERE, MAX_PARTICLES - numParticles);
+
+	for (int i = 0; i < num; ++i) {
+		float latitud = ((float)rand() / RAND_MAX) * 360.0f;
 		float longitud = ((float)rand() / RAND_MAX) * 360.0f;
 
 		float latitudRad = latitud * M_PI / 180.0f;

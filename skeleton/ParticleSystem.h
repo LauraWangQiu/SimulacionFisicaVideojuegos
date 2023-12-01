@@ -83,7 +83,7 @@ public:
 	void addParticleGenerator(ParticleGenerator* pg);
 	void addForceGenerator(ForceGenerator* fg);
 
-	// GIZMO
+	// ORIGIN
 	void addOrigin();
 
 	// FIGURAS

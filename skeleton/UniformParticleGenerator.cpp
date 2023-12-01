@@ -10,7 +10,9 @@ list<Particle*> UniformParticleGenerator::generateParticles() {
 	list<Particle*> mGenerator;
 
 	if (active) {
-		for (int i = 0; i < numParticles; i++) {
+		int num = min(numParticles, MAX_PARTICLES - actualNumParticles);
+
+		for (int i = 0; i < num; ++i) {
 			if (generateRandomValue() <= generationProbability) {
 				auto* p = model->clone();
 				p->setPos(model->getPos() + Vector3(u(generator) * posWidth.x, u(generator) * posWidth.y, u(generator) * posWidth.z));
@@ -36,12 +38,14 @@ list<Particle*> UniformParticleGenerator::generateParticles(Particle* deadP) {
 	list<Particle*> mGenerator;
 
 	if (deadP->getNumExplodes() > 0) {
-		for (int i = 0; i < model->getNumDivisions(); ++i) {
+		int num = min(model->getNumDivisions(), MAX_PARTICLES - actualNumParticles);
+
+		for (int i = 0; i < num; ++i) {
 			auto* p = model->clone();
 			p->setNumExplodes(deadP->getNumExplodes() - 1);
 
 			Vector3 pos, dir;
-			double angle = 2.0 * M_PI * (i + 1) / model->getNumDivisions();
+			double angle = 2.0 * M_PI * (i + 1) / num;
 
 			int min = 1;
 			int max = 5;

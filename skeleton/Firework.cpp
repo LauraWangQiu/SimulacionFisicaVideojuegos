@@ -1,6 +1,7 @@
 #include "Firework.h"
 
-Firework::Firework(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Active) : type(Type), Particle(Type, Transform, Dir, Active) {}
+Firework::Firework(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Active) :
+	type(Type), Particle(Type, Transform, Dir, Active) {}
 
 Firework::~Firework() {
 	while (!gen.empty()) {
@@ -8,12 +9,13 @@ Firework::~Firework() {
 	}
 }
 
-list<Particle*> Firework::explode() {
+list<Particle*> Firework::explode(int numParticles) {
 	list<Particle*> list;
 
 	while (!gen.empty()) {
 		auto c = gen.front();
 		if (c != nullptr) {
+			c->updateActualNumParticles(numParticles);
 			auto l = c->generateParticles(this);
 			for (auto it = l.begin(); it != l.end(); ++it)
 				list.push_back(*it);
@@ -34,7 +36,8 @@ void Firework::removeGenerators() {
 }
 
 ParticleGenerator* Firework::getFirstGenerator() const {
-	return gen.front();
+	if (!gen.empty()) return gen.front();
+	else return nullptr;
 }
 
 Firework* Firework::clone() const {

@@ -176,9 +176,9 @@ public:
 	inline void decreaseNumExplodes() { --numExplodes; }
 	inline void increaseNumExplodes() { ++numExplodes; }
 	inline void reTransform(Vector3 newPos, Vector3 newDir) {
-		transform.p = newPos;
+		setPos(newPos);
 		dir = newDir;
-		vel = dir * ParticlesInfo[particleType].velc;
+		setVel(dir * ParticlesInfo[particleType].velc);
 	}
 	inline void setVisible(bool Visible) { visible = Visible; }
 	inline void setActive(bool Active) { active = Active; }

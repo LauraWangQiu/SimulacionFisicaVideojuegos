@@ -13,13 +13,13 @@ protected:
 	string name;
 	Vector3 meanPos, meanVel;
 	double generationProbability;
-	int numParticles;
+	int numParticles, actualNumParticles;
 	Particle* model;
 	bool active;
 
 	mt19937 rd;
 	default_random_engine generator;
-	uniform_real_distribution<double> u{ 0.0, 1.0};
+	uniform_real_distribution<double> u{ 0.0, 1.0 };
 	normal_distribution<double> n{ 0.0, 1.0 };
 
 	particlePalettes palettes;
@@ -46,9 +46,9 @@ public:
 	inline void setNumParticles(int NumParticles) { numParticles = NumParticles; }
 	inline void setModel(Particle* Model) { model = Model; }
 	inline void setActive(bool Active) { active = Active; }
-	
+	inline void updateActualNumParticles(int n) { actualNumParticles = n; }
+
 	void setParticleColor(Particle* p);
 
-	inline double generateRandomValue(int precision = 2) { return (double)(rand() % (int) pow(10, precision)) / pow(10, precision); }
+	inline double generateRandomValue(int precision = 2) { return (double)(rand() % (int)pow(10, precision)) / pow(10, precision); }
 };
-
