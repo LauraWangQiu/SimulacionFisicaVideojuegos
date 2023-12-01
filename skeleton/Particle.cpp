@@ -309,6 +309,8 @@ Particle::Particle(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTr
 
 		rigid = gPhysics->createRigidDynamic(transform);
 		rigid->setLinearVelocity(dir * velc);
+		//rigid->setAngularVelocity(Vector3());
+		//rigid->setMassSpaceInertiaTensor(Vector3());
 		rigid->setLinearDamping(ParticlesInfo[particleType].damp);
 		PxShape* shape = getShape(ParticlesInfo[particleType].geometryType, ParticlesInfo[particleType].size);
 		rigid->attachShape(*shape);
@@ -344,6 +346,8 @@ Particle::Particle(PxPhysics* GPhysics, PxScene* GScene, PxTransform Transform, 
 
 		rigid = gPhysics->createRigidDynamic(transform);
 		rigid->setLinearVelocity(dir * velc);
+		//rigid->setAngularVelocity(Vector3());
+		//rigid->setMassSpaceInertiaTensor(Vector3());
 		rigid->setLinearDamping(damping);
 		PxShape* shape = getShape(shapeName, size);
 		rigid->attachShape(*shape);

@@ -44,6 +44,10 @@ void initPhysics(bool interactive)
 	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(),true,gPvd);
 
 	gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+	/*gMaterial = gPhysics->createMaterial(0.0f, 0.0f, 0.0f);
+	gMaterial = gPhysics->createMaterial(1.0f, 0.0f, 0.0f);
+	gMaterial = gPhysics->createMaterial(0.0f, 1.0f, 0.0f);
+	gMaterial = gPhysics->createMaterial(0.0f, 0.0f, 1.0f);*/
 
 	// For Solid Rigids +++++++++++++++++++++++++++++++++++++
 	PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
@@ -153,7 +157,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case '+': particleSys->addSphere(); break;
 
 	//case ' ': particleSys->addParticle(gPhysics, gScene, LASER, PxTransform(camera.p - Vector3(0, 10, 0)), GetCamera()->getDir() + Vector3(0, 0, 10)); break;
-	case ' ': particleSys->addParticle(gPhysics, gScene, RANDOM, PxTransform(camera.p - Vector3(0, 10, 0)), GetCamera()->getDir() + Vector3(0, 0, 10)); break;
+	case ' ': particleSys->addParticle(gPhysics, gScene, LASER, camera, GetCamera()->getDir()); break;
 	default: break;
 	}
 }
