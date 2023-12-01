@@ -30,7 +30,6 @@ ContactReportCallback gContactReportCallback;
 // ============
 std::unique_ptr<ParticleSystem> particleSys;
 
-
 // Initialize physics engine
 void initPhysics(bool interactive)
 {
@@ -56,7 +55,7 @@ void initPhysics(bool interactive)
 	gScene = gPhysics->createScene(sceneDesc);
 
 	// ============
-	particleSys = std::make_unique<ParticleSystem>(sceneDesc.gravity);
+	particleSys = std::make_unique<ParticleSystem>(gPhysics, gScene, sceneDesc.gravity);
 }
 
 
@@ -137,19 +136,22 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case '3': particleSys->addParticle(GUN_BULLET, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
 	//case '4': particleSys->addParticle(LASER, camera, GetCamera()->getDir()); break;
 	case '4': particleSys->addParticle(LASER, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
-	//case '5': particleSys->addFirework(FIREWORK, camera, GetCamera()->getDir()); break;
-	case '5': particleSys->addFirework(FIREWORK, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
-	//case '6': particleSys->addFirework(FIREWORK2, camera, GetCamera()->getDir()); break;
-	case '6': particleSys->addFirework(FIREWORK2, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
-	//case '7': particleSys->addFirework(FIREWORK3, camera, GetCamera()->getDir()); break;
-	case '7': particleSys->addFirework(FIREWORK3, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
+	//case '5': particleSys->addFirework(nullptr, nullptr, FIREWORK, camera, GetCamera()->getDir()); break;
+	case '5': particleSys->addFirework(nullptr, nullptr, FIREWORK, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
+	//case '5': particleSys->addFirework(gPhysics, gScene, FIREWORK, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
+	//case '6': particleSys->addFirework(nullptr, nullptr, FIREWORK2, camera, GetCamera()->getDir()); break;
+	case '6': particleSys->addFirework(nullptr, nullptr, FIREWORK2, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
+	//case '6': particleSys->addFirework(gPhysics, gScene, FIREWORK2, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
+	//case '7': particleSys->addFirework(nullptr, nullptr, FIREWORK3, camera, GetCamera()->getDir()); break;
+	case '7': particleSys->addFirework(nullptr, nullptr, FIREWORK3, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
+	//case '7': particleSys->addFirework(gPhysics, gScene, FIREWORK3, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
 	//case '8': particleSys->addParticle(WIND, camera, GetCamera()->getDir()); break;
 	case '8': particleSys->addParticle(WIND, PxTransform(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)); break;
 
 	case '-': particleSys->addCircle(); break;
 	case '+': particleSys->addSphere(); break;
 
-	case ' ': GetCamera()->setView(PxVec3(0.0f, 0.0f, 0.0f), PxVec3(0.0f, 0.0f, 1.0f)); break;
+	case ' ': GetCamera()->setView(PxVec3(0.0f, 200.0f, -100.0f), PxVec3(0.0f, -1.0f, 1.0f)); break;
 	default: break;
 	}
 }
@@ -163,6 +165,7 @@ void onCollision(physx::PxActor* actor1, physx::PxActor* actor2)
 
 int main(int, const char*const*)
 {
+
 #ifndef OFFLINE_EXECUTION 
 	extern void renderLoop();
 	renderLoop();

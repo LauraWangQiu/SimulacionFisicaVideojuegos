@@ -24,6 +24,7 @@ struct particleInfo {
 	int numExp;
 	Vector3 size;
 	string geometryType;
+	float density;
 };
 
 // Declaración del vector como extern en el archivo de encabezado
@@ -82,9 +83,10 @@ struct particlePalettes {
 class Particle {
 public:
 	Particle(ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), bool Visible = true, bool Active = false);
-	Particle(PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), float Mass = 1.0f, float Velc = 10.0f, 
+	Particle(PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), float Mass = 1.0f, float Velc = 10.0f,
 		Vector3 Acc = Vector3(0.0f, 0.0f, 0.0f), float Damping = 0.99f, Vector3 Size = Vector3(1.0f, 1.0f, 1.0f),
 		float Time = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f), int NumDivisions = 0, int NumExplodes = 0, bool Visible = true, bool Active = false);
+	Particle(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), bool Visible = true, bool Active = false);
 
 	virtual ~Particle();
 
@@ -109,13 +111,23 @@ protected:
 	Vector3 initialForce, force;
 	bool toDelete; int refCount;
 
+	PxPhysics*	gPhysics	= nullptr;
+	PxScene*	gScene		= nullptr;
+	PxRigidDynamic* rigid	= nullptr;
+
 	void changeColorWithTime();
 
 public:
 	// Getters
 	inline ParticleType getParticleType() const { return particleType; }
-	inline PxTransform getTransform() const { return transform; }
-	inline Vector3 getPos() const { return transform.p; }
+	inline PxTransform getTransform() const {
+		if (!isRigid()) return transform;
+		else return rigid->getGlobalPose();
+	}
+	inline Vector3 getPos() const {
+		if (!isRigid()) return transform.p;
+		else return rigid->getGlobalPose().p;
+	}
 	inline float getPosX() const { return getPos().x; }
 	inline float getPosY() const { return getPos().y; }
 	inline float getPosZ() const { return getPos().z; }
@@ -123,9 +135,15 @@ public:
 	inline float getInverseMass() const { return 1 / mass; }
 	inline float getVelc() const { return velc; }
 	inline Vector3 getDir() const { return dir; }
-	inline Vector3 getVel() const { return vel; }
+	inline Vector3 getVel() const {
+		if (!isRigid()) return vel;
+		else return rigid->getLinearVelocity();
+	}
 	inline Vector3 getAcc() const { return acc; }
-	inline float getDamping() const { return damping; }
+	inline float getDamping() const {
+		if (!isRigid()) return damping;
+		else return rigid->getLinearDamping();
+	}
 	inline Vector3 getSize() const { return size; }
 	inline Vector4 getColor() const { return color; }
 	inline float getTime() const { return time; }
@@ -143,21 +161,32 @@ public:
 	}
 	inline bool getDelete() const { return toDelete; }
 	inline int getRefCount() const { return refCount; }
+	inline bool isRigid() const { return rigid != nullptr; }
+	inline PxRigidDynamic* getRigid() const { return rigid; }
 
 	// Setters
 	inline void setParticleType(ParticleType Type) { particleType = Type; }
 	inline void setTransform(PxTransform Transform) { transform = Transform; }
-	inline void setPos(Vector3 Pos) { transform.p = Pos; }
-	inline void setPos(float X, float Y, float Z) { transform.p = Vector3(X, Y, Z); }
-	inline void setPosX(float X) { transform.p.x = X; }
-	inline void setPosY(float Y) { transform.p.y = Y; }
-	inline void setPosZ(float Z) { transform.p.z = Z; }
+	inline void setPos(Vector3 Pos) {
+		if (!isRigid()) transform.p = Pos;
+		else rigid->setGlobalPose(PxTransform(Pos));
+	}
+	inline void setPos(float X, float Y, float Z) {
+		if (!isRigid()) transform.p = Vector3(X, Y, Z);
+		else rigid->setGlobalPose(PxTransform(Vector3(X, Y, Z)));
+	}
+	inline void setPosX(float X) { setPos(X, getPosY(), getPosZ()); }
+	inline void setPosY(float Y) { setPos(getPosX(), Y, getPosZ()); }
+	inline void setPosZ(float Z) { setPos(getPosX(), getPosY(), Z); }
 	inline void setMass(float Mass) { mass = Mass; }
 	inline void setVelc(float VelC) { velc = VelC; }
 	inline void setDir(Vector3 Dir) { dir = Dir; }
 	inline void setDir(float X, float Y, float Z) { dir = Vector3(X, Y, Z); }
-	inline void setVel(Vector3 Vel) { vel = Vel; }
-	inline void setVel(float X, float Y, float Z) { vel = Vector3(X, Y, Z); }
+	inline void setVel(Vector3 Vel) {
+		if (!isRigid()) vel = Vel;
+		else rigid->setLinearVelocity(Vel);
+	}
+	inline void setVel(float X, float Y, float Z) { setVel(Vector3(X, Y, Z)); }
 	inline void setAcc(Vector3 Acc) { acc = Acc; }
 	inline void setAcc(float X, float Y, float Z) { acc = Vector3(X, Y, Z); }
 	inline void setDamping(float Damp) { damping = Damp; }
@@ -189,11 +218,7 @@ public:
 	inline void setShapeName(string name) { shapeName = name; }
 	inline void setShape(PxShape* g) { shape = g; }
 	inline void setDelete(bool toDelete) { this->toDelete = toDelete; }
-	inline void release() { 
-		if (--refCount == 0) {
-			delete this;
-		}
-	}
+	virtual void release();
 	inline void increaseRefCount() { ++refCount; }
 	inline void decreaseRefCount() { --refCount; }
 };

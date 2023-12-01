@@ -19,7 +19,7 @@ protected:
 
 	mt19937 rd;
 	default_random_engine generator;
-	uniform_real_distribution<double> u{ 0.0, 1.0 };
+	uniform_real_distribution<double> u{ 0.0, 1.0};
 	normal_distribution<double> n{ 0.0, 1.0 };
 
 	particlePalettes palettes;
@@ -50,5 +50,5 @@ public:
 
 	void setParticleColor(Particle* p);
 
-	inline double generateRandomValue(int precision = 2) { return (double)(rand() % (int)pow(10, precision)) / pow(10, precision); }
+	inline double generateRandomValue(int precision = 2) { return (double)(rand() % (int) pow(10, precision)) / pow(10, precision); }
 };

@@ -1,7 +1,11 @@
 #include "Firework.h"
 
-Firework::Firework(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Active) :
+Firework::Firework(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Active) : 
 	type(Type), Particle(Type, Transform, Dir, Active) {}
+
+Firework::Firework(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTransform Transform, Vector3 Dir, bool Active) : 
+	type(Type), Particle(GPhysics, GScene, Type, Transform, Dir, Active) {}
+
 
 Firework::~Firework() {
 	while (!gen.empty()) {
@@ -41,5 +45,6 @@ ParticleGenerator* Firework::getFirstGenerator() const {
 }
 
 Firework* Firework::clone() const {
-	return new Firework(type, transform, dir);
+	if (gPhysics == nullptr || gScene == nullptr) return new Firework(type, transform, dir);
+	else return new Firework(gPhysics, gScene, type, transform, dir);
 }

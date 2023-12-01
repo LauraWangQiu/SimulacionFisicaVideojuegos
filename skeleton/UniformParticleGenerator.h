@@ -14,7 +14,7 @@ protected:
 	Vector3 velWidth, posWidth;
 
 	uniform_real_distribution<double> u1{ -1.0, 1.0 };
-	uniform_real_distribution<double> u2{ -5.0, 5.0 };
+	uniform_real_distribution<double> u2{ -5.0, 5.0 };	
 
 public:
 	/// <summary> Generador de partículas uniformes </summary>

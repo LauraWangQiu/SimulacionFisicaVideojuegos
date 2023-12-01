@@ -15,8 +15,13 @@ list<Particle*> UniformParticleGenerator::generateParticles() {
 		for (int i = 0; i < num; ++i) {
 			if (generateRandomValue() <= generationProbability) {
 				auto* p = model->clone();
-				p->setPos(model->getPos() + Vector3(u(generator) * posWidth.x, u(generator) * posWidth.y, u(generator) * posWidth.z));
-				p->setVel(model->getVel() + Vector3(u(generator) * velWidth.x, u(generator) * velWidth.y, u(generator) * velWidth.z));
+
+				Vector3 pos, vel;
+				if (!model->isRigid()) { pos = model->getPos(); vel = model->getVel(); }
+				else { pos = meanPos; vel = meanVel; }
+
+				p->setPos(pos + Vector3(u(generator) * posWidth.x, u(generator) * posWidth.y, u(generator) * posWidth.z));
+				p->setVel(vel + Vector3(u(generator) * velWidth.x, u(generator) * velWidth.y, u(generator) * velWidth.z));
 
 				setParticleColor(p);
 
@@ -36,7 +41,7 @@ list<Particle*> UniformParticleGenerator::generateParticles() {
 
 list<Particle*> UniformParticleGenerator::generateParticles(Particle* deadP) {
 	list<Particle*> mGenerator;
-
+	
 	if (deadP->getNumExplodes() > 0) {
 		int num = min(model->getNumDivisions(), MAX_PARTICLES - actualNumParticles);
 

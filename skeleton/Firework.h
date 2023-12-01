@@ -13,6 +13,7 @@ protected:
 	
 public:
 	Firework(ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), bool Active = true);
+	Firework(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), bool Active = true);
 	virtual ~Firework();
 
 	list<Particle*> explode(int numParticles);

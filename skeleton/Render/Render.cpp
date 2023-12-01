@@ -261,7 +261,8 @@ void setupDefaultWindow(const char *name)
 void setupDefaultRenderState()
 {
 	// Setup default render states
-	glClearColor(0.3f, 0.4f, 0.5f, 1.0);
+	//glClearColor(0.3f, 0.4f, 0.5f, 1.0);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_COLOR_MATERIAL);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -287,9 +288,9 @@ void startRender(const PxVec3& cameraEye, const PxVec3& cameraDir, PxReal clipNe
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Display text
-	glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 	drawText(display_text, 0, 0);
-	glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 	drawText("Number of particles: " + num_particles, 5, glutGet(GLUT_WINDOW_HEIGHT) - 20);
 
 	// Setup camera

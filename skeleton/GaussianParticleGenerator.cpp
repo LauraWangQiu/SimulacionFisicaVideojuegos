@@ -1,6 +1,6 @@
 #include "GaussianParticleGenerator.h"
 
-GaussianParticleGenerator::GaussianParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanVel, double GenerationProbability, int NumParticles, Particle* Model,
+GaussianParticleGenerator::GaussianParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanVel, double GenerationProbability, int NumParticles, Particle* Model, 
 	Vector3 StdDevPos, Vector3 StdDevVel, bool Active) : ParticleGenerator(Name, MeanPos, MeanVel, GenerationProbability, NumParticles, Model, Active),
 	stdDevPos(StdDevPos), stdDevVel(StdDevVel) {}
 
@@ -16,8 +16,13 @@ list<Particle*> GaussianParticleGenerator::generateParticles() {
 		for (int i = 0; i < num; ++i) {
 			if (generateRandomValue() <= generationProbability) {
 				auto* p = model->clone();
-				p->setPos(model->getPos() + Vector3(n(generator) * stdDevPos.x, n(generator) * stdDevPos.y, n(generator) * stdDevPos.z));
-				p->setVel(model->getVel() + Vector3(n(generator) * stdDevVel.x, n(generator) * stdDevVel.y, n(generator) * stdDevVel.z));
+
+				Vector3 pos, vel;
+				if (!model->isRigid()) { pos = model->getPos(); vel = model->getVel(); } 
+				else { pos = meanPos; vel = meanVel; }
+
+				p->setPos(pos + Vector3(n(generator) * stdDevPos.x, n(generator) * stdDevPos.y, n(generator) * stdDevPos.z));
+				p->setVel(vel + Vector3(n(generator) * stdDevVel.x, n(generator) * stdDevVel.y, n(generator) * stdDevVel.z));
 
 				setParticleColor(p);
 
@@ -73,6 +78,6 @@ list<Particle*> GaussianParticleGenerator::generateParticles(Particle* deadP) {
 			mGenerator.push_back(p);
 		}
 	}
-
+	
 	return mGenerator;
 }
