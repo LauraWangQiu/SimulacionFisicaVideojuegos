@@ -308,6 +308,8 @@ Particle::Particle(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTr
 	if (gPhysics != nullptr & gScene != nullptr) {
 
 		rigid = gPhysics->createRigidDynamic(transform);
+		rigid->setName(getName(particleType));
+		rigid->userData = this;
 		rigid->setLinearVelocity(dir * velc);
 		//rigid->setAngularVelocity(Vector3());
 		//rigid->setMassSpaceInertiaTensor(Vector3());
@@ -345,6 +347,8 @@ Particle::Particle(PxPhysics* GPhysics, PxScene* GScene, PxTransform Transform, 
 	if (gPhysics != nullptr && gScene != nullptr) {
 
 		rigid = gPhysics->createRigidDynamic(transform);
+		rigid->setName(getName(particleType));
+		rigid->userData = this;
 		rigid->setLinearVelocity(dir * velc);
 		//rigid->setAngularVelocity(Vector3());
 		//rigid->setMassSpaceInertiaTensor(Vector3());

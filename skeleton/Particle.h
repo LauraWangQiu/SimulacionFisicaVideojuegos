@@ -110,8 +110,8 @@ protected:
 	particlePalettes palettes;
 	float mass, velc, damping, time;
 	string shapeName;
-	PxShape* shape;
-	RenderItem* renderItem;
+	PxShape* shape			= nullptr;
+	RenderItem* renderItem	= nullptr;
 	int numDivisions, numExplodes;
 	bool visible, active;
 	Vector3 initialForce, force;
@@ -190,19 +190,28 @@ public:
 	inline void setMass(float Mass) { mass = Mass; }
 	inline void setVelc(float VelC) { velc = VelC; }
 	inline void setDir(Vector3 Dir) { dir = Dir; }
-	inline void setDir(float X, float Y, float Z) { dir = Vector3(X, Y, Z); }
+	inline void setDir(float X, float Y, float Z) { setDir(Vector3(X, Y, Z)); }
 	inline void setVel(Vector3 Vel) {
 		if (!isRigid()) vel = Vel;
 		else rigid->setLinearVelocity(Vel);
 	}
 	inline void setVel(float X, float Y, float Z) { setVel(Vector3(X, Y, Z)); }
 	inline void setAcc(Vector3 Acc) { acc = Acc; }
-	inline void setAcc(float X, float Y, float Z) { acc = Vector3(X, Y, Z); }
+	inline void setAcc(float X, float Y, float Z) { setAcc(Vector3(X, Y, Z)); }
 	inline void setDamping(float Damp) { damping = Damp; }
 	inline void setSize(Vector3 Size) { size = Size; }
-	inline void setSize(float X, float Y, float Z) { size = Vector3(X, Y, Z); }
+	inline void setSize(float X, float Y, float Z) { setSize(Vector3(X, Y, Z)); }
 	inline void setRandomSize() {
 		setSize(generateRandomValue(1, MAX_SIZE), generateRandomValue(1, MAX_SIZE), generateRandomValue(1, MAX_SIZE));
+	}
+	inline void changeRigidSize(Vector3 Size) {
+		setSize(Size);
+		if (rigid != nullptr && Size.x > 0.1f && Size.y > 0.1f && Size.z > 0.1f) {
+			/*rigid->detachShape(*shape);
+			PxShape* newShape = getShape(shapeName, Size);
+			setShape(newShape);
+			rigid->attachShape(*newShape);*/
+		}
 	}
 	inline void setColor(Vector4 Color) { color = Color; }
 	inline void setColor(float R, float G, float B, float A = 1.0f) { color = Vector4(R, G, B, A); }
@@ -260,5 +269,31 @@ public:
 		setRandomDensity();
 		setRandomShapeName();
 		setRandomColor();
+	}
+
+	inline const char* getName(ParticleType Type) {
+		switch (Type) {
+		case BASIC: return "BASIC";
+		case FIREWORK: return "FIREWORK";
+		case FIREWORK2: return "FIREWORK2";
+		case FIREWORK3: return "FIREWORK3";
+		case FIRE: return "FIRE";
+		case WATER: return "WATER";
+		case STEAM: return "STEAM";
+		case CANNON_BALL: return "CANNON_BALL";
+		case TANK_BALL: return "TANK_BALL";
+		case GUN_BULLET: return "GUN_BULLET";
+		case LASER: return "LASER";
+		case WIND: return "WIND";
+		case EXPLOSION: return "EXPLOSION";
+		case SPRING_STATIC: return "SPRING_STATIC";
+		case SPRING_BASE: return "SPRING_BASE";
+		case SPRING_DYNAMIC: return "SPRING_DYNAMIC";
+		case SLINKY: return "SLINKY";
+		case IMMERSE: return "IMMERSE";
+		case WATER_PLANE: return "WATER_PLANE";
+		case RANDOM: return "RANDOM";
+		case NONE: return "NONE";
+		}
 	}
 };

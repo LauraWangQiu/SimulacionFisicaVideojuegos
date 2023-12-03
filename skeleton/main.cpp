@@ -166,6 +166,17 @@ void onCollision(physx::PxActor* actor1, physx::PxActor* actor2)
 {
 	PX_UNUSED(actor1);
 	PX_UNUSED(actor2);
+
+	if (actor1->getName() == "NONE" && actor2->getName() == "NONE") {
+		Particle* p1 = static_cast<Particle*>(actor1->userData);
+		Particle* p2 = static_cast<Particle*>(actor2->userData);
+
+		/*p1->changeRigidSize(p1->getSize() / 2);
+		p2->changeRigidSize(p2->getSize() / 2);*/
+		
+		p1->setColor2(1.0f, 0.0f, 0.0f);
+		p2->setColor2(1.0f, 0.0f, 0.0f);
+	}
 }
 
 
