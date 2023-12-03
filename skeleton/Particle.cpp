@@ -20,232 +20,11 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(0.0f, -50.0f, 0.0f),
 		0.99f,
 		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
-		1.0f,
-		10,
-		2,
-		Vector3(1.0f, 1.0f, 1.0f),
-		"Sphere",
-		1.0f
-	},
-	{ // FIREWORK2
-		1.0f,
-		100.0f,
-		Vector3(0.0f, -50.0f, 0.0f),
-		0.99f,
-		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
-		1.0f,
-		50,
+		3.0f,
+		20,
 		1,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Sphere",
-		1.0f
-	},
-	{ // FIREWORK3
-		1.0f,
-		100.0f,
-		Vector3(0.0f, -50.0f, 0.0f),
-		0.99f,
-		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
-		1.0f,
-		20,
-		2,
-		Vector3(1.0f, 1.0f, 1.0f),
-		"Sphere",
-		1.0f
-	},
-	{ // FIRE
-		1.0f,
-		10.0f,
-		Vector3(0.0f, 0.0f, 0.0f),
-		0.99f,
-		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
-		1.0f,
-		0,
-		0,
-		Vector3(1.0f, 1.0f, 1.0f),
-		"Sphere",
-		0.7f
-	},
-	{ // WATER
-		1.0f,
-		100.0f,
-		Vector3(0.0f, -50.0f, 0.0f),
-		0.99f,
-		Vector4(0.5f, 0.9f, 1.0f, 1.0f),
-		10.0f,
-		0,
-		0,
-		Vector3(1.0f, 1.0f, 1.0f),
-		"Sphere",
-		1000.0f
-	},
-	{ // STEAM
-		1.0f,
-		100.0f,
-		Vector3(0.0f, 0.0f, 0.0f),
-		0.99f,
-		Vector4(1.0f, 1.0f, 1.0f, 0.2f),
-		5.0f,
-		0,
-		0,
-		Vector3(5.0f, 5.0f, 5.0f),
-		"Cube",
-		0.6f
-	},
-	{ // CANNON_BALL
-		100.0f,
-		10.0f,
-		Vector3(0.0f, -6.0f, 0.0f),
-		0.9f,
-		Vector4(0.2f, 0.2f, 0.2f, 1.0f),
-		3.0f,
-		0,
-		0,
-		Vector3(1.0f, 1.0f, 1.0f),
-		"Sphere",
-		7800.0f
-	},
-	{ // TANK_BALL
-		200.0f,
-		40.0f,
-		Vector3(0.0f, -20.0f, 0.0f),
-		0.99f,
-		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-		3.0f,
-		0,
-		0,
-		Vector3(1.0f, 1.0f, 1.0f),
-		"Sphere",
-		7850.0f
-	},
-	{ // GUN_BULLET
-		2.0f,
-		35.0f,
-		Vector3(0.0f, -1.0f, 0.0f),
-		0.99f,
-		Vector4(1.0f, 0.8f, 0.2f, 1.0f),
-		3.0f,
-		0,
-		0,
-		Vector3(1.0f, 1.0f, 1.0f),
-		"Cube",
-		11.0f
-	},
-	{ // LASER
-		0.1f,
-		100.0f,
-		Vector3(0.0f, 0.0f, 0.0f),
-		0.99f,
-		Vector4(0.0f, 0.0f, 1.0f, 1.0f),
-		3.0f,
-		0,
-		0,
-		Vector3(1.0f, 1.0f, 1.0f),
-		"Cube",
-		1.0f
-	},
-	{ // WIND
-		0.5f,
-		50.0f,
-		Vector3(0.0f, 0.0f, 0.0f),
-		0.99f,
-		Vector4(0.8f, 0.9f, 1.0f, 1.0f),
-		10.0f,
-		0,
-		0,
-		Vector3(1.0f, 1.0f, 1.0f),
-		"Sphere",
-		1225.0f
-	},
-	{ // EXPLOSION
-		1.0f,
-		33.75f,
-		Vector3(0.0f, 0.0f, 0.0f),
-		0.99f,
-		Vector4(1.0f, 1.0f, 1.0f, 1.0f),
-		3.0f,
-		0,
-		0,
-		Vector3(1.0f, 1.0f, 1.0f),
-		"Cube",
-		1.0f
-	},
-	{ // SPRING_STATIC
-		1.0f,
-		0.0f,
-		Vector3(0.0f, 0.0f, 0.0f),
-		0.99f,
-		Vector4(1.0f, 0.0f, 0.8f, 1.0f),
-		0.0f,
-		0,
-		0,
-		Vector3(1.0f, 1.0f, 1.0f),
-		"Sphere",
-		1.0f
-	},
-	{ // SPRING_BASE
-		1.0f,
-		0.0f,
-		Vector3(0.0f, 0.0f, 0.0f),
-		0.99f,
-		Vector4(1.0f, 0.0f, 0.8f, 1.0f),
-		0.0f,
-		0,
-		0,
-		Vector3(3.0f, 0.5f, 3.0f),
-		"Cube",
-		1.0f
-	},
-	{ // SPRING_STATIC
-		1.0f,
-		0.0f,
-		Vector3(0.0f, 0.0f, 0.0f),
-		0.99f,
-		Vector4(1.0f, 0.0f, 0.8f, 1.0f),
-		0.0f,
-		0,
-		0,
-		Vector3(1.0f, 1.0f, 1.0f),
-		"Sphere",
-		1.0f
-	},
-	{ // SLINKY
-		20.0f,
-		0.0f,
-		Vector3(0.0f, 0.0f, 0.0f),
-		0.99f,
-		Vector4(1.0f, 0.0f, 0.8f, 1.0f),
-		0.0f,
-		0,
-		0,
-		Vector3(1.0f, 1.0f, 1.0f),
-		"Sphere",
-		1.0f
-	},
-	{ // IMMERSE
-		3.0f,
-		0.0f,
-		Vector3(0.0f, 0.0f, 0.0f),
-		0.99f,
-		Vector4(1.0f, 1.0f, 0.0f, 1.0f),
-		0.0f,
-		0,
-		0,
-		Vector3(3.0f, 5.0f, 3.0f),
-		"Cube",
-		1.0f
-	},
-	{ // WATER_PLANE
-		1350.0f,
-		0.0f,
-		Vector3(0.0f, 0.0f, 0.0f),
-		0.99f,
-		Vector4(0.0f, 0.8f, 1.0f, 1.0f),
-		0.0f,
-		0,
-		0,
-		Vector3(15.0f, 6.0f, 15.0f),
-		"Cube",
 		1.0f
 	},
 	{ // RANDOM
@@ -266,7 +45,7 @@ vector<particleInfo> ParticlesInfo = {
 Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible, bool Active) : particleType(Type),
 	transform(Transform), dir(Dir), velc(ParticlesInfo[particleType].velc), 
 	force(Vector3(0.0f, 0.0f, 0.0f)), initialForce(force),
-	visible(Visible), active(Active), toDelete(false), refCount(1) {
+	visible(Visible), active(Active), toDelete(false), refCount(1), toExplode(false) {
 	
 	setMass(ParticlesInfo[particleType].mass);
 	setVel(dir * velc);
@@ -289,7 +68,7 @@ Particle::Particle(PxTransform Transform, Vector3 Dir, float Mass, float Velc, V
 	particleType(NONE), transform(Transform), dir(Dir), mass(Mass), velc(Velc), acc(Acc), damping(Damping), size(Size), 
 	time(Time), color(Color), shapeName(ShapeName),
 	numDivisions(NumDivisions), numExplodes(NumExplodes), density(Density), visible(Visible), active(Active),
-	toDelete(false), refCount(1) {
+	toDelete(false), refCount(1), toExplode(false) {
 
 	if (gPhysics == nullptr || gScene == nullptr) {
 		setVel(dir * velc);
@@ -302,7 +81,7 @@ Particle::Particle(PxTransform Transform, Vector3 Dir, float Mass, float Velc, V
 Particle::Particle(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible, bool Active) : particleType(Type),
 	transform(Transform), dir(Dir), velc(ParticlesInfo[particleType].velc),
 	force(Vector3(0.0f, 0.0f, 0.0f)), initialForce(force),
-	visible(Visible), active(Active), toDelete(false), refCount(1),
+	visible(Visible), active(Active), toDelete(false), refCount(1), toExplode(false),
 	gPhysics(GPhysics), gScene(GScene) {
 
 	if (gPhysics != nullptr & gScene != nullptr) {
@@ -341,7 +120,7 @@ Particle::Particle(PxPhysics* GPhysics, PxScene* GScene, PxTransform Transform, 
 	time(Time), color(Color), shapeName(ShapeName),
 	numDivisions(NumDivisions), numExplodes(NumExplodes), density(Density),
 	visible(Visible), active(Active),
-	toDelete(false), refCount(1),
+	toDelete(false), refCount(1), toExplode(false),
 	gPhysics(GPhysics), gScene(GScene) {
 
 	if (gPhysics != nullptr && gScene != nullptr) {
@@ -459,17 +238,8 @@ void Particle::release() {
 }
 
 void Particle::changeColorWithTime() {
-	switch (particleType) {
-	case EXPLOSION:
-		if (time >= (ParticlesInfo[particleType].time / 2)) {
-			setColor2(palettes.explosionPalette[0]);
-		}
-		else if (time >= (ParticlesInfo[particleType].time / 3)) {
-			setColor2(palettes.explosionPalette[1]);
-		}
-		else if (time >= (ParticlesInfo[particleType].time / 4)) {
-			setColor2(palettes.explosionPalette[2]);
-		}
+	/*switch (particleType) {
+	case :
 		break;
-	}
+	}*/
 }

@@ -1,10 +1,10 @@
 #include "ParticleSystem.h"
 
 #define ORIGIN
+//#define ADD_CIRCLES
+#define ADD_SPHERES
 
 // GENERADORES DE PARTICULAS
-//#define ADD_CIRCLES
-//#define ADD_SPHERES
 #define FIREWORK_MODEL_VISIBLE false
 #define FIRE_MODEL_VISIBLE false
 #define WATERFALL_MODEL_VISIBLE false
@@ -61,30 +61,14 @@ ParticleSystem::ParticleSystem(PxPhysics* gPhysics, PxScene* gScene, const Vecto
 #endif // ORIGIN
 
 	// GENERADORES DE PARTICULAS
-	generateFireworkSystem();
-	generateFireSystem();
-	generateWaterfallSystem();
-	generateSteamSystem();
-	generateSquirtSystem();
-	generateWindSystem();
-	generateWhirlWindSystem();
 	generateRandomSystem();
 
 	// GENERADORES DE FUERZAS
 	generateGravityForce();
-	generateGravityForce2();
 	generateDragForce();
 	generateWindForce();
 	generateWhirlWindsForce();
 	generateExplosionsForce();
-#ifdef GENERATE_SPRINGS_DEMO
-	// MUELLES
-	generateSpringForce();
-	generateSpringDemo();
-	generateSpringSlinky();
-	// FLOTACIÓN
-	generateBuoyancyForce();
-#endif
 
 #ifdef CREATE_RIGID_BODIES_SCENE
 	createScene();
@@ -98,13 +82,7 @@ ParticleSystem::~ParticleSystem() {
 
 	originParticle		= nullptr;
 
-	fireworkGenerator	= nullptr;	fireworkModel	= nullptr;
-	fireGenerator		= nullptr;	fireModel		= nullptr;
-	waterfallGenerator	= nullptr;	waterfallModel	= nullptr;
-	steamGenerator		= nullptr;	steamModel		= nullptr;
-	squirtGenerator		= nullptr;	squirtModel		= nullptr;
-	windGenerator		= nullptr;	windModel		= nullptr;
-	whirlWindGenerator	= nullptr;	whirlWindModel	= nullptr;
+	randomGenerator		= nullptr; randomModel		= nullptr;
 
 	for (auto it = listOfForceGenerators.begin(); it != listOfForceGenerators.end(); ++it) {
 		delete* it; *it = nullptr;
@@ -112,26 +90,11 @@ ParticleSystem::~ParticleSystem() {
 	listOfForceGenerators.clear();
 
 	gravityForceGenerator		= nullptr;
-	gravityForceGenerator2		= nullptr;
 	particleDragForceGenerator	= nullptr;
 
 	windForceGenerator			= nullptr;
 	whirlWindsForceGenerator	= nullptr;
 	explosionsForceGenerator	= nullptr;
-
-	springForceGenerator		= nullptr;	
-	springModel					= nullptr;
-	springForceGeneratorPair1	= nullptr;
-	springForceGeneratorPair2	= nullptr;
-	springForceGenerator1		= nullptr;
-	springForceGenerator2		= nullptr;
-	springForceGenerator3		= nullptr;
-	springForceGenerator4		= nullptr;
-	springForceGenerator5		= nullptr;
-	springForceGenerator6		= nullptr;
-
-	buoyancyForceGenerator		= nullptr; 
-	liquidModel					= nullptr;
 }
 
 void ParticleSystem::update(double t) {
@@ -198,7 +161,7 @@ void ParticleSystem::update(double t) {
 
 void ParticleSystem::onParticleDeath(Particle* p) {
 	switch (p->getParticleType()) {
-	case FIREWORK: case FIREWORK2: case FIREWORK3:
+	case FIREWORK:
 		addParticles(static_cast<Firework*>(p)->explode(numParticles));
 		break;
 	}
@@ -250,59 +213,6 @@ void ParticleSystem::addOrigin() {
 }
 #pragma endregion
 
-#pragma region FIGURAS
-void ParticleSystem::addCircle(Vector3 center) {
-
-#ifdef CHANGE_CIRCLE_CENTER
-	center = explosionOrigin;
-#endif
-
-	int num = min(NUM_PARTICLES_CIRCLE, MAX_PARTICLES - numParticles);
-
-	for (int i = 0; i < num; ++i) {
-		float angle = 2.0f * M_PI * i / num;
-		float x = center.x + RADIUS_CIRCLE * cos(angle);
-		float y = center.y + RADIUS_CIRCLE * sin(angle);
-		float z = center.z;
-
-		Vector3 particlePosition(x, y, z);
-		Vector3 particleDirection = (center - particlePosition);
-		particleDirection.normalize();
-
-		if (!ADD_SPHERE_RIGIDBODY) addParticle(new Particle(EXPLOSION, PxTransform(particlePosition), particleDirection));
-		else addParticle(new Particle(gPhysics, gScene, EXPLOSION, PxTransform(particlePosition), particleDirection));
-	}
-}
-
-void ParticleSystem::addSphere(Vector3 center) {
-
-#ifdef CHANGE_CIRCLE_CENTER
-	center = explosionOrigin;
-#endif
-
-	int num = min(NUM_PARTICLES_SPHERE, MAX_PARTICLES - numParticles);
-
-	for (int i = 0; i < num; ++i) {
-		float latitud = ((float)rand() / RAND_MAX) * 360.0f;
-		float longitud = ((float)rand() / RAND_MAX) * 360.0f;
-
-		float latitudRad = latitud * M_PI / 180.0f;
-		float longitudRad = longitud * M_PI / 180.0f;
-
-		float x = RADIUS_SPHERE * std::sin(latitudRad) * std::cos(longitudRad) + center.x;
-		float y = RADIUS_SPHERE * std::sin(latitudRad) * std::sin(longitudRad) + center.y;
-		float z = RADIUS_SPHERE * std::cos(latitudRad) + center.z;
-
-		Vector3 particlePosition(x, y, z);
-		Vector3 particleDirection = (center - particlePosition);
-		particleDirection.normalize();
-
-		if (!ADD_SPHERE_RIGIDBODY) addParticle(new Particle(EXPLOSION, PxTransform(particlePosition), particleDirection));
-		else addParticle(new Particle(gPhysics, gScene, EXPLOSION, PxTransform(particlePosition), particleDirection));
-	}
-}
-#pragma endregion
-
 #pragma region PARTICULAS
 void ParticleSystem::addParticles(list<Particle*> list) {
 	for (auto p : list) {
@@ -338,105 +248,32 @@ void ParticleSystem::addParticle(Particle* p) {
 
 void ParticleSystem::addFirework(PxPhysics* gPhysics, PxScene* gScene, ParticleType Type, PxTransform Transform, Vector3 Dir) {
 	Firework* model = nullptr;
-	if (gPhysics == nullptr || gScene == nullptr) model = new Firework(Type, Transform, Dir, FIREWORK_MODEL_VISIBLE);
-	else model = new Firework(gPhysics, gScene, Type, Transform, Dir, FIREWORK_MODEL_VISIBLE);
-
 	Firework* p = nullptr;
-	if (gPhysics == nullptr || gScene == nullptr) p = new Firework(Type, Transform, Dir);
-	else p = new Firework(gPhysics, gScene, Type, Transform, Dir);
+
+	if (gPhysics == nullptr || gScene == nullptr) {
+		model = new Firework(Type, Transform, Dir, FIREWORK_MODEL_VISIBLE);
+		p = new Firework(Type, Transform, Dir);
+	}
+	else {
+		model = new Firework(gPhysics, gScene, Type, Transform, Dir, FIREWORK_MODEL_VISIBLE);
+		p = new Firework(gPhysics, gScene, Type, Transform, Dir);
+	}
 
 	addParticle(p);
 	GaussianParticleGenerator* g = new GaussianParticleGenerator("Firework", Transform.p, Dir, 0.1, 1,
-		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
+		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f));
 	p->addGenerator(g);
 }
 #pragma endregion
 
 #pragma region GENERADORES DE PARTICULAS
-void ParticleSystem::generateFireworkSystem() {
-	if (fireworkGenerator == nullptr) {
-		if (!FIREWORK_GEN_RIGIDBODY) fireworkModel = new Firework(FIREWORK, origin, Vector3(0.0f, 1.0f, 0.0f), FIREWORK_MODEL_VISIBLE);
-		else fireworkModel = new Firework(gPhysics, gScene, FIREWORK, origin, Vector3(0.0f, 1.0f, 0.0f), FIREWORK_MODEL_VISIBLE);
-
-		fireworkGenerator = new GaussianParticleGenerator("Fireworks", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.1, 1,
-			fireworkModel, Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
-		addParticleGenerator(fireworkGenerator);
-	}
-}
-
-void ParticleSystem::generateFireSystem() {
-	if (fireGenerator == nullptr) {
-		if (!FIRE_GEN_RIGIDBODY) fireModel = new Particle(FIRE, origin, Vector3(0.0f, 1.0f, 0.0f), FIRE_MODEL_VISIBLE);
-		else fireModel = new Particle(gPhysics, gScene, FIRE, origin, Vector3(0.0f, 1.0f, 0.0f), FIRE_MODEL_VISIBLE);
-
-		fireGenerator = new GaussianParticleGenerator("Fire", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 1,
-			fireModel, Vector3(2.0f, 2.0f, 2.0f), Vector3(1.0f, 1.0f, 1.0f));
-		addParticleGenerator(fireGenerator);
-	}
-}
-
-void ParticleSystem::generateWaterfallSystem() {
-	if (waterfallGenerator == nullptr) {
-		if (!WATERFALL_GEN_RIGIDBODY) waterfallModel = new Particle(WATER, origin, Vector3(0.0f, -1.0f, 0.0f), WATERFALL_MODEL_VISIBLE);
-		else waterfallModel = new Particle(gPhysics, gScene, WATER, origin, Vector3(0.0f, -1.0f, 0.0f), WATERFALL_MODEL_VISIBLE);
-
-		waterfallGenerator = new UniformParticleGenerator("Waterfall", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.3, 1,
-			waterfallModel, Vector3(0.0f, 0.0f, 0.0f), Vector3(50.0f, 0.0f, 0.0f));
-		addParticleGenerator(waterfallGenerator);
-	}
-}
-
-void ParticleSystem::generateSteamSystem() {
-	if (steamGenerator == nullptr) {
-		if (!STEAM_GEN_RIGIDBODY) steamModel = new Particle(STEAM, origin, Vector3(0.0f, 1.0f, 0.0f), STEAM_MODEL_VISIBLE);
-		else steamModel = new Particle(gPhysics, gScene, STEAM, origin, Vector3(0.0f, 1.0f, 0.0f), STEAM_MODEL_VISIBLE);
-
-		steamGenerator = new GaussianParticleGenerator("Steam", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.1, 1,
-			steamModel, Vector3(10.0f, 10.0f, 10.0f), Vector3(0.0f, 0.0f, 0.0f));
-		addParticleGenerator(steamGenerator);
-	}
-}
-
-void ParticleSystem::generateSquirtSystem() {
-	if (squirtGenerator == nullptr) {
-		if (!SQUIRT_GEN_RIGIDBODY) squirtModel = new Particle(WATER, origin, Vector3(0.3f, SQUIRT_INITIAL_VEL, 0.3f), SQUIRT_MODEL_VISIBLE);
-		else squirtModel = new Particle(gPhysics, gScene, WATER, origin, Vector3(0.3f, SQUIRT_INITIAL_VEL, 0.3f), SQUIRT_MODEL_VISIBLE);
-
-		squirtGenerator = new GaussianParticleGenerator("Squirt", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 50,
-			squirtModel, Vector3(1.0f, 1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f));
-		addParticleGenerator(squirtGenerator);
-	}
-}
-
-void ParticleSystem::generateWindSystem() {
-	if (windGenerator == nullptr) {
-		if (!WIND_GEN_RIGIDBODY) windModel = new Particle(WIND, origin, Vector3(0.0f, -1.0f, 0.0f), WIND_MODEL_VISIBLE);
-		else windModel = new Particle(gPhysics, gScene, WIND, origin, Vector3(0.0f, -1.0f, 0.0f), WIND_MODEL_VISIBLE);
-
-		windGenerator = new UniformParticleGenerator("Wind", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.5, 1,
-			windModel, Vector3(0.0f, 0.0f, 0.0f), Vector3(50.0f, 0.0f, 50.0f));
-		addParticleGenerator(windGenerator);
-	}
-}
-
-void ParticleSystem::generateWhirlWindSystem() {
-	if (whirlWindGenerator == nullptr) {
-		if (!WHIRL_WIND_GEN_RIGIDBODY) whirlWindModel = new Particle(WIND, origin, Vector3(0.0f, 1.0f, 0.0f), WHIRL_WIND_MODEL_VISIBLE);
-		else whirlWindModel = new Particle(gPhysics, gScene, WIND, origin, Vector3(0.0f, 1.0f, 0.0f), WHIRL_WIND_MODEL_VISIBLE);
-
-		whirlWindGenerator = new GaussianParticleGenerator("WhirlWind", origin.p, Vector3(0.0f, 0.0f, 0.0f), 1, 1,
-			whirlWindModel, Vector3(1.0f, 1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f));
-		addParticleGenerator(whirlWindGenerator);
-	}
-}
-
 void ParticleSystem::generateRandomSystem() {
 	if (randomGenerator == nullptr) {
 		if (!RANDOM_GEN_RIGIDBODY) randomModel = new Particle(RANDOM, origin, Vector3(0.0f, 1.0f, 0.0f), RANDOM_MODEL_VISIBLE);
 		else randomModel = new Particle(gPhysics, gScene, RANDOM, origin, Vector3(0.0f, 1.0f, 0.0f), RANDOM_MODEL_VISIBLE);
 
 		randomGenerator = new GaussianParticleGenerator("Random", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.1, 1,
-			randomModel, Vector3(1.0f, 1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f), true);
+			randomModel, Vector3(1.0f, 1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f));
 		addParticleGenerator(randomGenerator);
 	}
 }
@@ -447,9 +284,6 @@ void ParticleSystem::addForces(Particle* p) {
 
 	if (gravityForceGenerator != nullptr && gravityForceGenerator->getActive()) {
 		particleForceRegistry.addRegistry(gravityForceGenerator, p);
-	}
-	if (gravityForceGenerator2 != nullptr && gravityForceGenerator2->getActive()) {
-		particleForceRegistry.addRegistry(gravityForceGenerator2, p);
 	}
 	if (particleDragForceGenerator != nullptr && particleDragForceGenerator->getActive()) {
 		particleForceRegistry.addRegistry(particleDragForceGenerator, p);
@@ -463,28 +297,12 @@ void ParticleSystem::addForces(Particle* p) {
 	if (explosionsForceGenerator != nullptr && explosionsForceGenerator->getActive()) {
 		particleForceRegistry.addRegistry(explosionsForceGenerator, p);
 	}
-	if (springForceGenerator != nullptr && springForceGenerator->getActive()) {
-		switch (p->getParticleType()) {
-		case SPRING_STATIC: particleForceRegistry.addRegistry(springForceGenerator, p); break;
-		}
-	}
-	if (buoyancyForceGenerator != nullptr && buoyancyForceGenerator->getActive()) {
-		switch (p->getParticleType()) {
-		case IMMERSE: particleForceRegistry.addRegistry(buoyancyForceGenerator, p); break;
-		}
-	}
 }
 
 void ParticleSystem::generateGravityForce() {
 	gravityForceGenerator = new GravityForceGenerator(GRAVITY_FORCE1, 
-		"GravityForce1", GRAVITY_FORCE1_DURATION);
+		"GravityForce", GRAVITY_FORCE1_DURATION);
 	addForceGenerator(gravityForceGenerator);
-}
-
-void ParticleSystem::generateGravityForce2() {
-	gravityForceGenerator2 = new GravityForceGenerator(GRAVITY_FORCE2, 
-		"GravityForce2", GRAVITY_FORCE2_DURATION);
-	addForceGenerator(gravityForceGenerator2);
 }
 
 void ParticleSystem::generateDragForce() {
@@ -523,94 +341,47 @@ void ParticleSystem::generateExplosionsForce() {
 		"ExplosionForce", EXPLOSION_FORCE_DURATION);
 	addForceGenerator(explosionsForceGenerator);
 }
-
-#pragma region MUELLES
-void ParticleSystem::generateSpringForce() {
-	if (springModel == nullptr) {
-		springModel = new Particle(SPRING_BASE, PxTransform(Vector3(-30.0f, 20.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f));
-		Particle* other = new Particle(SPRING_STATIC, PxTransform(Vector3(-30.0f, 20.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
-		other->setMass(1.0f);
-		addParticle(other);
-		springForceGenerator = new SpringForceGenerator(1.0f, 1.0f, springModel, "SpringForce", SPRING_FORCE_STATIC_DURATION);
-		addForceGenerator(springForceGenerator);
-	}
-}
-
-void ParticleSystem::generateSpringDemo() {
-	Particle* p1 = new Particle(SPRING_DYNAMIC, PxTransform(Vector3(10.0f, -20.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
-	Particle* p2 = new Particle(SPRING_DYNAMIC, PxTransform(Vector3(-10.0f, -20.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
-	p1->setMass(1.0f);
-	p2->setMass(2.0f);
-	springForceGeneratorPair1 = new SpringForceGenerator(1, 10, p2, "SpringForcePair1", SPRING_FORCE_DYNAMIC_DURATION);
-	springForceGeneratorPair2 = new SpringForceGenerator(1, 10, p1, "SpringForcePair2", SPRING_FORCE_DYNAMIC_DURATION);
-	addForceGenerator(springForceGeneratorPair1);
-	addForceGenerator(springForceGeneratorPair2);
-	particleForceRegistry.addRegistry(springForceGeneratorPair1, p1);
-	particleForceRegistry.addRegistry(springForceGeneratorPair2, p2);
-	addParticle(p1);
-	addParticle(p2);
-}
-
-void ParticleSystem::generateSpringSlinky() {
-	Particle* p1 = new Particle(SLINKY, PxTransform(Vector3(25.0f, 15.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
-	Particle* p2 = new Particle(SLINKY, PxTransform(Vector3(25.0f, 10.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
-	Particle* p3 = new Particle(SLINKY, PxTransform(Vector3(25.0f, 5.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
-	Particle* p4 = new Particle(SLINKY, PxTransform(Vector3(25.0f, 0.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
-	Particle* p5 = new Particle(SLINKY, PxTransform(Vector3(25.0f, -5.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
-	Particle* p6 = new Particle(SLINKY, PxTransform(Vector3(25.0f, -10.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
-	p1->setMass(SLINKY_PARTICLE_MASS);
-	p2->setMass(SLINKY_PARTICLE_MASS);
-	p3->setMass(SLINKY_PARTICLE_MASS);
-	p4->setMass(SLINKY_PARTICLE_MASS);
-	p5->setMass(SLINKY_PARTICLE_MASS);
-	p6->setMass(SLINKY_PARTICLE_MASS);
-	p1->setColor2(1.0f, 0.0f, 0.0f);
-	p2->setColor2(1.0f, 0.5f, 0.0f);
-	p3->setColor2(1.0f, 1.0f, 0.0f);
-	p4->setColor2(0.0f, 1.0f, 0.0f);
-	p5->setColor2(0.0f, 1.0f, 1.0f);
-	p6->setColor2(0.0f, 0.0f, 1.0f);
-	springForceGenerator1 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p1, "SpringForce1", SPRING_FORCE_SLINKY_DURATION);
-	springForceGenerator2 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p2, "SpringForce2", SPRING_FORCE_SLINKY_DURATION);
-	springForceGenerator3 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p3, "SpringForce3", SPRING_FORCE_SLINKY_DURATION);
-	springForceGenerator4 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p4, "SpringForce4", SPRING_FORCE_SLINKY_DURATION);
-	springForceGenerator5 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p5, "SpringForce5", SPRING_FORCE_SLINKY_DURATION);
-	springForceGenerator6 = new SpringForceGenerator(SLINKY_PARTICLE_K, SLINKY_PARTICLE_LENGTH, p6, "SpringForce6", SPRING_FORCE_SLINKY_DURATION);
-	addForceGenerator(springForceGenerator1);
-	addForceGenerator(springForceGenerator2);
-	addForceGenerator(springForceGenerator3);
-	addForceGenerator(springForceGenerator4);
-	addForceGenerator(springForceGenerator5);
-	addForceGenerator(springForceGenerator6);
-	particleForceRegistry.addRegistry(springForceGenerator2, p1);
-	particleForceRegistry.addRegistry(springForceGenerator1, p2);
-	particleForceRegistry.addRegistry(springForceGenerator3, p2);
-	particleForceRegistry.addRegistry(springForceGenerator2, p3);
-	particleForceRegistry.addRegistry(springForceGenerator4, p3);
-	particleForceRegistry.addRegistry(springForceGenerator3, p4);
-	particleForceRegistry.addRegistry(springForceGenerator5, p4);
-	particleForceRegistry.addRegistry(springForceGenerator4, p5);
-	particleForceRegistry.addRegistry(springForceGenerator6, p5);
-	particleForceRegistry.addRegistry(springForceGenerator5, p6);
-	addParticle(p1);
-	addParticle(p2);
-	addParticle(p3);
-	addParticle(p4);
-	addParticle(p5);
-	addParticle(p6);
-}
-
-void ParticleSystem::generateBuoyancyForce() {
-	if (liquidModel == nullptr) {
-		liquidModel = new Particle(WATER_PLANE, origin, Vector3(0.0f, 0.0f, 0.0f), true, true);
-		Particle* immerse = new Particle(IMMERSE, PxTransform(origin.p + Vector3(0.0f, 20.0f, 0.0f)), Vector3(0.0f, 0.0f, 0.0f), true, true);
-		float volume = immerse->getSize().x * immerse->getSize().y * immerse->getSize().z;
-		buoyancyForceGenerator = new BuoyancyForceGenerator(liquidModel, liquidModel->getPosX() + 10.0f, volume, 1.0f, gravity.y, "BuoyancyForce", BUOYANCY_FORCE_DURATION);
-		addForceGenerator(buoyancyForceGenerator);
-		addParticle(immerse);
-	}
-}
 #pragma endregion
+
+#pragma region FIGURAS
+void ParticleSystem::addCircle(Vector3 center) {
+#ifdef CHANGE_CIRCLE_CENTER
+	center = explosionOrigin;
+#endif
+	int num = min(NUM_PARTICLES_CIRCLE, MAX_PARTICLES - numParticles);
+	for (int i = 0; i < num; ++i) {
+		float angle = 2.0f * M_PI * i / num;
+		float x = center.x + RADIUS_CIRCLE * cos(angle);
+		float y = center.y + RADIUS_CIRCLE * sin(angle);
+		float z = center.z;
+		Vector3 particlePosition(x, y, z);
+		Vector3 particleDirection = (center - particlePosition);
+		particleDirection.normalize();
+		if (!ADD_SPHERE_RIGIDBODY) addParticle(new Particle(BASIC, PxTransform(particlePosition), particleDirection));
+		else addParticle(new Particle(gPhysics, gScene, BASIC, PxTransform(particlePosition), particleDirection));
+	}
+}
+
+void ParticleSystem::addSphere(Vector3 center) {
+#ifdef CHANGE_CIRCLE_CENTER
+	center = explosionOrigin;
+#endif
+	int num = min(NUM_PARTICLES_SPHERE, MAX_PARTICLES - numParticles);
+	for (int i = 0; i < num; ++i) {
+		float latitud = ((float)rand() / RAND_MAX) * 360.0f;
+		float longitud = ((float)rand() / RAND_MAX) * 360.0f;
+		float latitudRad = latitud * M_PI / 180.0f;
+		float longitudRad = longitud * M_PI / 180.0f;
+		float x = RADIUS_SPHERE * std::sin(latitudRad) * std::cos(longitudRad) + center.x;
+		float y = RADIUS_SPHERE * std::sin(latitudRad) * std::sin(longitudRad) + center.y;
+		float z = RADIUS_SPHERE * std::cos(latitudRad) + center.z;
+		Vector3 particlePosition(x, y, z);
+		Vector3 particleDirection = (center - particlePosition);
+		particleDirection.normalize();
+		if (!ADD_SPHERE_RIGIDBODY) addParticle(new Particle(BASIC, PxTransform(particlePosition), particleDirection));
+		else addParticle(new Particle(gPhysics, gScene, BASIC, PxTransform(particlePosition), particleDirection));
+	}
+}
 #pragma endregion
 
 #pragma region SOLIDOS RIGIDOS

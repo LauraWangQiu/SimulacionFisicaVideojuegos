@@ -32,7 +32,7 @@ list<Particle*> GaussianParticleGenerator::generateParticles() {
 				mGenerator.push_back(p);
 
 				switch (model->getParticleType()) {
-				case FIREWORK: case FIREWORK2: case FIREWORK3:
+				case FIREWORK:
 					static_cast<Firework*>(p)->addGenerator(this);
 					break;
 				}
@@ -58,18 +58,6 @@ list<Particle*> GaussianParticleGenerator::generateParticles(Particle* deadP) {
 
 			switch (model->getParticleType()) {
 			case FIREWORK:
-				pos = deadP->getPos();
-				dir.x = std::cos(angle);
-				dir.y = std::sin(angle);
-				dir.z = 0.0f;
-				if (p->getNumExplodes() > 0) static_cast<Firework*>(p)->addGenerator(this);
-				break;
-			case FIREWORK2:
-				pos = deadP->getPos() + Vector3(n1(generator) * stdDevPos.x, n1(generator) * stdDevPos.y, n1(generator) * stdDevPos.z);
-				dir = Vector3(n1(generator), n1(generator), n1(generator));
-				if (p->getNumExplodes() > 0) static_cast<Firework*>(p)->addGenerator(this);
-				break;
-			case FIREWORK3:
 				pos = deadP->getPos() + Vector3(n2(generator) * stdDevPos.x, n2(generator) * stdDevPos.y, n2(generator) * stdDevPos.z);
 				dir = Vector3(n2(generator), n2(generator), n2(generator));
 				if (p->getNumExplodes() > 0) static_cast<Firework*>(p)->addGenerator(this);

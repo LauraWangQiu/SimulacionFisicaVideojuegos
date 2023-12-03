@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <vector>
 #include <string>
 #include "RenderUtils.hpp"
@@ -7,11 +8,7 @@ using namespace std;
 using namespace physx;
 
 enum ParticleType {
-	BASIC, FIREWORK, FIREWORK2, FIREWORK3, FIRE, WATER, STEAM,
-	CANNON_BALL, TANK_BALL, GUN_BULLET, LASER,
-	WIND, EXPLOSION, SPRING_STATIC, SPRING_BASE, SPRING_DYNAMIC, SLINKY, IMMERSE, WATER_PLANE,
-	RANDOM,
-	NONE
+	BASIC, FIREWORK, RANDOM, NONE
 };
 
 struct particleInfo {
@@ -116,6 +113,7 @@ protected:
 	bool visible, active;
 	Vector3 initialForce, force;
 	bool toDelete; int refCount;
+	bool toExplode;
 
 	float density;
 	PxPhysics*	gPhysics	= nullptr;
@@ -168,6 +166,7 @@ public:
 		else return CreateShape(PxSphereGeometry(size.x));
 	}
 	inline bool getDelete() const { return toDelete; }
+	inline bool getToExplode() const { return toExplode; }
 	inline int getRefCount() const { return refCount; }
 	inline float getDensity() const { return density; }
 	inline bool isRigid() const { return rigid != nullptr; }
@@ -206,11 +205,16 @@ public:
 	}
 	inline void changeRigidSize(Vector3 Size) {
 		setSize(Size);
-		if (rigid != nullptr && Size.x > 0.1f && Size.y > 0.1f && Size.z > 0.1f) {
+		if (rigid != nullptr && Size.x > 0.0f && Size.y > 0.0f && Size.z > 0.0f) {
+
+			// CAMBIAR DE TAMAÑO ¿?
 			/*rigid->detachShape(*shape);
+			shape->release();
 			PxShape* newShape = getShape(shapeName, Size);
-			setShape(newShape);
-			rigid->attachShape(*newShape);*/
+			rigid->attachShape(*newShape);
+			gScene->addActor(*rigid);
+
+			setShape(newShape);*/
 		}
 	}
 	inline void setColor(Vector4 Color) { color = Color; }
@@ -244,7 +248,6 @@ public:
 	inline void setForce(float X, float Y, float Z) { force = Vector3(X, Y, Z); }
 	inline void setShapeName(string name) { shapeName = name; }
 	inline void setRandomShapeName() {
-
 		int g = rand() % 3;
 		switch (g) {
 		case 0: setShapeName("Cube"); break;
@@ -258,6 +261,7 @@ public:
 	virtual void release();
 	inline void increaseRefCount() { ++refCount; }
 	inline void decreaseRefCount() { --refCount; }
+	inline void setToExplode(bool ToExplode) { toExplode = ToExplode; }
 	inline void setDensity(float Density) { density = Density; }
 	inline void setRandomDensity() { setDensity(generateRandomValue(1, 1000)); }
 
@@ -275,23 +279,6 @@ public:
 		switch (Type) {
 		case BASIC: return "BASIC";
 		case FIREWORK: return "FIREWORK";
-		case FIREWORK2: return "FIREWORK2";
-		case FIREWORK3: return "FIREWORK3";
-		case FIRE: return "FIRE";
-		case WATER: return "WATER";
-		case STEAM: return "STEAM";
-		case CANNON_BALL: return "CANNON_BALL";
-		case TANK_BALL: return "TANK_BALL";
-		case GUN_BULLET: return "GUN_BULLET";
-		case LASER: return "LASER";
-		case WIND: return "WIND";
-		case EXPLOSION: return "EXPLOSION";
-		case SPRING_STATIC: return "SPRING_STATIC";
-		case SPRING_BASE: return "SPRING_BASE";
-		case SPRING_DYNAMIC: return "SPRING_DYNAMIC";
-		case SLINKY: return "SLINKY";
-		case IMMERSE: return "IMMERSE";
-		case WATER_PLANE: return "WATER_PLANE";
 		case RANDOM: return "RANDOM";
 		case NONE: return "NONE";
 		}

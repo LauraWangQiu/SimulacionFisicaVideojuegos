@@ -33,20 +33,6 @@ protected:
 	// GENERADORES DE PARTICULAS
 	list<ParticleGenerator*> listOfParticleGenerators;
 
-	ParticleGenerator*	fireworkGenerator	= nullptr;
-	Firework*			fireworkModel		= nullptr;
-	ParticleGenerator*	fireGenerator		= nullptr;
-	Particle*			fireModel			= nullptr;
-	ParticleGenerator*	waterfallGenerator	= nullptr;
-	Particle*			waterfallModel		= nullptr;
-	ParticleGenerator*	steamGenerator		= nullptr;
-	Particle*			steamModel			= nullptr;
-	ParticleGenerator*	squirtGenerator		= nullptr;
-	Particle*			squirtModel			= nullptr;
-	ParticleGenerator*	windGenerator		= nullptr;
-	Particle*			windModel			= nullptr;
-	ParticleGenerator*	whirlWindGenerator	= nullptr;
-	Particle*			whirlWindModel		= nullptr;
 	ParticleGenerator*	randomGenerator		= nullptr;
 	Particle*			randomModel			= nullptr;
 
@@ -55,27 +41,12 @@ protected:
 	ParticleForceRegistry particleForceRegistry;
 
 	GravityForceGenerator*		gravityForceGenerator		= nullptr;
-	GravityForceGenerator*		gravityForceGenerator2		= nullptr;
 	ParticleDragForceGenerator*	particleDragForceGenerator	= nullptr;
 	WindForceGenerator*			windForceGenerator			= nullptr;
 	WhirlWindForceGenerator*	whirlWindsForceGenerator	= nullptr;
 	ExplosionForceGenerator*	explosionsForceGenerator	= nullptr;
 	Vector3 explosionOrigin;
-	// MUELLES
-	SpringForceGenerator* springForceGenerator		= nullptr;	
-	Particle*			  springModel				= nullptr;
-	SpringForceGenerator* springForceGeneratorPair1 = nullptr;
-	SpringForceGenerator* springForceGeneratorPair2 = nullptr;
-	SpringForceGenerator* springForceGenerator1		= nullptr;
-	SpringForceGenerator* springForceGenerator2		= nullptr;
-	SpringForceGenerator* springForceGenerator3		= nullptr;
-	SpringForceGenerator* springForceGenerator4		= nullptr;
-	SpringForceGenerator* springForceGenerator5		= nullptr;
-	SpringForceGenerator* springForceGenerator6		= nullptr;
-	// FLOTACIÓN
-	BuoyancyForceGenerator* buoyancyForceGenerator	= nullptr; 
-	Particle*				liquidModel				= nullptr;
-
+	
 	// SÓLIDOS RÍGIDOS
 	PxPhysics*		gPhysics	= nullptr;
 	PxScene*		gScene		= nullptr;
@@ -100,11 +71,6 @@ public:
 
 #pragma region ORIGIN
 	void addOrigin();
-#pragma endregion
-
-#pragma region FIGURAS
-	void addCircle(Vector3 center = Vector3(0.0f, 0.0f, 0.0f));
-	void addSphere(Vector3 center = Vector3(0.0f, 0.0f, 0.0f));
 #pragma endregion
 
 #pragma region PARTICULAS
@@ -133,68 +99,13 @@ public:
 		getParticleGenerator(name)->setActive(false);
 	}
 
-	void generateFireworkSystem();
-	void generateFireSystem();
-	void generateWaterfallSystem();
-	void generateSteamSystem();
-	void generateSquirtSystem();
-	void generateWindSystem();
-	void generateWhirlWindSystem();
 	void generateRandomSystem();
 	inline Particle* getRandomModel() const { return randomModel; }
 	inline void setRandomModel(Particle* p) { delete randomModel; randomModel = p; }
 
-	inline void switchFireworkSystem() {
-		if (fireworkGenerator != nullptr) {
-			if (!fireworkGenerator->getActive()) {
-				fireworkGenerator->setActive(true);
-				fireworkGenerator->getModel()->setParticleType(FIREWORK);
-			}
-			else {
-				switch (fireworkGenerator->getModel()->getParticleType()) {
-				case FIREWORK: fireworkGenerator->getModel()->setParticleType(FIREWORK2); break;
-				case FIREWORK2: fireworkGenerator->getModel()->setParticleType(FIREWORK3); break;
-				case FIREWORK3: fireworkGenerator->setActive(!fireworkGenerator->getActive()); break;
-				}
-			}
-		}
-	}
-	inline void activateFireSystem() {
-		if (fireGenerator != nullptr)
-			fireGenerator->setActive(!fireGenerator->getActive());
-	}
-	inline void activateWaterfallSystem() {
-		if (waterfallGenerator != nullptr)
-			waterfallGenerator->setActive(!waterfallGenerator->getActive());
-	}
-	inline void activateSteamSystem() {
-		if (steamGenerator != nullptr)
-			steamGenerator->setActive(!steamGenerator->getActive());
-	}
-	inline void activateSquirtSystem() {
-		if (squirtGenerator != nullptr)
-			squirtGenerator->setActive(!squirtGenerator->getActive());
-	}
-	inline void activateWindSystem() {
-		if (windGenerator != nullptr)
-			windGenerator->setActive(!windGenerator->getActive());
-	}
-	inline void activateWhirlWindSystem() {
-		if (whirlWindGenerator != nullptr)
-			whirlWindGenerator->setActive(!whirlWindGenerator->getActive());
-	}
-
-	inline void increaseSquirtVel() {
-		Vector3 newVel = Vector3(squirtGenerator->getModel()->getVel().x, squirtGenerator->getModel()->getVel().y + SQUIRT_INCREASE_VEL, squirtGenerator->getModel()->getVel().z);
-		squirtGenerator->getModel()->setVel(newVel);
-	}
-	inline void decreaseSquirtVel() {
-		Vector3 newVel = Vector3(squirtGenerator->getModel()->getVel().x, squirtGenerator->getModel()->getVel().y - SQUIRT_INCREASE_VEL, squirtGenerator->getModel()->getVel().z);
-		squirtGenerator->getModel()->setVel(newVel);
-	}
-	inline void resetSquirtVel() { 
-		Vector3 newVel = Vector3(squirtGenerator->getModel()->getVel().x, SQUIRT_INITIAL_VEL, squirtGenerator->getModel()->getVel().z);
-		squirtGenerator->getModel()->setVel(newVel);
+	inline void activateRandomSystem() {
+		if (randomGenerator != nullptr)
+			randomGenerator->setActive(!randomGenerator->getActive());
 	}
 #pragma endregion
 	
@@ -203,28 +114,14 @@ public:
 	void addForces(Particle* p);
 	
 	void generateGravityForce();
-	void generateGravityForce2();
 	void generateDragForce();
 	void generateWindForce();
 	void generateWhirlWindsForce();
 	void generateExplosionsForce();
 
-	inline void switchGravityForce() {
-		if (gravityForceGenerator != nullptr && !gravityForceGenerator->getActive()) {
-			cout << "Se activó el primer generador de gravedad\n";
-			gravityForceGenerator->setActive(true);
-		}
-		else if (gravityForceGenerator != nullptr && gravityForceGenerator->getActive() 
-			&& gravityForceGenerator2 != nullptr && !gravityForceGenerator2->getActive()) {
-			cout << "Se activó el segundo generador de gravedad\n";
-			gravityForceGenerator2->setActive(true);
-		}
-		else if (gravityForceGenerator != nullptr && gravityForceGenerator->getActive() 
-			&& gravityForceGenerator2 != nullptr && gravityForceGenerator2->getActive()) {
-			cout << "Se desactivaron los generadores de gravedad\n";
-			gravityForceGenerator->setActive(false);
-			gravityForceGenerator2->setActive(false);
-		}
+	inline void activateGravityForce() {
+		if (gravityForceGenerator != nullptr)
+			gravityForceGenerator->setActive(!gravityForceGenerator->getActive());
 	}
 	inline void activateDragForce() {
 		if (particleDragForceGenerator != nullptr)
@@ -242,31 +139,11 @@ public:
 		if (explosionsForceGenerator != nullptr)
 			explosionsForceGenerator->setActive(!explosionsForceGenerator->getActive());
 	}
-
-#pragma region MUELLES
-	// MUELLES
-	void generateSpringForce();
-	inline void activateSpringForce() {
-		if (springForceGenerator != nullptr)
-			springForceGenerator->setActive(!springForceGenerator->getActive());
-	}
-	inline void increaseSpringForceK() {
-		if (springForceGenerator != nullptr)
-			springForceGenerator->setK(springForceGenerator->getK() + 0.1f);
-	}
-	inline void decreaseSpringForceK() {
-		if (springForceGenerator != nullptr)
-			springForceGenerator->setK(springForceGenerator->getK() - 0.1f);
-	}
-	void generateSpringDemo();
-	void generateSpringSlinky();
-	// FLOTACION
-	void generateBuoyancyForce();
-	inline void activateBuoyancyForce() {
-		if (buoyancyForceGenerator != nullptr)
-			buoyancyForceGenerator->setActive(!buoyancyForceGenerator->getActive());
-	}
 #pragma endregion
+
+#pragma region FIGURAS
+	void addCircle(Vector3 center = { 0.0f, 0.0f, 0.0f });
+	void addSphere(Vector3 center = { 0.0f, 0.0f, 0.0f });
 #pragma endregion
 
 #pragma region SOLIDOS RIGIDOS
