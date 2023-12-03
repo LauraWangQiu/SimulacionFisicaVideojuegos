@@ -114,6 +114,10 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case 'U': particleSys->activateWhirlWindsForce(); break;
 	case 'I': particleSys->activateExplosionsForce(); break;
 
+	// MOVIMIENTO DEL COHETE
+	case 'Q': particleSys->left(); break;
+	case 'E': particleSys->right(); break;
+
 	case ' ': particleSys->addFirework(gPhysics, gScene, FIREWORK, camera, GetCamera()->getDir()); break;
 	default: break;
 	}

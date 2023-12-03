@@ -8,7 +8,7 @@ using namespace std;
 using namespace physx;
 
 enum ParticleType {
-	BASIC, FIREWORK, RANDOM, NONE
+	BASIC, FIREWORK, RANDOM, SPACECRAFT, NONE
 };
 
 struct particleInfo {
@@ -163,6 +163,7 @@ public:
 		if (name == "Sphere") return CreateShape(PxSphereGeometry(size.x));
 		else if (name == "Cube") return CreateShape(PxBoxGeometry(size));
 		else if (name == "Capsule") return CreateShape(PxCapsuleGeometry(size.x, size.y));
+		else if (name == "Plane") return CreateShape(PxPlaneGeometry());
 		else return CreateShape(PxSphereGeometry(size.x));
 	}
 	inline bool getDelete() const { return toDelete; }
@@ -202,20 +203,6 @@ public:
 	inline void setSize(float X, float Y, float Z) { setSize(Vector3(X, Y, Z)); }
 	inline void setRandomSize() {
 		setSize(generateRandomValue(1, MAX_SIZE), generateRandomValue(1, MAX_SIZE), generateRandomValue(1, MAX_SIZE));
-	}
-	inline void changeRigidSize(Vector3 Size) {
-		setSize(Size);
-		if (rigid != nullptr && Size.x > 0.0f && Size.y > 0.0f && Size.z > 0.0f) {
-
-			// CAMBIAR DE TAMAÑO ¿?
-			/*rigid->detachShape(*shape);
-			shape->release();
-			PxShape* newShape = getShape(shapeName, Size);
-			rigid->attachShape(*newShape);
-			gScene->addActor(*rigid);
-
-			setShape(newShape);*/
-		}
 	}
 	inline void setColor(Vector4 Color) { color = Color; }
 	inline void setColor(float R, float G, float B, float A = 1.0f) { color = Vector4(R, G, B, A); }

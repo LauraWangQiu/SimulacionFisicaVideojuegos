@@ -13,7 +13,6 @@ ParticleGenerator::~ParticleGenerator() {
 }
 
 void ParticleGenerator::randomize() {
-
 	if (model->getParticleType() == RANDOM) model->setRandom();
 }
 

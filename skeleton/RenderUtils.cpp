@@ -154,10 +154,7 @@ void exitCallback(void)
 void renderLoop()
 {
 	StartCounter();
-	// Vista frontal
 	sCamera = new Camera(PxVec3(0.0f, 0.0f, 0.0f), PxVec3(0.0f, 0.0f, 1.0f));
-	// Vista lateral
-	//sCamera = new Camera(PxVec3(-100.0f, 0.0f, 0.0f), PxVec3(1.0f,0.0f,0.0f));
 
 	setupDefaultWindow("Simulacion Fisica Videojuegos");
 	setupDefaultRenderState();

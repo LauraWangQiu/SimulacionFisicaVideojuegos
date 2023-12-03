@@ -39,6 +39,19 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Cube",
 		1.0f
+	},
+	{ // SPACECRAFT
+		10.0f,
+		0.0f,
+		Vector3(0.0f, 0.0f, 0.0f),
+		0.99f,
+		Vector4(0.0f, 0.0f, 1.0f, 1.0f),
+		3.0f,
+		0,
+		0,
+		Vector3(4.0f, 7.0f, 4.0f),
+		"Cube",
+		1.0f
 	}
 };
 

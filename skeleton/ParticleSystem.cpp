@@ -1,8 +1,9 @@
 #include "ParticleSystem.h"
 
-#define ORIGIN
+//#define ORIGIN
 //#define ADD_CIRCLES
-#define ADD_SPHERES
+//#define ADD_SPHERES
+#define CHANGE_CIRCLE_CENTER
 
 // GENERADORES DE PARTICULAS
 #define FIREWORK_MODEL_VISIBLE false
@@ -15,17 +16,10 @@
 #define RANDOM_MODEL_VISIBLE false
 
 // SOLIDOS RIGIDOS
-#define CREATE_RIGID_BODIES_SCENE
 #define ADD_CIRCLE_RIGIDBODY true
 #define ADD_SPHERE_RIGIDBODY true
-#define FIREWORK_GEN_RIGIDBODY true
-#define FIRE_GEN_RIGIDBODY true
-#define WATERFALL_GEN_RIGIDBODY true
-#define STEAM_GEN_RIGIDBODY true
-#define SQUIRT_GEN_RIGIDBODY true
-#define WIND_GEN_RIGIDBODY true
-#define WHIRL_WIND_GEN_RIGIDBODY true
 #define RANDOM_GEN_RIGIDBODY true
+#define PROPELLER_GEN_RIGIDBODY false
 
 // GENERADORES DE FUERZAS
 #define GRAVITY_FORCE1 Vector3(0.0f, -9.8f /*-1.5f*/, 0.0f)
@@ -39,17 +33,6 @@
 #define WIND_SIDE
 #define WHIRL_WIND_FORCE_DURATION 0.0f
 #define EXPLOSION_FORCE_DURATION 0.0f
-#define CHANGE_CIRCLE_CENTER
-// MUELLES
-//#define GENERATE_SPRINGS_DEMO
-#define SPRING_FORCE_STATIC_DURATION 0.0f
-#define SPRING_FORCE_DYNAMIC_DURATION 0.0f
-#define SPRING_FORCE_SLINKY_DURATION 0.0f
-#define SLINKY_PARTICLE_MASS 30.0f
-#define SLINKY_PARTICLE_K 100.0f
-#define SLINKY_PARTICLE_LENGTH 1.0f
-// FLOTACIÓN
-#define BUOYANCY_FORCE_DURATION 0.0f
 
 ParticleSystem::ParticleSystem(PxPhysics* gPhysics, PxScene* gScene, const Vector3& g) : gravity(g), 
 	numParticles(0),
@@ -70,9 +53,7 @@ ParticleSystem::ParticleSystem(PxPhysics* gPhysics, PxScene* gScene, const Vecto
 	generateWhirlWindsForce();
 	generateExplosionsForce();
 
-#ifdef CREATE_RIGID_BODIES_SCENE
 	createScene();
-#endif
 }
 
 ParticleSystem::~ParticleSystem() {
@@ -119,6 +100,12 @@ void ParticleSystem::update(double t) {
 	for (auto pg : listOfParticleGenerators) {
 		pg->updateActualNumParticles(numParticles);
 		if (pg->getActive()) {
+
+			if (pg->getName() == "Propeller1")
+				pg->getModel()->setPos(Vector3(spacecraft->getPosX() - 2.0f, spacecraft->getPosY() - 5.0f, spacecraft->getPosZ()));
+			else if (pg->getName() == "Propeller2")
+				pg->getModel()->setPos(Vector3(spacecraft->getPosX() + 2.0f, spacecraft->getPosY() - 5.0f, spacecraft->getPosZ()));
+
 			auto list = pg->generateParticles();
 			addParticles(list);
 		}
@@ -144,6 +131,12 @@ void ParticleSystem::update(double t) {
 	while (p != listOfParticles.end()) {
 		// Si se termina su tiempo de vida, se elimina
 		if (!(*p)->integrate(t)) {
+
+			if (*p == spacecraft) {
+				propellerGenerator1->setActive(false);
+				propellerGenerator2->setActive(false);
+				spacecraft = nullptr;
+			}
 			onParticleDeath(*p);
 			(*p)->setDelete(true);
 			(*p)->release();
@@ -222,22 +215,25 @@ void ParticleSystem::addParticles(list<Particle*> list) {
 	updateNumParticlesText();
 }
 
-void ParticleSystem::addParticle(ParticleType Type, PxTransform Transform, Vector3 Dir) {
-	Particle* p = new Particle(Type, Transform, Dir);
+Particle* ParticleSystem::addParticle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible, bool Active) {
+	Particle* p = new Particle(Type, Transform, Dir, Visible, Active);
 	addParticle(p);
+	return p;
 }
 
-void ParticleSystem::addParticle(PxTransform Transform, Vector3 Dir, float Mass, float Velc, Vector3 Acc, float Damping, Vector3 Size,
-	float Time, Vector4 Color, string ShapeName, int NumDivisions, int NumExplodes) {
-	Particle* p = new Particle(Transform, Dir, Mass, Velc, Acc, Damping, Size, Time, Color, ShapeName, NumDivisions, NumExplodes);
+Particle* ParticleSystem::addParticle(PxTransform Transform, Vector3 Dir, float Mass, float Velc, Vector3 Acc, float Damping, Vector3 Size,
+	float Time, Vector4 Color, string ShapeName, int NumDivisions, int NumExplodes, float Density, bool Visible, bool Active) {
+	Particle* p = new Particle(Transform, Dir, Mass, Velc, Acc, Damping, Size, Time, Color, ShapeName, NumDivisions, NumExplodes, Density, Visible, Active);
 
 	p->setRandom();
 	addParticle(p);
+	return p;
 }
 
-void ParticleSystem::addParticle(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTransform Transform, Vector3 Dir) {
-	Particle* p = new Particle(GPhysics, GScene, Type, Transform, Dir);
+Particle* ParticleSystem::addParticle(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible, bool Active) {
+	Particle* p = new Particle(GPhysics, GScene, Type, Transform, Dir, Visible, Active);
 	addParticle(p);
+	return p;
 }
 
 void ParticleSystem::addParticle(Particle* p) {
@@ -246,7 +242,7 @@ void ParticleSystem::addParticle(Particle* p) {
 	updateNumParticlesText();
 }
 
-void ParticleSystem::addFirework(PxPhysics* gPhysics, PxScene* gScene, ParticleType Type, PxTransform Transform, Vector3 Dir) {
+Firework* ParticleSystem::addFirework(PxPhysics* gPhysics, PxScene* gScene, ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible, bool Active) {
 	Firework* model = nullptr;
 	Firework* p = nullptr;
 
@@ -263,6 +259,8 @@ void ParticleSystem::addFirework(PxPhysics* gPhysics, PxScene* gScene, ParticleT
 	GaussianParticleGenerator* g = new GaussianParticleGenerator("Firework", Transform.p, Dir, 0.1, 1,
 		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f));
 	p->addGenerator(g);
+
+	return p;
 }
 #pragma endregion
 
@@ -275,6 +273,30 @@ void ParticleSystem::generateRandomSystem() {
 		randomGenerator = new GaussianParticleGenerator("Random", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.1, 1,
 			randomModel, Vector3(1.0f, 1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f));
 		addParticleGenerator(randomGenerator);
+	}
+}
+
+void ParticleSystem::generatePropellers(Vector3 SpacecraftPos) {
+	if (propellerGenerator1 == nullptr || propellerGenerator2 == nullptr) {
+		if (!PROPELLER_GEN_RIGIDBODY) {
+			propellerModel1 = new Particle(BASIC, PxTransform(SpacecraftPos + Vector3(-2.0f, -5.0f, 0.0f)), Vector3(0.0f, -1.0f, 0.0f), false);
+			propellerModel2 = new Particle(BASIC, PxTransform(SpacecraftPos + Vector3(2.0f, -5.0f, 0.0f)), Vector3(0.0f, -1.0f, 0.0f), false);
+		}
+		else {
+			propellerModel1 = new Particle(gPhysics, gScene, BASIC, PxTransform(SpacecraftPos + Vector3(-2.0f, -5.0f, 0.0f)), Vector3(0.0f, -1.0f, 0.0f), false);
+			propellerModel2 = new Particle(gPhysics, gScene, BASIC, PxTransform(SpacecraftPos + Vector3(2.0f, -5.0f, 0.0f)), Vector3(0.0f, -1.0f, 0.0f), false);
+		}
+
+		if (propellerGenerator1 == nullptr) {
+			propellerGenerator1 = new GaussianParticleGenerator("Propeller1", SpacecraftPos + Vector3(-2.0f, -5.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 0.1, 1,
+				propellerModel1, Vector3(0.1f, 0.1f, 0.1f), Vector3(1.0f, 1.0f, 1.0f), true);
+			addParticleGenerator(propellerGenerator1);
+		}
+		if (propellerGenerator2 == nullptr) {
+			propellerGenerator2 = new GaussianParticleGenerator("Propeller2", SpacecraftPos + Vector3(2.0f, -5.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 0.1, 1,
+				propellerModel2, Vector3(0.1f, 0.1f, 0.1f), Vector3(1.0f, 1.0f, 1.0f), true);
+			addParticleGenerator(propellerGenerator2);
+		}
 	}
 }
 #pragma endregion
@@ -384,14 +406,24 @@ void ParticleSystem::addSphere(Vector3 center) {
 }
 #pragma endregion
 
-#pragma region SOLIDOS RIGIDOS
 void ParticleSystem::createScene() {
-	// Generar suelo
-	floor = gPhysics->createRigidStatic(PxTransform(Vector3(0.0f, -20.0f, 0.0f)));
-	floorShape = CreateShape(PxBoxGeometry(100, 0.1, 100));
-	floor->attachShape(*floorShape);
-	gScene->addActor(*floor);
-	// Pintar suelo
-	floorRI = new RenderItem(floorShape, floor, { 0.8, 0.8, 0.8, 1 });
+	//// Generar suelo
+	//floor = gPhysics->createRigidStatic(PxTransform(Vector3(0.0f, -20.0f, 0.0f)));
+	//floorShape = CreateShape(PxBoxGeometry(100, 1, 100));
+	//floor->attachShape(*floorShape);
+	//gScene->addActor(*floor);
+	//// Pintar suelo
+	//floorRI = new RenderItem(floorShape, floor, { 0.8, 0.8, 0.8, 1 });
+
+	spacecraft = addParticle(SPACECRAFT, origin, Vector3(0.0f, 0.0f, 0.0f), true, true);
+	//spacecraft = addParticle(gPhysics, gScene, SPACECRAFT, origin, Vector3(0.0f, 0.0f, 0.0f), true, true);
+	generatePropellers(spacecraft->getPos());
 }
-#pragma endregion
+
+void ParticleSystem::left() {
+	spacecraft->setPos(Vector3(spacecraft->getPosX() + SPACECRAFT_MOVEMENT_SPEED, spacecraft->getPosY(), spacecraft->getPosZ()));
+}
+
+void ParticleSystem::right() {
+	spacecraft->setPos(Vector3(spacecraft->getPosX() - SPACECRAFT_MOVEMENT_SPEED, spacecraft->getPosY(), spacecraft->getPosZ()));
+}

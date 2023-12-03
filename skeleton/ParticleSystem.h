@@ -36,6 +36,11 @@ protected:
 	ParticleGenerator*	randomGenerator		= nullptr;
 	Particle*			randomModel			= nullptr;
 
+	ParticleGenerator* propellerGenerator1	= nullptr;
+	ParticleGenerator* propellerGenerator2	= nullptr;
+	Particle* propellerModel1				= nullptr;
+	Particle* propellerModel2				= nullptr;
+
 	// GENERADORES DE FUERZAS
 	list<ForceGenerator*> listOfForceGenerators;
 	ParticleForceRegistry particleForceRegistry;
@@ -53,6 +58,8 @@ protected:
 	PxRigidStatic*	floor		= nullptr;
 	PxShape*		floorShape	= nullptr;
 	RenderItem*		floorRI		= nullptr;
+
+	Particle* spacecraft		= nullptr;
 
 public:
 	ParticleSystem(PxPhysics* gPhysics, PxScene* gScene, const Vector3& g = { 0.0f, -9.8f, 0.0f});
@@ -74,14 +81,15 @@ public:
 #pragma endregion
 
 #pragma region PARTICULAS
-	void addParticle(ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 0.0f, 1.0f));
-	void addParticle(PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), float Mass = 1.0f, float Velc = 10.0f,
+	Particle* addParticle(ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 0.0f, 1.0f), bool Visible = true, bool Active = false);
+	Particle* addParticle(PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), float Mass = 1.0f, float Velc = 10.0f,
 		Vector3 Acc = Vector3(0.0f, 0.0f, 0.0f), float Damping = 0.99f, Vector3 Size = Vector3(1.0f, 1.0f, 1.0f),
-		float Time = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f), string ShapeName = "Sphere", int NumDivisions = 0, int NumExplodes = 0);
-	void addParticle(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 0.0f, 1.0f));
+		float Time = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f), string ShapeName = "Sphere", int NumDivisions = 0, int NumExplodes = 0,
+		float Density = 1000.0f, bool Visible = true, bool Active = false);
+	Particle* addParticle(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 0.0f, 1.0f), bool Visible = true, bool Active = false);
 	void addParticle(Particle* p);
 	void addParticles(list<Particle*> list);
-	void addFirework(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTransform Transform, Vector3 Dir);
+	Firework* addFirework(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible = true, bool Active = false);
 
 	inline void increaseNumParticles() { ++numParticles; }
 	inline void decreaseNumParticles() { --numParticles; }
@@ -107,6 +115,8 @@ public:
 		if (randomGenerator != nullptr)
 			randomGenerator->setActive(!randomGenerator->getActive());
 	}
+
+	void generatePropellers(Vector3 SpacecraftPos);
 #pragma endregion
 	
 #pragma region GENERADORES DE FUERZAS
@@ -146,7 +156,7 @@ public:
 	void addSphere(Vector3 center = { 0.0f, 0.0f, 0.0f });
 #pragma endregion
 
-#pragma region SOLIDOS RIGIDOS
 	void createScene();
-#pragma endregion
+	void left();
+	void right();
 };
