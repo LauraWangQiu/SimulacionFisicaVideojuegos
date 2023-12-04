@@ -32,18 +32,21 @@ ParticleSystem::~ParticleSystem() {
 	listOfParticles.clear();
 	listOfParticleGenerators.clear();
 
-	originParticle		= nullptr;
+	originParticle = nullptr;
 
 	randomGenerator		= nullptr; randomModel		= nullptr;
-	propellerGenerator1 = nullptr; propellerModel1	= nullptr;
-	propellerGenerator2 = nullptr; propellerModel2	= nullptr;
+	propellerGenerator1 = nullptr; propellantModel1	= nullptr;
+	propellerGenerator2 = nullptr; propellantModel2	= nullptr;
 	
+	spacecraft	= nullptr;
+	propellant1 = nullptr;
+	propellant2 = nullptr;
+
 	for (auto it = listOfForceGenerators.begin(); it != listOfForceGenerators.end(); ++it) {
 		delete* it; *it = nullptr;
 	}
 	listOfForceGenerators.clear();
 
-	spacecraft					= nullptr;
 	propulsionForceGenerator	= nullptr;
 }
 
@@ -55,9 +58,9 @@ void ParticleSystem::update(double t) {
 		if (pg->getActive()) {
 
 			if (pg->getName() == "Propeller1")
-				pg->getModel()->setPos(Vector3(spacecraft->getPosX() - 2.0f, spacecraft->getPosY() - 5.0f, spacecraft->getPosZ()));
+				pg->getModel()->setPos(spacecraft->getPos() + PROPELLANT1_GENERATOR_POSITION);
 			else if (pg->getName() == "Propeller2")
-				pg->getModel()->setPos(Vector3(spacecraft->getPosX() + 2.0f, spacecraft->getPosY() - 5.0f, spacecraft->getPosZ()));
+				pg->getModel()->setPos(spacecraft->getPos() + PROPELLANT2_GENERATOR_POSITION);
 
 			auto list = pg->generateParticles();
 			addParticles(list);
@@ -88,7 +91,10 @@ void ParticleSystem::update(double t) {
 			if (*p == spacecraft) {
 				propellerGenerator1->setActive(false);
 				propellerGenerator2->setActive(false);
-				spacecraft = nullptr;
+				delete spacecraft;	spacecraft = nullptr;
+				delete propellant1; propellant1 = nullptr;
+				delete propellant2; propellant2 = nullptr;
+				delete window;		window = nullptr;
 			}
 			onParticleDeath(*p);
 			(*p)->setDelete(true);
@@ -99,6 +105,24 @@ void ParticleSystem::update(double t) {
 			updateNumParticlesText();
 		}
 		else {
+
+			if (*p == spacecraft) {
+				if (spacecraft->getPosY() > 3.0f) {
+					propellerGenerator1->setActive(true);
+					propellerGenerator2->setActive(true);
+				}
+				else {
+					propellerGenerator1->setActive(false);
+					propellerGenerator2->setActive(false);
+				}
+			}
+			else if (*p == propellant1) 
+				propellant1->setPos(spacecraft->getPos() + PROPELLANT1_POSITION);
+			else if (*p == propellant2) 
+				propellant2->setPos(spacecraft->getPos() + PROPELLANT2_POSITION);
+			else if (*p == window)
+				window->setPos(spacecraft->getPos() + WINDOW_POSITION);
+
 			addForces(*p);
 			++p;
 		}
@@ -241,51 +265,62 @@ void ParticleSystem::addForces(Particle* p) {
 
 #pragma region JUEGO
 void ParticleSystem::createScene() {
-	//// Generar suelo
-	//floor = gPhysics->createRigidStatic(PxTransform(Vector3(0.0f, -20.0f, 0.0f)));
-	//floorShape = CreateShape(PxBoxGeometry(100, 1, 100));
-	//floor->attachShape(*floorShape);
-	//gScene->addActor(*floor);
-	//// Pintar suelo
-	//floorRI = new RenderItem(floorShape, floor, { 0.8, 0.8, 0.8, 1 });
 
+	// Suelo
+	floor = gPhysics->createRigidStatic(PxTransform(Vector3(0.0f, -5.0f, 0.0f)));
+	floorShape = CreateShape(PxBoxGeometry(100, 1, 100));
+	floor->attachShape(*floorShape);
+	gScene->addActor(*floor);
+	floorRI = new RenderItem(floorShape, floor, { 0.8, 0.8, 0.8, 1 });
+
+	// Nave
 	spacecraft = addParticle(gPhysics, gScene, SPACECRAFT, origin, Vector3(0.0f, 0.0f, 0.0f), true, true);
-
 	// Bloquear las rotaciones y el movimiento en el eje Z
 	 PxRigidDynamicLockFlags flags = 
 		  PxRigidDynamicLockFlag::eLOCK_ANGULAR_X 
 		| PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y
 		| PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z 
 		| PxRigidDynamicLockFlag::eLOCK_LINEAR_Z;
-
 	spacecraft->getRigid()->setRigidDynamicLockFlags(flags);
 
+	// Ventana de la nave
+	window = addParticle(WINDOW, 
+		PxTransform(Vector3(
+			spacecraft->getPosX(), 
+			spacecraft->getPosY(), 
+			spacecraft->getPosZ() - 3.0f)),
+		Vector3(0.0f, 0.0f, 0.0f), true, true);
+
+	// Propulsores
 	generatePropellants(spacecraft->getPos());
 	generatePropulsionForce();
-	
+
+	//spacecraft->getRigid()->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
 }
 
 void ParticleSystem::generatePropellants(Vector3 SpacecraftPos) {
 	if (propellerGenerator1 == nullptr || propellerGenerator2 == nullptr) {
 		if (!PROPELLER_GEN_RIGIDBODY) {
-			propellerModel1 = new Particle(BASIC, PxTransform(SpacecraftPos + Vector3(-2.0f, -5.0f, 0.0f)), Vector3(0.0f, -1.0f, 0.0f), false);
-			propellerModel2 = new Particle(BASIC, PxTransform(SpacecraftPos + Vector3(2.0f, -5.0f, 0.0f)), Vector3(0.0f, -1.0f, 0.0f), false);
+			propellantModel1 = new Particle(BASIC, PxTransform(SpacecraftPos + PROPELLANT1_GENERATOR_POSITION), Vector3(0.0f, -1.0f, 0.0f), false);
+			propellantModel2 = new Particle(BASIC, PxTransform(SpacecraftPos + PROPELLANT2_GENERATOR_POSITION), Vector3(0.0f, -1.0f, 0.0f), false);
 		}
 		else {
-			propellerModel1 = new Particle(gPhysics, gScene, BASIC, PxTransform(SpacecraftPos + Vector3(-2.0f, -5.0f, 0.0f)), Vector3(0.0f, -1.0f, 0.0f), false);
-			propellerModel2 = new Particle(gPhysics, gScene, BASIC, PxTransform(SpacecraftPos + Vector3(2.0f, -5.0f, 0.0f)), Vector3(0.0f, -1.0f, 0.0f), false);
+			propellantModel1 = new Particle(gPhysics, gScene, BASIC, PxTransform(SpacecraftPos + PROPELLANT1_GENERATOR_POSITION), Vector3(0.0f, -1.0f, 0.0f), false);
+			propellantModel2 = new Particle(gPhysics, gScene, BASIC, PxTransform(SpacecraftPos + PROPELLANT2_GENERATOR_POSITION), Vector3(0.0f, -1.0f, 0.0f), false);
 		}
+		propellant1 = addParticle(PROPELLANT, PxTransform(SpacecraftPos + PROPELLANT1_POSITION), Vector3(0.0f, -1.0f, 0.0f), true, true);
 
 		if (propellerGenerator1 == nullptr) {
-			propellerGenerator1 = new GaussianParticleGenerator("Propeller1", SpacecraftPos + Vector3(-2.0f, -5.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 1, 3,
-				propellerModel1, Vector3(0.1f, 0.1f, 0.1f), Vector3(1.0f, 1.0f, 1.0f), true);
+			propellerGenerator1 = new GaussianParticleGenerator("Propeller1", SpacecraftPos + PROPELLANT1_GENERATOR_POSITION, Vector3(0.0f, 0.0f, 0.0f), 1, 3,
+				propellantModel1, Vector3(0.1f, 0.1f, 0.1f), Vector3(1.0f, 1.0f, 1.0f));
 			addParticleGenerator(propellerGenerator1);
 		}
 		if (propellerGenerator2 == nullptr) {
-			propellerGenerator2 = new GaussianParticleGenerator("Propeller2", SpacecraftPos + Vector3(2.0f, -5.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 1, 3,
-				propellerModel2, Vector3(0.1f, 0.1f, 0.1f), Vector3(1.0f, 1.0f, 1.0f), true);
+			propellerGenerator2 = new GaussianParticleGenerator("Propeller2", SpacecraftPos + PROPELLANT2_GENERATOR_POSITION, Vector3(0.0f, 0.0f, 0.0f), 1, 3,
+				propellantModel2, Vector3(0.1f, 0.1f, 0.1f), Vector3(1.0f, 1.0f, 1.0f));
 			addParticleGenerator(propellerGenerator2);
 		}
+		propellant2 = addParticle(PROPELLANT, PxTransform(SpacecraftPos + PROPELLANT2_POSITION), Vector3(0.0f, -1.0f, 0.0f), true, true);
 	}
 }
 

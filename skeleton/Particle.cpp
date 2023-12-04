@@ -10,7 +10,7 @@ vector<particleInfo> ParticlesInfo = {
 		1.0f,
 		0,
 		0,
-		Vector3(1.0f, 1.0f, 1.0f),
+		Vector3(0.5f, 0.5f, 0.5f),
 		"Sphere",
 		0.7f
 	},
@@ -46,11 +46,37 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(0.0f, 0.0f, 0.0f),
 		0.99f,
 		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
-		3.0f,
+		0.0f,
 		0,
 		0,
-		Vector3(4.0f, 7.0f, 4.0f),
+		Vector3(3.2f, 7.0f, 3.2f),
 		"Cube",
+		1.0f
+	},
+	{ // PROPELLANT
+		100.0f,
+		0.0f,
+		Vector3(0.0f, 0.0f, 0.0f),
+		0.99f,
+		Vector4(0.0f, 0.0f, 1.0f, 1.0f),
+		0.0f,
+		0,
+		0,
+		Vector3(1.0f, 2.0f, 2.0f),
+		"Cube",
+		1.0f
+	},
+	{ // WINDOW
+		10.0f,
+		0.0f,
+		Vector3(0.0f, 0.0f, 0.0f),
+		0.99f,
+		Vector4(0.0f, 0.8f, 0.8f, 1.0f),
+		0.0f,
+		0,
+		0,
+		Vector3(2.0f, 2.0f, 2.0f),
+		"Sphere",
 		1.0f
 	}
 };

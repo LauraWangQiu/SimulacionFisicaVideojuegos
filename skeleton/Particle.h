@@ -8,7 +8,7 @@ using namespace std;
 using namespace physx;
 
 enum ParticleType {
-	BASIC, FIREWORK, RANDOM, SPACECRAFT, NONE
+	BASIC, FIREWORK, RANDOM, SPACECRAFT, PROPELLANT, WINDOW, NONE
 };
 
 struct particleInfo {

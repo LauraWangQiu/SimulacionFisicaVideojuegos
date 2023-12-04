@@ -38,8 +38,8 @@ protected:
 
 	ParticleGenerator* propellerGenerator1	= nullptr;
 	ParticleGenerator* propellerGenerator2	= nullptr;
-	Particle* propellerModel1				= nullptr;
-	Particle* propellerModel2				= nullptr;
+	Particle* propellantModel1				= nullptr;
+	Particle* propellantModel2				= nullptr;
 
 	// GENERADORES DE FUERZAS
 	list<ForceGenerator*> listOfForceGenerators;
@@ -48,8 +48,16 @@ protected:
 	// SÓLIDOS RÍGIDOS
 	PxPhysics*		gPhysics	= nullptr;
 	PxScene*		gScene		= nullptr;
+	PxRigidStatic*	floor		= nullptr;
+	PxShape*		floorShape	= nullptr;
+	RenderItem*		floorRI		= nullptr;
 
 	Particle* spacecraft		= nullptr;
+	Particle* propellant1		= nullptr;
+	Particle* propellant2		= nullptr;
+	Particle* window			= nullptr;
+	bool despegado = false;
+
 	GravityForceGenerator*		propulsionForceGenerator	= nullptr;
 
 public:
