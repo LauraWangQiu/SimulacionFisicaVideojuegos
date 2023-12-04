@@ -3,16 +3,16 @@
 vector<particleInfo> ParticlesInfo = {
 	{ // BASIC
 		1.0f,
-		20.0f,
+		10.0f,
 		Vector3(0.0f, 0.0f, 0.0f),
 		0.99f,
-		Vector4(1.0f, 1.0f, 1.0f, 1.0f),
-		5.0f,
+		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
+		1.0f,
 		0,
 		0,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Sphere",
-		1.0f
+		0.7f
 	},
 	{ // FIREWORK
 		1.0f,
@@ -45,7 +45,7 @@ vector<particleInfo> ParticlesInfo = {
 		0.0f,
 		Vector3(0.0f, 0.0f, 0.0f),
 		0.99f,
-		Vector4(0.0f, 0.0f, 1.0f, 1.0f),
+		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
 		3.0f,
 		0,
 		0,

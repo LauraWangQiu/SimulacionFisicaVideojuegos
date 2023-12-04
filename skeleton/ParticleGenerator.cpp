@@ -18,6 +18,9 @@ void ParticleGenerator::randomize() {
 
 void ParticleGenerator::setParticleColor(Particle* p) {
 	switch (model->getParticleType()) {
+	case BASIC:
+		p->setColor2(palettes.firePalette[rand() % palettes.firePaletteSize]);
+		break;
 	case FIREWORK:
 		p->setColor2(palettes.fireWorkPalette[rand() % palettes.fireWorkPaletteSize]);
 		break;
