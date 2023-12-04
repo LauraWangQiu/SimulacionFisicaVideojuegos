@@ -35,7 +35,9 @@ ParticleSystem::~ParticleSystem() {
 	originParticle		= nullptr;
 
 	randomGenerator		= nullptr; randomModel		= nullptr;
-
+	propellerGenerator1 = nullptr; propellerModel1	= nullptr;
+	propellerGenerator2 = nullptr; propellerModel2	= nullptr;
+	
 	for (auto it = listOfForceGenerators.begin(); it != listOfForceGenerators.end(); ++it) {
 		delete* it; *it = nullptr;
 	}
@@ -248,6 +250,16 @@ void ParticleSystem::createScene() {
 	//floorRI = new RenderItem(floorShape, floor, { 0.8, 0.8, 0.8, 1 });
 
 	spacecraft = addParticle(gPhysics, gScene, SPACECRAFT, origin, Vector3(0.0f, 0.0f, 0.0f), true, true);
+
+	// Bloquear las rotaciones y el movimiento en el eje Z
+	 PxRigidDynamicLockFlags flags = 
+		  PxRigidDynamicLockFlag::eLOCK_ANGULAR_X 
+		| PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y
+		| PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z 
+		| PxRigidDynamicLockFlag::eLOCK_LINEAR_Z;
+
+	spacecraft->getRigid()->setRigidDynamicLockFlags(flags);
+
 	generatePropellants(spacecraft->getPos());
 	generatePropulsionForce();
 	
@@ -265,12 +277,12 @@ void ParticleSystem::generatePropellants(Vector3 SpacecraftPos) {
 		}
 
 		if (propellerGenerator1 == nullptr) {
-			propellerGenerator1 = new GaussianParticleGenerator("Propeller1", SpacecraftPos + Vector3(-2.0f, -5.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 0.1, 1,
+			propellerGenerator1 = new GaussianParticleGenerator("Propeller1", SpacecraftPos + Vector3(-2.0f, -5.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 1, 3,
 				propellerModel1, Vector3(0.1f, 0.1f, 0.1f), Vector3(1.0f, 1.0f, 1.0f), true);
 			addParticleGenerator(propellerGenerator1);
 		}
 		if (propellerGenerator2 == nullptr) {
-			propellerGenerator2 = new GaussianParticleGenerator("Propeller2", SpacecraftPos + Vector3(2.0f, -5.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 0.1, 1,
+			propellerGenerator2 = new GaussianParticleGenerator("Propeller2", SpacecraftPos + Vector3(2.0f, -5.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), 1, 3,
 				propellerModel2, Vector3(0.1f, 0.1f, 0.1f), Vector3(1.0f, 1.0f, 1.0f), true);
 			addParticleGenerator(propellerGenerator2);
 		}
@@ -293,7 +305,6 @@ void ParticleSystem::right() {
 
 void ParticleSystem::addPropulsion() {
 	if (propulsionForceGenerator != nullptr) {
-		// HAY QUE APLICARLE LA PROPULSION SEGÚN LA DIRECCIÓN A LA QUE ESTÉ LA NAVE
 		propulsionForceGenerator->setGravity(propulsionForceGenerator->getGravity() + PROPULSION_FORCE);
 		propulsionForceGenerator->setActive(true);
 	}
