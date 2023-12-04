@@ -101,24 +101,29 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	PX_UNUSED(camera);
 
 	switch(toupper(key)) {
-	// Cambiar vista de la camara
+	// CAMARAS
 	case 'F': GetCamera()->setView(PxVec3(0.0f, 0.0f, -100.0f), PxVec3(0.0f, 0.0f, 1.0f)); break;
 	case 'L': GetCamera()->setView(PxVec3(-100.0f, 0.0f, 0.0f), PxVec3(1.0f, 0.0f, 0.0f)); break;
+	// PARTICULAS UNICAS
+	case '0': particleSys->addFirework(gPhysics, gScene, FIREWORK, camera, GetCamera()->getDir()); break;
 
 	// GENERADORES DE PARTICULAS
 	case 'Z': particleSys->activateRandomSystem(); break;
-	// GENERADORES DE FUERZAS
-	case 'R': particleSys->activateGravityForce(); break;
-	case 'T': particleSys->activateDragForce(); break;
-	case 'Y': particleSys->activateWindForce(); break;
-	case 'U': particleSys->activateWhirlWindsForce(); break;
-	case 'I': particleSys->activateExplosionsForce(); break;
 
 	// MOVIMIENTO DEL COHETE
-	case 'Q': particleSys->left(); break;
-	case 'E': particleSys->right(); break;
+	case 'A': particleSys->left(); break;
+	case 'D': particleSys->right(); break;
+	case ' ': particleSys->addPropulsion(); break;
+	default: break;
+	}
+}
 
-	case ' ': particleSys->addFirework(gPhysics, gScene, FIREWORK, camera, GetCamera()->getDir()); break;
+void keyUp(unsigned char key, const PxTransform& camera)
+{
+	PX_UNUSED(camera);
+
+	switch (toupper(key)) {
+	case ' ': particleSys->stopPropulsion(); break;
 	default: break;
 	}
 }

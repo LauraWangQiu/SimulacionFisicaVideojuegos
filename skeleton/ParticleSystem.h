@@ -44,22 +44,13 @@ protected:
 	// GENERADORES DE FUERZAS
 	list<ForceGenerator*> listOfForceGenerators;
 	ParticleForceRegistry particleForceRegistry;
-
-	GravityForceGenerator*		gravityForceGenerator		= nullptr;
-	ParticleDragForceGenerator*	particleDragForceGenerator	= nullptr;
-	WindForceGenerator*			windForceGenerator			= nullptr;
-	WhirlWindForceGenerator*	whirlWindsForceGenerator	= nullptr;
-	ExplosionForceGenerator*	explosionsForceGenerator	= nullptr;
-	Vector3 explosionOrigin;
 	
 	// SÓLIDOS RÍGIDOS
 	PxPhysics*		gPhysics	= nullptr;
 	PxScene*		gScene		= nullptr;
-	PxRigidStatic*	floor		= nullptr;
-	PxShape*		floorShape	= nullptr;
-	RenderItem*		floorRI		= nullptr;
 
 	Particle* spacecraft		= nullptr;
+	GravityForceGenerator*		propulsionForceGenerator	= nullptr;
 
 public:
 	ParticleSystem(PxPhysics* gPhysics, PxScene* gScene, const Vector3& g = { 0.0f, -9.8f, 0.0f});
@@ -115,48 +106,20 @@ public:
 		if (randomGenerator != nullptr)
 			randomGenerator->setActive(!randomGenerator->getActive());
 	}
-
-	void generatePropellers(Vector3 SpacecraftPos);
 #pragma endregion
 	
 #pragma region GENERADORES DE FUERZAS
 	inline ParticleForceRegistry getParticleForceRegistry() const { return particleForceRegistry; }
 	void addForces(Particle* p);
-	
-	void generateGravityForce();
-	void generateDragForce();
-	void generateWindForce();
-	void generateWhirlWindsForce();
-	void generateExplosionsForce();
-
-	inline void activateGravityForce() {
-		if (gravityForceGenerator != nullptr)
-			gravityForceGenerator->setActive(!gravityForceGenerator->getActive());
-	}
-	inline void activateDragForce() {
-		if (particleDragForceGenerator != nullptr)
-			particleDragForceGenerator->setActive(!particleDragForceGenerator->getActive()); 
-	}
-	inline void activateWindForce() { 
-		if (windForceGenerator != nullptr)
-			windForceGenerator->setActive(!windForceGenerator->getActive());
-	}
-	inline void activateWhirlWindsForce() {
-		if (whirlWindsForceGenerator != nullptr)
-			whirlWindsForceGenerator->setActive(!whirlWindsForceGenerator->getActive());
-	}
-	inline void activateExplosionsForce() {
-		if (explosionsForceGenerator != nullptr)
-			explosionsForceGenerator->setActive(!explosionsForceGenerator->getActive());
-	}
 #pragma endregion
 
-#pragma region FIGURAS
-	void addCircle(Vector3 center = { 0.0f, 0.0f, 0.0f });
-	void addSphere(Vector3 center = { 0.0f, 0.0f, 0.0f });
-#pragma endregion
-
+#pragma region JUEGO
 	void createScene();
+	void generatePropellants(Vector3 SpacecraftPos);
+	void generatePropulsionForce();
 	void left();
 	void right();
+	void addPropulsion();
+	void stopPropulsion();
+#pragma endregion
 };
