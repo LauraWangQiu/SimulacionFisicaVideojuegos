@@ -56,7 +56,8 @@ protected:
 	Particle* propellant1		= nullptr;
 	Particle* propellant2		= nullptr;
 	Particle* window			= nullptr;
-	bool despegado = false;
+	particlePalettes palettes;
+	int colorIndex = 0;
 
 	GravityForceGenerator*		propulsionForceGenerator	= nullptr;
 
@@ -129,5 +130,8 @@ public:
 	void right();
 	void addPropulsion();
 	void stopPropulsion();
+
+	void leftColor();
+	void rightColor();
 #pragma endregion
 };

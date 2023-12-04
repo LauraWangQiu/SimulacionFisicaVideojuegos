@@ -13,6 +13,7 @@
 #define SPHERE_INTERVAL 3.0f
 #define MAX_SIZE 5.0f
 
+#define FLOOR_HEIGHT 3.0f
 #define SPACECRAFT_MOVEMENT_SPEED 1.0f
 #define PROPELLANT1_POSITION Vector3(-2.0f, -6.0f, 0.0f)
 #define PROPELLANT2_POSITION Vector3(2.0f, -6.0f, 0.0f)

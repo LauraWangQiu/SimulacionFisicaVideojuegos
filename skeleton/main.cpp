@@ -7,7 +7,7 @@
 // ==================
 #include "ParticleSystem.h"
 
-std::string display_text = "Simulacion Fisica para Videojuegos - Laura Wang Qiu";
+std::string display_text = "Q-E -> select spacecraft color";
 std::string num_particles = "0";
 
 using namespace physx;
@@ -114,6 +114,9 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case 'A': particleSys->left(); break;
 	case 'D': particleSys->right(); break;
 	case ' ': particleSys->addPropulsion(); break;
+	// PERSONALIZACION DEL COHETE
+	case 'Q': particleSys->leftColor(); break;
+	case 'E': particleSys->rightColor(); break;
 	default: break;
 	}
 }

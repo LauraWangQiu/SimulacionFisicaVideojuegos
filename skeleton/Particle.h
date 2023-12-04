@@ -41,7 +41,7 @@ struct particlePalettes {
 		Vector4(0.22f, 1.0f, 0.08f, 1.0f),	// Verde neon
 		Vector4(0.0f, 0.8f, 1.0f, 1.0f),	// Azul neon
 		Vector4(1.0f, 0.5f, 0.0f, 1.0f),	// Naranja neon
-		Vector4(1.0f, 1.0f, 0.0f, 1.0f),	// Amarillo neon
+		Vector4(1.0f, 1.0f, 0.0f, 1.0f)		// Amarillo neon
 	};
 	int fireWorkPaletteSize = sizeof(fireWorkPalette) / sizeof(fireWorkPalette[0]);
 
@@ -76,6 +76,16 @@ struct particlePalettes {
 		Vector4(0.4f, 0.2f, 0.1f, 1.0f)		// Marron
 	};
 	int explosionPaletteSize = sizeof(explosionPalette) / sizeof(explosionPalette[0]);
+
+	Vector4 spacecraftPalette[6] = {
+		Vector4(1.0f, 0.0f, 0.0f, 1.0f),	// Rojo
+		Vector4(1.0f, 0.078f, 0.576f, 1.0f),// Rosa neon
+		Vector4(0.22f, 1.0f, 0.08f, 1.0f),	// Verde neon
+		Vector4(0.0f, 0.8f, 1.0f, 1.0f),	// Azul neon
+		Vector4(1.0f, 0.5f, 0.0f, 1.0f),	// Naranja neon
+		Vector4(1.0f, 1.0f, 0.0f, 1.0f)		// Amarillo neon
+	};
+	int spacecraftPaletteSize = sizeof(spacecraftPalette) / sizeof(spacecraftPalette[0]);
 };
 
 class Particle {

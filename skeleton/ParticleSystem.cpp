@@ -107,14 +107,8 @@ void ParticleSystem::update(double t) {
 		else {
 
 			if (*p == spacecraft) {
-				if (spacecraft->getPosY() > 3.0f) {
-					propellerGenerator1->setActive(true);
-					propellerGenerator2->setActive(true);
-				}
-				else {
-					propellerGenerator1->setActive(false);
-					propellerGenerator2->setActive(false);
-				}
+				propellerGenerator1->setActive(spacecraft->getPosY() > FLOOR_HEIGHT);
+				propellerGenerator2->setActive(spacecraft->getPosY() > FLOOR_HEIGHT);
 			}
 			else if (*p == propellant1) 
 				propellant1->setPos(spacecraft->getPos() + PROPELLANT1_POSITION);
@@ -282,6 +276,7 @@ void ParticleSystem::createScene() {
 		| PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z 
 		| PxRigidDynamicLockFlag::eLOCK_LINEAR_Z;
 	spacecraft->getRigid()->setRigidDynamicLockFlags(flags);
+	spacecraft->setColor2(palettes.spacecraftPalette[colorIndex]);
 
 	// Ventana de la nave
 	window = addParticle(WINDOW, 
@@ -351,5 +346,13 @@ void ParticleSystem::stopPropulsion() {
 		propulsionForceGenerator->setGravity(Vector3(0.0f, 0.0f, 0.0f));
 		propulsionForceGenerator->setActive(false);
 	}
+}
+
+void ParticleSystem::leftColor() {
+	spacecraft->setColor2(palettes.spacecraftPalette[abs(--colorIndex % palettes.spacecraftPaletteSize)]);
+}
+
+void ParticleSystem::rightColor() {
+	spacecraft->setColor2(palettes.spacecraftPalette[abs(++colorIndex % palettes.spacecraftPaletteSize)]);
 }
 #pragma endregion

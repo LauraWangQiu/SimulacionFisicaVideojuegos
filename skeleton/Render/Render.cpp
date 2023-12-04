@@ -289,7 +289,7 @@ void startRender(const PxVec3& cameraEye, const PxVec3& cameraDir, PxReal clipNe
 
 	// Display text
 	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-	drawText(display_text, 0, 0);
+	drawText(display_text, glutGet(GLUT_WINDOW_WIDTH) / 2 - 150, 5);
 	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 	drawText("Number of particles: " + num_particles, 5, glutGet(GLUT_WINDOW_HEIGHT) - 20);
 
