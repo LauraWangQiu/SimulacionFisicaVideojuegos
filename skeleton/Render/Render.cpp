@@ -286,12 +286,17 @@ void setupDefaultRenderState()
 void startRender(const PxVec3& cameraEye, const PxVec3& cameraDir, PxReal clipNear, PxReal clipFar)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	
 	// Display text
-	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-	drawText(display_text, 10, 5);
-	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-	drawText("Number of particles: " + num_particles, 5, glutGet(GLUT_WINDOW_HEIGHT) - 20);
+	if (menu) {
+		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+		drawText(title, glutGet(GLUT_WINDOW_WIDTH) / 2 - title.size() * 24, glutGet(GLUT_WINDOW_HEIGHT) / 2, GLUT_BITMAP_TIMES_ROMAN_24);
+		glColor4f(1.0f, 0.078f, 0.576f, 1.0f);
+		drawText(controls1, glutGet(GLUT_WINDOW_WIDTH) / 2 - 125, 40, GLUT_BITMAP_HELVETICA_18);
+		drawText(controls2, glutGet(GLUT_WINDOW_WIDTH) / 2 - 100, 15, GLUT_BITMAP_HELVETICA_18);
+		//glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+		//drawText("Number of particles: " + num_particles, 5, glutGet(GLUT_WINDOW_HEIGHT) - 20);
+	}
 
 	// Setup camera
 	glMatrixMode(GL_PROJECTION);
@@ -385,7 +390,7 @@ void finishRender()
 	glutSwapBuffers();
 }
 
-void drawText(const std::string& text, int x, int y)
+void drawText(const std::string& text, int x, int y, void* font)
 {
 	glMatrixMode(GL_PROJECTION);
 	double* matrix = new double[16];
@@ -401,7 +406,7 @@ void drawText(const std::string& text, int x, int y)
 	int length = text.length();
 
 	for (int i = 0; i < length; i++) {
-		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, (int)text[i]);
+		glutBitmapCharacter(font, (int)text[i]);
 	}
 	glPopMatrix();
 	glMatrixMode(GL_PROJECTION);

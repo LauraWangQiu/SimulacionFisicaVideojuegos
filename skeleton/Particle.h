@@ -215,14 +215,18 @@ public:
 		setSize(generateRandomValue(1, MAX_SIZE), generateRandomValue(1, MAX_SIZE), generateRandomValue(1, MAX_SIZE));
 	}
 	inline void setColor(Vector4 Color) { color = Color; }
-	inline void setColor(float R, float G, float B, float A = 1.0f) { color = Vector4(R, G, B, A); }
-	inline void setColor2(Vector4 Color) { if (renderItem != nullptr) renderItem->color = Color; }
-	inline void setColor2(float R, float G, float B, float A = 1.0f) { if (renderItem != nullptr) renderItem->color = Vector4(R, G, B, A); }
+	inline void setColor(float R, float G, float B, float A = 1.0f) { setColor(Vector4(R, G, B, A)); }
+	inline void setColor2(Vector4 Color) { if (renderItem != nullptr) renderItem->color = Color; setColor(Color); }
+	inline void setColor2(float R, float G, float B, float A = 1.0f) { setColor2(Vector4(R, G, B, A)); }
 	inline void setRandomColor() {
 		float R = static_cast<float>(rand()) / RAND_MAX; // Componente Rojo
 		float G = static_cast<float>(rand()) / RAND_MAX; // Componente Verde
 		float B = static_cast<float>(rand()) / RAND_MAX; // Componente Azul
 		setColor(R, G, B);
+	}
+	inline void setRandomColorAmong() {
+		int r = rand() % palettes.spacecraftPaletteSize;
+		setColor(palettes.spacecraftPalette[r]);
 	}
 	inline void setTime(float Time) { time = Time; }
 	inline void increaseTime(float Time) { time += Time; }
@@ -269,7 +273,7 @@ public:
 		setRandomSize();
 		setRandomDensity();
 		setRandomShapeName();
-		setRandomColor();
+		setRandomColorAmong();
 	}
 
 	inline const char* getName(ParticleType Type) {
@@ -277,6 +281,9 @@ public:
 		case BASIC: return "BASIC";
 		case FIREWORK: return "FIREWORK";
 		case RANDOM: return "RANDOM";
+		case SPACECRAFT: return "SPACECRAFT";
+		case PROPELLANT: return "PROPELLANT";
+		case WINDOW: return "WINDOW";
 		case NONE: return "NONE";
 		}
 	}

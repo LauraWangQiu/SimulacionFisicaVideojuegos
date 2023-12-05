@@ -21,9 +21,6 @@ ParticleSystem::ParticleSystem(PxPhysics* gPhysics, PxScene* gScene, Camera* cam
 	addOrigin();
 #endif // ORIGIN
 
-	// GENERADORES DE PARTICULAS
-	generateRandomSystem();
-
 	createScene();
 }
 
@@ -235,10 +232,10 @@ Firework* ParticleSystem::addFirework(PxPhysics* gPhysics, PxScene* gScene, Part
 #pragma region GENERADORES DE PARTICULAS
 void ParticleSystem::generateRandomSystem() {
 	if (randomGenerator == nullptr) {
-		if (!RANDOM_GEN_RIGIDBODY) randomModel = new Particle(RANDOM, origin, Vector3(0.0f, 1.0f, 0.0f), RANDOM_MODEL_VISIBLE);
-		else randomModel = new Particle(gPhysics, gScene, RANDOM, origin, Vector3(0.0f, 1.0f, 0.0f), RANDOM_MODEL_VISIBLE);
+		if (!RANDOM_GEN_RIGIDBODY) randomModel = new Particle(RANDOM, PxTransform(RANDOM_GENERATOR_ORIGIN), Vector3(0.0f, -1.0f, 0.0f), RANDOM_MODEL_VISIBLE);
+		else randomModel = new Particle(gPhysics, gScene, RANDOM, PxTransform(RANDOM_GENERATOR_ORIGIN), Vector3(0.0f, -1.0f, 0.0f), RANDOM_MODEL_VISIBLE);
 
-		randomGenerator = new GaussianParticleGenerator("Random", origin.p, Vector3(0.0f, 0.0f, 0.0f), 0.1, 1,
+		randomGenerator = new UniformParticleGenerator("Random", RANDOM_GENERATOR_ORIGIN, Vector3(0.0f, 0.0f, 0.0f), 1.0, 1,
 			randomModel, Vector3(1.0f, 1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f));
 		addParticleGenerator(randomGenerator);
 	}
@@ -257,21 +254,21 @@ void ParticleSystem::addForces(Particle* p) {
 #pragma region JUEGO
 void ParticleSystem::createScene() {
 
-	// Suelo
+	// SUELO
 	floor = gPhysics->createRigidStatic(PxTransform(Vector3(0.0f, -5.0f, 0.0f)));
 	floorShape = CreateShape(PxBoxGeometry(100, 1, 100));
 	floor->attachShape(*floorShape);
 	gScene->addActor(*floor);
-	floorRI = new RenderItem(floorShape, floor, { 0.8, 0.8, 0.8, 1 });
+	floorRI = new RenderItem(floorShape, floor, { 0.0, 1.0, 0.0, 1 });
 
-	// Nave
+	// NAVE
 	spacecraft = addParticle(gPhysics, gScene, SPACECRAFT, origin, Vector3(0.0f, 0.0f, 0.0f), true, true);
-	// Bloquear las rotaciones y el movimiento en el eje Z
+	// Bloquear las rotaciones
 	 PxRigidDynamicLockFlags flags = 
 		  PxRigidDynamicLockFlag::eLOCK_ANGULAR_X 
 		| PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y
-		| PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z 
-		| PxRigidDynamicLockFlag::eLOCK_LINEAR_Z;
+		| PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z;
+
 	spacecraft->getRigid()->setRigidDynamicLockFlags(flags);
 	spacecraft->setColor2(palettes.spacecraftPalette[colorIndex]);
 
@@ -286,6 +283,11 @@ void ParticleSystem::createScene() {
 	// Propulsores
 	generatePropellants(spacecraft->getPos());
 	generatePropulsionForce();
+
+	// GENERADORES DE PARTICULAS
+	generateRandomSystem();
+	randomGenerator->setActive(true);
+	addParticles(randomGenerator->generateParticles());
 }
 
 void ParticleSystem::generatePropellants(Vector3 SpacecraftPos) {
@@ -321,11 +323,19 @@ void ParticleSystem::generatePropulsionForce() {
 }
 
 void ParticleSystem::left() {
-	spacecraft->setPos(Vector3(spacecraft->getPosX() + SPACECRAFT_MOVEMENT_SPEED, spacecraft->getPosY(), spacecraft->getPosZ()));
+	if (gameMode == NORMAL) spacecraft->setPos(Vector3(spacecraft->getPosX() + SPACECRAFT_MOVEMENT_SPEED, spacecraft->getPosY(), spacecraft->getPosZ()));
 }
 
 void ParticleSystem::right() {
-	spacecraft->setPos(Vector3(spacecraft->getPosX() - SPACECRAFT_MOVEMENT_SPEED, spacecraft->getPosY(), spacecraft->getPosZ()));
+	if (gameMode == NORMAL) spacecraft->setPos(Vector3(spacecraft->getPosX() - SPACECRAFT_MOVEMENT_SPEED, spacecraft->getPosY(), spacecraft->getPosZ()));
+}
+
+void ParticleSystem::forward() {
+	if (gameMode == NORMAL) spacecraft->setPos(Vector3(spacecraft->getPosX(), spacecraft->getPosY(), spacecraft->getPosZ() + SPACECRAFT_MOVEMENT_SPEED));
+}
+
+void ParticleSystem::backward() {
+	if (gameMode == NORMAL) spacecraft->setPos(Vector3(spacecraft->getPosX(), spacecraft->getPosY(), spacecraft->getPosZ() - SPACECRAFT_MOVEMENT_SPEED));
 }
 
 void ParticleSystem::addPropulsion() {
@@ -398,10 +408,12 @@ void ParticleSystem::switchMode(){
 
 	switch (gameMode) {
 	case NORMAL:
+		menu = false;
 		cameraFollow(); 
 		stopMotion(false);
 		break;
 	case PERSONALIZATION:
+		menu = true;
 		cameraRotate();
 		stopMotion(true);
 		break;

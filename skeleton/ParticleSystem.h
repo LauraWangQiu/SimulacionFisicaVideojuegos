@@ -136,6 +136,8 @@ public:
 	void generatePropulsionForce();
 	void left();
 	void right();
+	void forward();
+	void backward();
 	void addPropulsion();
 	void stopPropulsion();
 	void objectFollowSpacecraft(Particle* p);
