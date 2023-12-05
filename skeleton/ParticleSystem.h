@@ -36,7 +36,9 @@ protected:
 	PxTransform		origin;
 	Camera*			camera					= nullptr;
 	float			inGameTime				= 0.0f;
-	bool			stopped					= false;
+	bool			stopped					= true;
+	bool			end						= false;
+	bool			end2					= false;
 
 	// GENERADORES DE PARTICULAS
 	list<ParticleGenerator*> listOfParticleGenerators;
@@ -56,6 +58,10 @@ protected:
 	list<ForceGenerator*> listOfForceGenerators;
 	ParticleForceRegistry particleForceRegistry;
 	
+	GravityForceGenerator*		propulsionForceGenerator	= nullptr;
+	WhirlWindForceGenerator*	whirlWindsForceGenerator	= nullptr;
+	Vector3 center = CAMERA_FINAL_POSITION + Vector3(0.0f, 0.0f, 100.0f);
+
 	// SÓLIDOS RÍGIDOS
 	PxPhysics*		gPhysics	= nullptr;
 	PxScene*		gScene		= nullptr;
@@ -70,11 +76,9 @@ protected:
 	particlePalettes palettes;
 	int colorIndex = 0;
 
-	float cameraAzimuth = CAMERA_INITIAL_AZIMUTH;
-	float cameraElevation = CAMERA_INITIAL_ELEVATION;
-	float cameraRadius = CAMERA_INITIAL_RADIUS;
-
-	GravityForceGenerator*		propulsionForceGenerator	= nullptr;
+	float cameraAzimuth		= CAMERA_INITIAL_AZIMUTH;
+	float cameraElevation	= CAMERA_INITIAL_ELEVATION;
+	float cameraRadius		= CAMERA_INITIAL_RADIUS;
 
 public:
 	ParticleSystem(PxPhysics* gPhysics, PxScene* gScene, Camera* camera, const Vector3& g = { 0.0f, -9.8f, 0.0f});
@@ -153,33 +157,48 @@ public:
 #pragma region GENERADORES DE FUERZAS
 	inline ParticleForceRegistry getParticleForceRegistry() const { return particleForceRegistry; }
 	void addForces(Particle* p);
+
+	void generateWhirlWindsForce();
+	inline void activateWhirlWindsForce() {
+		if (whirlWindsForceGenerator != nullptr)
+			whirlWindsForceGenerator->setActive(!whirlWindsForceGenerator->getActive());
+	}
+
+	void generatePropulsionForce();
+	inline void activatePropulsionForce() {
+		if (propulsionForceGenerator != nullptr)
+			propulsionForceGenerator->setActive(!propulsionForceGenerator->getActive());
+	}
 #pragma endregion
 
 #pragma region JUEGO
 	void createScene();
-	void generatePropellants(Vector3 SpacecraftPos);
-	void generatePropulsionForce();
+	void stopMotion(bool m);
+	void addSphere();
+	void manageMode();
+	void switchMode();
+
+	// Nave
+	void createSpacecraft();
+	void deleteSpacecraft();
+	void createPropellants(Vector3 SpacecraftPos);
+	// Movimiento de la nave
 	void left();
 	void right();
 	void forward();
 	void backward();
 	void addPropulsion();
 	void stopPropulsion();
-	void objectFollowSpacecraft(Particle* p);
-	void generatorFollowSpacecraft(ParticleGenerator* pg);
 	void shoot();
-
-	void manageMode();
-	void switchMode();
-
-	// Personalizacion cohete
+	// Personalización de la nave
 	void leftColor();
 	void rightColor();
 
+	// Seguimiento de la nave
+	void objectFollowSpacecraft(Particle* p);
+	void generatorFollowSpacecraft(ParticleGenerator* pg);
 	// Camara
 	void cameraRotate();
 	void cameraFollow();
-
-	void stopMotion(bool m);
 #pragma endregion
 };

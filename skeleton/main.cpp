@@ -110,6 +110,8 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	// GENERADORES DE PARTICULAS
 	case '1': particleSys->activateRandomSystem(); break;
 	case '2': particleSys->activateFireworkSystem(); break;
+	// GENERADORES DE FUERZAS
+	case '3': particleSys->activateWhirlWindsForce(); break;
 
 	// MOVIMIENTO DEL COHETE
 	case 'A': particleSys->left(); break;
@@ -121,6 +123,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case 'Q': particleSys->leftColor(); break;
 	case 'E': particleSys->rightColor(); break;
 	case '\r': particleSys->switchMode(); break;
+
 	default: break;
 	}
 }
