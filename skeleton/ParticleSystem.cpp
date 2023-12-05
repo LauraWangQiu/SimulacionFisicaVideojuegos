@@ -53,14 +53,7 @@ ParticleSystem::~ParticleSystem() {
 void ParticleSystem::update(double t) {
 
 	// Camara
-	if (personalization) {
-		cameraAzimuth += 0.001f;
-		cameraRotate();
-	}
-	else {
-		cameraAzimuth = CAMERA_INITIAL_AZIMUTH;
-		cameraFollow();
-	}
+	manageMode();
 
 	// Recorro todos los generadores de particulas y genero particulas anadiendolas a listOfParticles
 	for (auto pg : listOfParticleGenerators) {
@@ -293,9 +286,6 @@ void ParticleSystem::createScene() {
 	// Propulsores
 	generatePropellants(spacecraft->getPos());
 	generatePropulsionForce();
-
-	// Camara
-	switchPersonalization();
 }
 
 void ParticleSystem::generatePropellants(Vector3 SpacecraftPos) {
@@ -339,14 +329,14 @@ void ParticleSystem::right() {
 }
 
 void ParticleSystem::addPropulsion() {
-	if (propulsionForceGenerator != nullptr && !personalization) {
+	if (propulsionForceGenerator != nullptr && gameMode == NORMAL) {
 		propulsionForceGenerator->setGravity(propulsionForceGenerator->getGravity() + PROPULSION_FORCE);
 		propulsionForceGenerator->setActive(true);
 	}
 }
 
 void ParticleSystem::stopPropulsion() {
-	if (propulsionForceGenerator != nullptr && !personalization) {
+	if (propulsionForceGenerator != nullptr && gameMode == NORMAL) {
 		spacecraft->clearForce();
 		propulsionForceGenerator->setGravity(Vector3(0.0f, 0.0f, 0.0f));
 		propulsionForceGenerator->setActive(false);
@@ -375,21 +365,51 @@ void ParticleSystem::generatorFollowSpacecraft(ParticleGenerator* pg) {
 	pg->getModel()->setPos(spacecraft->getPos() + offset);
 }
 
+void ParticleSystem::manageMode() {
+	switch (gameMode) {
+	case NORMAL: 
+		cameraAzimuth = CAMERA_INITIAL_AZIMUTH; 
+		cameraFollow(); 
+		break;
+	case PERSONALIZATION: 
+		cameraAzimuth += 0.001f; 
+		cameraRotate();
+		break;
+	default: break;
+	}
+}
+
+// Personalizacion cohete
 void ParticleSystem::leftColor() {
-	if (--colorIndex < 0) colorIndex = palettes.spacecraftPaletteSize - 1; 
-	if (personalization) spacecraft->setColor2(palettes.spacecraftPalette[colorIndex % palettes.spacecraftPaletteSize]);
+	if (gameMode == PERSONALIZATION) {
+		if (--colorIndex < 0) colorIndex = palettes.spacecraftPaletteSize - 1;
+		spacecraft->setColor2(palettes.spacecraftPalette[colorIndex % palettes.spacecraftPaletteSize]);
+	}
 }
 
 void ParticleSystem::rightColor() {
-	if (personalization) spacecraft->setColor2(palettes.spacecraftPalette[++colorIndex % palettes.spacecraftPaletteSize]);
+	if (gameMode == PERSONALIZATION) {
+		spacecraft->setColor2(palettes.spacecraftPalette[++colorIndex % palettes.spacecraftPaletteSize]);
+	}
 }
 
-void ParticleSystem::switchPersonalization(){
-	personalization = !personalization;
-	if (personalization) { cameraRotate(); stopMotion(true);
-	} else { cameraFollow(); stopMotion(false); }
+void ParticleSystem::switchMode(){
+	gameMode = (gameMode + 1) % GAME_MODES_SIZE;
+
+	switch (gameMode) {
+	case NORMAL:
+		cameraFollow(); 
+		stopMotion(false);
+		break;
+	case PERSONALIZATION:
+		cameraRotate();
+		stopMotion(true);
+		break;
+	default: break;
+	}
 }
 
+// Camara
 void ParticleSystem::cameraRotate() {
 	// Calcular la posición de la cámara usando coordenadas esféricas
 	float x = cameraRadius * cos(cameraElevation) * cos(cameraAzimuth);

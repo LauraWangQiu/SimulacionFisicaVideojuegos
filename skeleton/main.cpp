@@ -7,7 +7,7 @@
 // ==================
 #include "ParticleSystem.h"
 
-std::string display_text = "Q-E -> select spacecraft color";
+std::string display_text = "Q-E -> select spacecraft color || ENTER to change mode";
 std::string num_particles = "0";
 
 using namespace physx;
@@ -117,7 +117,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	// PERSONALIZACION DEL COHETE
 	case 'Q': particleSys->leftColor(); break;
 	case 'E': particleSys->rightColor(); break;
-	case '\r': particleSys->switchPersonalization(); break;
+	case '\r': particleSys->switchMode(); break;
 	default: break;
 	}
 }

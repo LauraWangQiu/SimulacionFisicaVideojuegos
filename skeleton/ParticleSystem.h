@@ -21,6 +21,8 @@
 using namespace std;
 using namespace physx;
 
+enum GAME_MODES { NORMAL, PERSONALIZATION, GAME_MODES_SIZE };
+
 class ParticleSystem {
 protected:
 	list<string>	listOfGeneratorNames;
@@ -59,8 +61,8 @@ protected:
 	Particle* window			= nullptr;
 	particlePalettes palettes;
 	int colorIndex = 0;
+	int gameMode = PERSONALIZATION;
 
-	bool personalization = false;
 	float cameraAzimuth = CAMERA_INITIAL_AZIMUTH;
 	float cameraElevation = CAMERA_INITIAL_ELEVATION;
 	float cameraRadius = CAMERA_INITIAL_RADIUS;
@@ -139,12 +141,14 @@ public:
 	void objectFollowSpacecraft(Particle* p);
 	void generatorFollowSpacecraft(ParticleGenerator* pg);
 
+	void manageMode();
+	void switchMode();
+
 	// Personalizacion cohete
 	void leftColor();
 	void rightColor();
 
 	// Camara
-	void switchPersonalization();
 	void cameraRotate();
 	void cameraFollow();
 
