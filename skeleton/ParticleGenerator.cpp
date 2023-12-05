@@ -9,7 +9,7 @@ ParticleGenerator::ParticleGenerator(string Name, Vector3 MeanPos, Vector3 MeanV
 }
 
 ParticleGenerator::~ParticleGenerator() {
-	delete model;
+	delete model; model = nullptr;
 }
 
 void ParticleGenerator::randomize() {

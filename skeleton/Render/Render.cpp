@@ -298,12 +298,17 @@ void startRender(const PxVec3& cameraEye, const PxVec3& cameraDir, PxReal clipNe
 		break;
 	case NORMAL:
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		drawText("Eliminated: " + std::to_string(numParticlesEliminated), glutGet(GLUT_WINDOW_WIDTH) / 2 - 50, glutGet(GLUT_WINDOW_HEIGHT) - 30, GLUT_BITMAP_TIMES_ROMAN_24);
+		drawText("Eliminated: " + std::to_string(numParticlesEliminated), glutGet(GLUT_WINDOW_WIDTH) / 2 + 75, glutGet(GLUT_WINDOW_HEIGHT) - 30, GLUT_BITMAP_TIMES_ROMAN_24);
+		drawText("Time: " + std::to_string((int)(gameTime - inGameTime) + 1), 50, glutGet(GLUT_WINDOW_HEIGHT) - 30, GLUT_BITMAP_TIMES_ROMAN_24);
 		break;
 	case END:
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		drawText(end, glutGet(GLUT_WINDOW_WIDTH) / 2 - 95, glutGet(GLUT_WINDOW_HEIGHT) / 2, GLUT_BITMAP_TIMES_ROMAN_24);
 		drawText("You eliminated: " + std::to_string(numParticlesEliminated), glutGet(GLUT_WINDOW_WIDTH) / 2 - 100, glutGet(GLUT_WINDOW_HEIGHT) / 2 - 30, GLUT_BITMAP_TIMES_ROMAN_24);
+		break;
+	case END2:
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		drawText(special_thanks, 35, glutGet(GLUT_WINDOW_HEIGHT) / 2, GLUT_BITMAP_TIMES_ROMAN_24);
 		break;
 	default: break;
 	}

@@ -22,6 +22,7 @@
 using namespace std;
 using namespace physx;
 
+extern float inGameTime;
 extern float gameTime;
 extern int numParticlesEliminated;
 extern int gameMode;
@@ -35,7 +36,6 @@ protected:
 	Vector3			gravity;
 	PxTransform		origin;
 	Camera*			camera					= nullptr;
-	float			inGameTime				= 0.0f;
 	bool			stopped					= true;
 	bool			end						= false;
 	bool			end2					= false;
@@ -89,6 +89,7 @@ public:
 
 #pragma region LISTAS
 	void addGeneratorName(string name);
+	void clearListOfParticles();
 	void addParticleGenerator(ParticleGenerator* pg);
 	void addForceGenerator(ForceGenerator* fg);
 	void removeForceGenerator(ForceGenerator* fg);
@@ -182,6 +183,10 @@ public:
 	void createSpacecraft();
 	void deleteSpacecraft();
 	void createPropellants(Vector3 SpacecraftPos);
+	inline void setActivePropellants(bool a) {
+		propellantGenerator1->setActive(a);
+		propellantGenerator2->setActive(a);
+	}
 	// Movimiento de la nave
 	void left();
 	void right();

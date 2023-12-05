@@ -53,11 +53,6 @@ ParticleSystem::~ParticleSystem() {
 void ParticleSystem::update(double t) {
 
 	if (gameMode == NORMAL || gameMode == END) inGameTime += t;
-	if (inGameTime >= gameTime) {
-		(inGameTime >= gameTime + END_TIME) ? 
-			gameMode = END2 : gameMode = END;
-	}
-	stopped = gameMode == PERSONALIZATION || gameMode == END;
 
 	manageMode();
 
@@ -66,7 +61,7 @@ void ParticleSystem::update(double t) {
 		pg->updateActualNumParticles(numParticles);
 		if (pg->getActive()) {
 
-			if (pg->getName() == "Propeller1" || pg->getName() == "Propeller2")
+			if (pg->getName() == "Propellant1" || pg->getName() == "Propellant2")
 				generatorFollowSpacecraft(pg);
 
 			auto list = pg->generateParticles();
@@ -102,11 +97,8 @@ void ParticleSystem::update(double t) {
 			decreaseNumParticles();
 		}
 		else {
-
-			if (*p == spacecraft && spacecraft != nullptr && floorRI != nullptr) {
-				propellantGenerator1->setActive(spacecraft->getPosY() > FLOOR_HEIGHT);
-				propellantGenerator2->setActive(spacecraft->getPosY() > FLOOR_HEIGHT);
-			}
+			if (*p == spacecraft && spacecraft != nullptr && floorRI != nullptr)
+				setActivePropellants(true);
 			else if (*p == propellant1 || *p == propellant2 || *p == window)
 				objectFollowSpacecraft(*p);
 
@@ -130,6 +122,15 @@ void ParticleSystem::onParticleDeath(Particle* p) {
 #pragma region LISTAS
 void ParticleSystem::addGeneratorName(string name) {
 	listOfGeneratorNames.push_back(name);
+}
+
+void ParticleSystem::clearListOfParticles() {
+	for (auto p : listOfParticles) {
+		p->setDelete(true);
+		p->release();
+		particleForceRegistry.deleteParticleRegistry(p);
+		decreaseNumParticles();
+	} listOfParticles.clear();
 }
 
 void ParticleSystem::addParticleGenerator(ParticleGenerator* pg) {
@@ -275,6 +276,12 @@ void ParticleSystem::addForces(Particle* p) {
 	}
 }
 
+void ParticleSystem::generatePropulsionForce() {
+	propulsionForceGenerator = new GravityForceGenerator(PROPULSION_FORCE,
+		"PropulsionForce", 0.0f);
+	addForceGenerator(propulsionForceGenerator);
+}
+
 void ParticleSystem::generateWhirlWindsForce() {
 	whirlWindsForceGenerator = new WhirlWindForceGenerator(7.0f, center - Vector3(0.0f, 50.0f, 0.0f),
 		"WhirlWindForce", WHIRL_WIND_FORCE_DURATION);
@@ -287,6 +294,7 @@ void ParticleSystem::createScene() {
 
 	// SUELO
 	floor = gPhysics->createRigidStatic(PxTransform(Vector3(0.0f, -5.0f, 0.0f)));
+	floor->setName("FLOOR");
 	floorShape = CreateShape(PxBoxGeometry(100, 1, 100));
 	floor->attachShape(*floorShape);
 	gScene->addActor(*floor);
@@ -340,6 +348,9 @@ void ParticleSystem::addSphere() {
 
 void ParticleSystem::manageMode() {
 
+	if (inGameTime >= gameTime) (inGameTime >= gameTime + END_TIME) ? gameMode = END2 : gameMode = END;
+	stopped = gameMode == PERSONALIZATION || gameMode == END;
+
 	static int c = 0;
 
 	switch (gameMode) {
@@ -367,10 +378,11 @@ void ParticleSystem::manageMode() {
 		++c;
 		if (!end2 && c > 50) {
 			end2 = true;
-			addSphere();
 			fireworkGenerator->setActive(false);
-			whirlWindsForceGenerator->setActive(true);
 			deleteSpacecraft();
+			clearListOfParticles();
+			addSphere();
+			whirlWindsForceGenerator->setActive(true);
 		}
 		break;
 	default: break;
@@ -450,12 +462,12 @@ void ParticleSystem::createPropellants(Vector3 SpacecraftPos) {
 		propellant1 = addParticle(PROPELLANT, PxTransform(SpacecraftPos + PROPELLANT1_POSITION), Vector3(0.0f, -1.0f, 0.0f), true, true);
 
 		if (propellantGenerator1 == nullptr) {
-			propellantGenerator1 = new GaussianParticleGenerator("Propeller1", SpacecraftPos + PROPELLANT1_GENERATOR_POSITION, Vector3(0.0f, 0.0f, 0.0f), 1, 3,
+			propellantGenerator1 = new GaussianParticleGenerator("Propellant1", SpacecraftPos + PROPELLANT1_GENERATOR_POSITION, Vector3(0.0f, 0.0f, 0.0f), 1, 3,
 				propellantModel1, Vector3(0.1f, 0.1f, 0.1f), Vector3(1.0f, 1.0f, 1.0f));
 			addParticleGenerator(propellantGenerator1);
 		}
 		if (propellantGenerator2 == nullptr) {
-			propellantGenerator2 = new GaussianParticleGenerator("Propeller2", SpacecraftPos + PROPELLANT2_GENERATOR_POSITION, Vector3(0.0f, 0.0f, 0.0f), 1, 3,
+			propellantGenerator2 = new GaussianParticleGenerator("Propellant2", SpacecraftPos + PROPELLANT2_GENERATOR_POSITION, Vector3(0.0f, 0.0f, 0.0f), 1, 3,
 				propellantModel2, Vector3(0.1f, 0.1f, 0.1f), Vector3(1.0f, 1.0f, 1.0f));
 			addParticleGenerator(propellantGenerator2);
 		}
@@ -463,24 +475,18 @@ void ParticleSystem::createPropellants(Vector3 SpacecraftPos) {
 	}
 }
 
-void ParticleSystem::generatePropulsionForce() {
-	propulsionForceGenerator = new GravityForceGenerator(PROPULSION_FORCE,
-		"PropulsionForce", 0.0f);
-	addForceGenerator(propulsionForceGenerator);
-}
-
 #pragma region MOVIMIENTO
 void ParticleSystem::left() {
-	if (gameMode == NORMAL) spacecraft->setPos(Vector3(spacecraft->getPosX() + SPACECRAFT_MOVEMENT_SPEED, spacecraft->getPosY(), spacecraft->getPosZ()));
+	if (spacecraft != nullptr && gameMode == NORMAL) spacecraft->setPos(Vector3(spacecraft->getPosX() + SPACECRAFT_MOVEMENT_SPEED, spacecraft->getPosY(), spacecraft->getPosZ()));
 }
 void ParticleSystem::right() {
-	if (gameMode == NORMAL) spacecraft->setPos(Vector3(spacecraft->getPosX() - SPACECRAFT_MOVEMENT_SPEED, spacecraft->getPosY(), spacecraft->getPosZ()));
+	if (spacecraft != nullptr && gameMode == NORMAL) spacecraft->setPos(Vector3(spacecraft->getPosX() - SPACECRAFT_MOVEMENT_SPEED, spacecraft->getPosY(), spacecraft->getPosZ()));
 }
 void ParticleSystem::forward() {
-	if (gameMode == NORMAL) spacecraft->setPos(Vector3(spacecraft->getPosX(), spacecraft->getPosY(), spacecraft->getPosZ() + SPACECRAFT_MOVEMENT_SPEED));
+	if (spacecraft != nullptr && gameMode == NORMAL) spacecraft->setPos(Vector3(spacecraft->getPosX(), spacecraft->getPosY(), spacecraft->getPosZ() + SPACECRAFT_MOVEMENT_SPEED));
 }
 void ParticleSystem::backward() {
-	if (gameMode == NORMAL) spacecraft->setPos(Vector3(spacecraft->getPosX(), spacecraft->getPosY(), spacecraft->getPosZ() - SPACECRAFT_MOVEMENT_SPEED));
+	if (spacecraft != nullptr && gameMode == NORMAL) spacecraft->setPos(Vector3(spacecraft->getPosX(), spacecraft->getPosY(), spacecraft->getPosZ() - SPACECRAFT_MOVEMENT_SPEED));
 }
 void ParticleSystem::addPropulsion() {
 	if (propulsionForceGenerator != nullptr && gameMode == NORMAL) {
@@ -489,7 +495,7 @@ void ParticleSystem::addPropulsion() {
 	}
 }
 void ParticleSystem::stopPropulsion() {
-	if (propulsionForceGenerator != nullptr && gameMode == NORMAL) {
+	if (propulsionForceGenerator != nullptr && spacecraft != nullptr && gameMode == NORMAL) {
 		spacecraft->clearForce();
 		propulsionForceGenerator->setGravity(Vector3(0.0f, 0.0f, 0.0f));
 		propulsionForceGenerator->setActive(false);
@@ -498,7 +504,8 @@ void ParticleSystem::stopPropulsion() {
 #pragma endregion
 
 void ParticleSystem::shoot() {
-	addFirework(gPhysics, gScene, FIREWORK, PxTransform(spacecraft->getPos()));
+	if (spacecraft != nullptr)
+		addFirework(gPhysics, gScene, FIREWORK, PxTransform(spacecraft->getPos()));
 }
 
 #pragma region PERSONALIZACION
@@ -518,24 +525,30 @@ void ParticleSystem::rightColor() {
 
 #pragma region SEGUIMIENTO DE LA NAVE
 void ParticleSystem::objectFollowSpacecraft(Particle* p) {
-	Vector3 offset;
-	if (p == propellant1)
-		offset = PROPELLANT1_POSITION;
-	else if (p == propellant2)
-		offset = PROPELLANT2_POSITION;
-	else if (p == window)
-		offset = WINDOW_POSITION;
 
-	p->setPos(spacecraft->getPos() + offset);
+	if (spacecraft != nullptr) {
+		Vector3 offset;
+		if (p == propellant1)
+			offset = PROPELLANT1_POSITION;
+		else if (p == propellant2)
+			offset = PROPELLANT2_POSITION;
+		else if (p == window)
+			offset = WINDOW_POSITION;
+
+		p->setPos(spacecraft->getPos() + offset);
+	}
 }
 void ParticleSystem::generatorFollowSpacecraft(ParticleGenerator* pg) {
-	Vector3 offset;
-	if (pg == propellantGenerator1)
-		offset = PROPELLANT1_GENERATOR_POSITION;
-	else if (pg == propellantGenerator2)
-		offset = PROPELLANT2_GENERATOR_POSITION;
 
-	pg->getModel()->setPos(spacecraft->getPos() + offset);
+	if (spacecraft != nullptr) {
+		Vector3 offset;
+		if (pg == propellantGenerator1)
+			offset = PROPELLANT1_GENERATOR_POSITION;
+		else if (pg == propellantGenerator2)
+			offset = PROPELLANT2_GENERATOR_POSITION;
+
+		pg->getModel()->setPos(spacecraft->getPos() + offset);
+	}
 }
 #pragma endregion
 

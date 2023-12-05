@@ -12,7 +12,9 @@ std::string title = "Space up!";
 std::string controls1 = "Q-E -> select spacecraft color";
 std::string controls2 = "ENTER to change mode";
 std::string end = "Congratulations!";
+std::string special_thanks = "Thanks for making the space a better place :)";
 float gameTime = GAME_TIME;
+float inGameTime = 0.0f;
 int numParticlesEliminated = 0;
 int gameMode = PERSONALIZATION;
 
@@ -164,6 +166,11 @@ void onCollision(physx::PxActor* actor1, physx::PxActor* actor2)
 {
 	PX_UNUSED(actor1);
 	PX_UNUSED(actor2);
+
+	if ((actor1->getName() == "SPACECRAFT" && actor2->getName() == "FLOOR") ||
+		(actor1->getName() == "FLOOR" && actor2->getName() == "SPACECRAFT")) {
+		particleSys->setActivePropellants(false);
+	}
 
 	if (gameMode == NORMAL || gameMode == PERSONALIZATION) {
 		// Colision Nave - Objeto Random
