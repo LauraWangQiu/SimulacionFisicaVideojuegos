@@ -4,7 +4,7 @@
 
 #include "core.hpp"
 #include "RenderUtils.hpp"
-
+#include <iostream>
 using namespace physx;
 
 extern void initPhysics(bool interactive);
@@ -12,6 +12,7 @@ extern void stepPhysics(bool interactive, double t);
 extern void cleanupPhysics(bool interactive);
 extern void keyPress(unsigned char key, const PxTransform& camera);
 extern void keyUp(unsigned char key, const PxTransform& camera);
+extern void keyPressSpecial(int key, const PxTransform& camera);
 extern PxPhysics* gPhysics;
 extern PxMaterial* gMaterial;
 
@@ -81,6 +82,7 @@ void specialInput(int key, int x, int y)
 	case GLUT_KEY_RIGHT:
 		sCamera->setEye(sCamera->getEye() + sCamera->getViewY() * 2.0f);
 		break;
+	default: keyPressSpecial(key, sCamera->getTransform()); break;
 	}
 }
 

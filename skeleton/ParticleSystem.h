@@ -29,6 +29,7 @@ protected:
 	Particle*		originParticle			= nullptr;
 	Vector3			gravity;
 	PxTransform		origin;
+	Camera*			camera					= nullptr;
 
 	// GENERADORES DE PARTICULAS
 	list<ParticleGenerator*> listOfParticleGenerators;
@@ -36,8 +37,8 @@ protected:
 	ParticleGenerator*	randomGenerator		= nullptr;
 	Particle*			randomModel			= nullptr;
 
-	ParticleGenerator* propellerGenerator1	= nullptr;
-	ParticleGenerator* propellerGenerator2	= nullptr;
+	ParticleGenerator* propellantGenerator1	= nullptr;
+	ParticleGenerator* propellantGenerator2	= nullptr;
 	Particle* propellantModel1				= nullptr;
 	Particle* propellantModel2				= nullptr;
 
@@ -59,10 +60,15 @@ protected:
 	particlePalettes palettes;
 	int colorIndex = 0;
 
+	bool personalization = false;
+	float cameraAzimuth = CAMERA_INITIAL_AZIMUTH;
+	float cameraElevation = CAMERA_INITIAL_ELEVATION;
+	float cameraRadius = CAMERA_INITIAL_RADIUS;
+
 	GravityForceGenerator*		propulsionForceGenerator	= nullptr;
 
 public:
-	ParticleSystem(PxPhysics* gPhysics, PxScene* gScene, const Vector3& g = { 0.0f, -9.8f, 0.0f});
+	ParticleSystem(PxPhysics* gPhysics, PxScene* gScene, Camera* camera, const Vector3& g = { 0.0f, -9.8f, 0.0f});
 	~ParticleSystem();
 
 	void update(double t);
@@ -130,8 +136,18 @@ public:
 	void right();
 	void addPropulsion();
 	void stopPropulsion();
+	void objectFollowSpacecraft(Particle* p);
+	void generatorFollowSpacecraft(ParticleGenerator* pg);
 
+	// Personalizacion cohete
 	void leftColor();
 	void rightColor();
+
+	// Camara
+	void switchPersonalization();
+	void cameraRotate();
+	void cameraFollow();
+
+	void stopMotion(bool m);
 #pragma endregion
 };

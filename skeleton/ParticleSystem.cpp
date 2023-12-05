@@ -12,10 +12,10 @@
 
 #define PROPULSION_FORCE Vector3(0.0f, 50.0f, 0.0f)
 
-ParticleSystem::ParticleSystem(PxPhysics* gPhysics, PxScene* gScene, const Vector3& g) : gravity(g), 
+ParticleSystem::ParticleSystem(PxPhysics* gPhysics, PxScene* gScene, Camera* camera, const Vector3& g) : gravity(g),
 	numParticles(0),
 	origin(PxTransform(Vector3(0.0f, 0.0f, 0.0f))),
-	gPhysics(gPhysics), gScene(gScene) {
+	gPhysics(gPhysics), gScene(gScene), camera(camera) {
 
 #ifdef ORIGIN
 	addOrigin();
@@ -35,8 +35,8 @@ ParticleSystem::~ParticleSystem() {
 	originParticle = nullptr;
 
 	randomGenerator		= nullptr; randomModel		= nullptr;
-	propellerGenerator1 = nullptr; propellantModel1	= nullptr;
-	propellerGenerator2 = nullptr; propellantModel2	= nullptr;
+	propellantGenerator1 = nullptr; propellantModel1	= nullptr;
+	propellantGenerator2 = nullptr; propellantModel2	= nullptr;
 	
 	spacecraft	= nullptr;
 	propellant1 = nullptr;
@@ -52,15 +52,23 @@ ParticleSystem::~ParticleSystem() {
 
 void ParticleSystem::update(double t) {
 
+	// Camara
+	if (personalization) {
+		cameraAzimuth += 0.001f;
+		cameraRotate();
+	}
+	else {
+		cameraAzimuth = CAMERA_INITIAL_AZIMUTH;
+		cameraFollow();
+	}
+
 	// Recorro todos los generadores de particulas y genero particulas anadiendolas a listOfParticles
 	for (auto pg : listOfParticleGenerators) {
 		pg->updateActualNumParticles(numParticles);
 		if (pg->getActive()) {
 
-			if (pg->getName() == "Propeller1")
-				pg->getModel()->setPos(spacecraft->getPos() + PROPELLANT1_GENERATOR_POSITION);
-			else if (pg->getName() == "Propeller2")
-				pg->getModel()->setPos(spacecraft->getPos() + PROPELLANT2_GENERATOR_POSITION);
+			if (pg->getName() == "Propeller1" || pg->getName() == "Propeller2")
+				generatorFollowSpacecraft(pg);
 
 			auto list = pg->generateParticles();
 			addParticles(list);
@@ -89,8 +97,8 @@ void ParticleSystem::update(double t) {
 		if (!(*p)->integrate(t)) {
 
 			if (*p == spacecraft) {
-				propellerGenerator1->setActive(false);
-				propellerGenerator2->setActive(false);
+				propellantGenerator1->setActive(false);
+				propellantGenerator2->setActive(false);
 				delete spacecraft;	spacecraft = nullptr;
 				delete propellant1; propellant1 = nullptr;
 				delete propellant2; propellant2 = nullptr;
@@ -107,15 +115,11 @@ void ParticleSystem::update(double t) {
 		else {
 
 			if (*p == spacecraft) {
-				propellerGenerator1->setActive(spacecraft->getPosY() > FLOOR_HEIGHT);
-				propellerGenerator2->setActive(spacecraft->getPosY() > FLOOR_HEIGHT);
+				propellantGenerator1->setActive(spacecraft->getPosY() > FLOOR_HEIGHT);
+				propellantGenerator2->setActive(spacecraft->getPosY() > FLOOR_HEIGHT);
 			}
-			else if (*p == propellant1) 
-				propellant1->setPos(spacecraft->getPos() + PROPELLANT1_POSITION);
-			else if (*p == propellant2) 
-				propellant2->setPos(spacecraft->getPos() + PROPELLANT2_POSITION);
-			else if (*p == window)
-				window->setPos(spacecraft->getPos() + WINDOW_POSITION);
+			else if (*p == propellant1 || *p == propellant2 || *p == window)
+				objectFollowSpacecraft(*p);
 
 			addForces(*p);
 			++p;
@@ -290,11 +294,12 @@ void ParticleSystem::createScene() {
 	generatePropellants(spacecraft->getPos());
 	generatePropulsionForce();
 
-	//spacecraft->getRigid()->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+	// Camara
+	switchPersonalization();
 }
 
 void ParticleSystem::generatePropellants(Vector3 SpacecraftPos) {
-	if (propellerGenerator1 == nullptr || propellerGenerator2 == nullptr) {
+	if (propellantGenerator1 == nullptr || propellantGenerator2 == nullptr) {
 		if (!PROPELLER_GEN_RIGIDBODY) {
 			propellantModel1 = new Particle(BASIC, PxTransform(SpacecraftPos + PROPELLANT1_GENERATOR_POSITION), Vector3(0.0f, -1.0f, 0.0f), false);
 			propellantModel2 = new Particle(BASIC, PxTransform(SpacecraftPos + PROPELLANT2_GENERATOR_POSITION), Vector3(0.0f, -1.0f, 0.0f), false);
@@ -305,15 +310,15 @@ void ParticleSystem::generatePropellants(Vector3 SpacecraftPos) {
 		}
 		propellant1 = addParticle(PROPELLANT, PxTransform(SpacecraftPos + PROPELLANT1_POSITION), Vector3(0.0f, -1.0f, 0.0f), true, true);
 
-		if (propellerGenerator1 == nullptr) {
-			propellerGenerator1 = new GaussianParticleGenerator("Propeller1", SpacecraftPos + PROPELLANT1_GENERATOR_POSITION, Vector3(0.0f, 0.0f, 0.0f), 1, 3,
+		if (propellantGenerator1 == nullptr) {
+			propellantGenerator1 = new GaussianParticleGenerator("Propeller1", SpacecraftPos + PROPELLANT1_GENERATOR_POSITION, Vector3(0.0f, 0.0f, 0.0f), 1, 3,
 				propellantModel1, Vector3(0.1f, 0.1f, 0.1f), Vector3(1.0f, 1.0f, 1.0f));
-			addParticleGenerator(propellerGenerator1);
+			addParticleGenerator(propellantGenerator1);
 		}
-		if (propellerGenerator2 == nullptr) {
-			propellerGenerator2 = new GaussianParticleGenerator("Propeller2", SpacecraftPos + PROPELLANT2_GENERATOR_POSITION, Vector3(0.0f, 0.0f, 0.0f), 1, 3,
+		if (propellantGenerator2 == nullptr) {
+			propellantGenerator2 = new GaussianParticleGenerator("Propeller2", SpacecraftPos + PROPELLANT2_GENERATOR_POSITION, Vector3(0.0f, 0.0f, 0.0f), 1, 3,
 				propellantModel2, Vector3(0.1f, 0.1f, 0.1f), Vector3(1.0f, 1.0f, 1.0f));
-			addParticleGenerator(propellerGenerator2);
+			addParticleGenerator(propellantGenerator2);
 		}
 		propellant2 = addParticle(PROPELLANT, PxTransform(SpacecraftPos + PROPELLANT2_POSITION), Vector3(0.0f, -1.0f, 0.0f), true, true);
 	}
@@ -334,25 +339,71 @@ void ParticleSystem::right() {
 }
 
 void ParticleSystem::addPropulsion() {
-	if (propulsionForceGenerator != nullptr) {
+	if (propulsionForceGenerator != nullptr && !personalization) {
 		propulsionForceGenerator->setGravity(propulsionForceGenerator->getGravity() + PROPULSION_FORCE);
 		propulsionForceGenerator->setActive(true);
 	}
 }
 
 void ParticleSystem::stopPropulsion() {
-	if (propulsionForceGenerator != nullptr) {
+	if (propulsionForceGenerator != nullptr && !personalization) {
 		spacecraft->clearForce();
 		propulsionForceGenerator->setGravity(Vector3(0.0f, 0.0f, 0.0f));
 		propulsionForceGenerator->setActive(false);
 	}
 }
 
+void ParticleSystem::objectFollowSpacecraft(Particle* p) {
+	Vector3 offset;
+	if (p == propellant1)
+		offset = PROPELLANT1_POSITION;
+	else if (p == propellant2)
+		offset = PROPELLANT2_POSITION;
+	else if (p == window)
+		offset = WINDOW_POSITION;
+
+	p->setPos(spacecraft->getPos() + offset);
+}
+
+void ParticleSystem::generatorFollowSpacecraft(ParticleGenerator* pg) {
+	Vector3 offset;
+	if (pg == propellantGenerator1)
+		offset = PROPELLANT1_GENERATOR_POSITION;
+	else if (pg == propellantGenerator2)
+		offset = PROPELLANT2_GENERATOR_POSITION;
+
+	pg->getModel()->setPos(spacecraft->getPos() + offset);
+}
+
 void ParticleSystem::leftColor() {
-	spacecraft->setColor2(palettes.spacecraftPalette[abs(--colorIndex % palettes.spacecraftPaletteSize)]);
+	if (--colorIndex < 0) colorIndex = palettes.spacecraftPaletteSize - 1; 
+	if (personalization) spacecraft->setColor2(palettes.spacecraftPalette[colorIndex % palettes.spacecraftPaletteSize]);
 }
 
 void ParticleSystem::rightColor() {
-	spacecraft->setColor2(palettes.spacecraftPalette[abs(++colorIndex % palettes.spacecraftPaletteSize)]);
+	if (personalization) spacecraft->setColor2(palettes.spacecraftPalette[++colorIndex % palettes.spacecraftPaletteSize]);
+}
+
+void ParticleSystem::switchPersonalization(){
+	personalization = !personalization;
+	if (personalization) { cameraRotate(); stopMotion(true);
+	} else { cameraFollow(); stopMotion(false); }
+}
+
+void ParticleSystem::cameraRotate() {
+	// Calcular la posición de la cámara usando coordenadas esféricas
+	float x = cameraRadius * cos(cameraElevation) * cos(cameraAzimuth);
+	float y = cameraRadius * sin(cameraElevation);
+	float z = cameraRadius * cos(cameraElevation) * sin(cameraAzimuth);
+	Vector3 dir = Vector3(x, y, z);
+	camera->setView(dir + spacecraft->getPos(), (-dir).getNormalized());
+}
+
+void ParticleSystem::cameraFollow() {
+	camera->setView(spacecraft->getPos() + CAMERA_POSITION, CAMERA_VIEW);
+}
+
+void ParticleSystem::stopMotion(bool m) {
+	spacecraft->getRigid()->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, m);
 }
 #pragma endregion

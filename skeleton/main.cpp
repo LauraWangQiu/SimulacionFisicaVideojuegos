@@ -59,7 +59,7 @@ void initPhysics(bool interactive)
 	gScene = gPhysics->createScene(sceneDesc);
 
 	// ============
-	particleSys = std::make_unique<ParticleSystem>(gPhysics, gScene, sceneDesc.gravity);
+	particleSys = std::make_unique<ParticleSystem>(gPhysics, gScene, GetCamera(), sceneDesc.gravity);
 }
 
 
@@ -117,6 +117,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	// PERSONALIZACION DEL COHETE
 	case 'Q': particleSys->leftColor(); break;
 	case 'E': particleSys->rightColor(); break;
+	case '\r': particleSys->switchPersonalization(); break;
 	default: break;
 	}
 }
@@ -129,6 +130,15 @@ void keyUp(unsigned char key, const PxTransform& camera)
 	case ' ': particleSys->stopPropulsion(); break;
 	default: break;
 	}
+}
+
+void keyPressSpecial(int key, const PxTransform& camera) {
+
+	PX_UNUSED(camera);
+	
+	/*switch (key) {
+	case GLUT_ACTIVE_CTRL:  break;
+	}*/
 }
 
 void onCollision(physx::PxActor* actor1, physx::PxActor* actor2)
