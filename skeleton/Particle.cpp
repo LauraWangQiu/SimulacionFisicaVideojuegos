@@ -12,7 +12,8 @@ vector<particleInfo> ParticlesInfo = {
 		0,
 		Vector3(0.5f, 0.5f, 0.5f),
 		"Sphere",
-		0.7f
+		0.7f,
+		Vector3(0.0f, 1.0f, 0.0f)
 	},
 	{ // FIREWORK
 		1.0f,
@@ -25,7 +26,8 @@ vector<particleInfo> ParticlesInfo = {
 		1,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Sphere",
-		1.0f
+		1.0f,
+		Vector3(0.0f, 1.0f, 0.0f)
 	},
 	{ // RANDOM
 		0.1f,
@@ -38,7 +40,8 @@ vector<particleInfo> ParticlesInfo = {
 		0,
 		Vector3(1.0f, 1.0f, 1.0f),
 		"Cube",
-		1.0f
+		1.0f,
+		Vector3(0.0f, 1.0f, 0.0f)
 	},
 	{ // SPACECRAFT
 		10.0f,
@@ -51,7 +54,8 @@ vector<particleInfo> ParticlesInfo = {
 		0,
 		Vector3(3.2f, 7.0f, 3.2f),
 		"Cube",
-		1.0f
+		1.0f,
+		Vector3(0.0f, 1.0f, 0.0f)
 	},
 	{ // PROPELLANT
 		100.0f,
@@ -64,7 +68,8 @@ vector<particleInfo> ParticlesInfo = {
 		0,
 		Vector3(1.0f, 2.0f, 2.0f),
 		"Cube",
-		1.0f
+		1.0f,
+		Vector3(0.0f, -1.0f, 0.0f)
 	},
 	{ // WINDOW
 		10.0f,
@@ -77,14 +82,19 @@ vector<particleInfo> ParticlesInfo = {
 		0,
 		Vector3(2.0f, 2.0f, 2.0f),
 		"Sphere",
-		1.0f
+		1.0f,
+		Vector3(0.0f, 0.0f, 1.0f)
 	}
 };
 
-Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible, bool Active) : particleType(Type),
+Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, 
+	bool Visible, bool Active) : 
+	particleType(Type),
 	transform(Transform), dir(Dir), velc(ParticlesInfo[particleType].velc), 
 	force(Vector3(0.0f, 0.0f, 0.0f)), initialForce(force),
-	visible(Visible), active(Active), toDelete(false), refCount(1), toExplode(false) {
+	density(1000.0f), massInertiaTensor(Vector3(0.0f, 1.0f, 0.0f)),
+	visible(Visible), active(Active),
+	toDelete(false), refCount(1), toExplode(false) {
 	
 	setMass(ParticlesInfo[particleType].mass);
 	setVel(dir * velc);
@@ -98,16 +108,26 @@ Particle::Particle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool V
 	setShapeName(ParticlesInfo[particleType].geometryType);
 	setShape(getShape(ParticlesInfo[particleType].geometryType, ParticlesInfo[particleType].size));
 	setDensity(ParticlesInfo[particleType].density);
+	setMassInertiaTensor(ParticlesInfo[particleType].massInertiaTensor);
 
 	if (visible) renderItem = new RenderItem(shape, &transform, color);
 }
 
-Particle::Particle(PxTransform Transform, Vector3 Dir, float Mass, float Velc, Vector3 Acc, float Damping, Vector3 Size,
-	float Time, Vector4 Color, string ShapeName, int NumDivisions, int NumExplodes, float Density, bool Visible, bool Active) :
-	particleType(NONE), transform(Transform), dir(Dir), mass(Mass), velc(Velc), acc(Acc), damping(Damping), size(Size), 
+Particle::Particle(PxTransform Transform, Vector3 Dir, 
+	float Mass, float Velc, Vector3 Acc, float Damping, Vector3 Size,
+	float Time, Vector4 Color, string ShapeName, 
+	int NumDivisions, int NumExplodes, 
+	float Density, Vector3 MassInertiaTensor, 
+	bool Visible, bool Active) :
+
+	particleType(NONE), transform(Transform), dir(Dir), 
+	mass(Mass), velc(Velc), acc(Acc), damping(Damping), size(Size), 
 	time(Time), color(Color), shapeName(ShapeName),
-	numDivisions(NumDivisions), numExplodes(NumExplodes), density(Density), visible(Visible), active(Active),
-	toDelete(false), refCount(1), toExplode(false) {
+	numDivisions(NumDivisions), numExplodes(NumExplodes), 
+	density(Density), massInertiaTensor(MassInertiaTensor),
+	visible(Visible), active(Active),
+	toDelete(false), refCount(1), toExplode(false)
+{
 
 	if (gPhysics == nullptr || gScene == nullptr) {
 		setVel(dir * velc);
@@ -117,11 +137,16 @@ Particle::Particle(PxTransform Transform, Vector3 Dir, float Mass, float Velc, V
 	}
 }
 
-Particle::Particle(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible, bool Active) : particleType(Type),
-	transform(Transform), dir(Dir), velc(ParticlesInfo[particleType].velc),
+Particle::Particle(PxPhysics* GPhysics, PxScene* GScene, 
+	ParticleType Type, PxTransform Transform, Vector3 Dir, 
+	bool Visible, bool Active) : 
+	particleType(Type), transform(Transform), dir(Dir), velc(ParticlesInfo[particleType].velc),
 	force(Vector3(0.0f, 0.0f, 0.0f)), initialForce(force),
-	visible(Visible), active(Active), toDelete(false), refCount(1), toExplode(false),
-	gPhysics(GPhysics), gScene(GScene) {
+	density(1000.0f), massInertiaTensor(Vector3(0.0f, 1.0f, 0.0f)),
+	visible(Visible), active(Active), 
+	toDelete(false), refCount(1), toExplode(false),
+	gPhysics(GPhysics), gScene(GScene)
+{
 
 	if (gPhysics != nullptr & gScene != nullptr) {
 
@@ -129,8 +154,8 @@ Particle::Particle(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTr
 		rigid->setName(getName(particleType));
 		rigid->userData = this;
 		rigid->setLinearVelocity(dir * velc);
-		//rigid->setAngularVelocity(Vector3());
-		//rigid->setMassSpaceInertiaTensor(Vector3());
+		rigid->setAngularVelocity(Vector3(0.0f, 0.0f, 0.0f));
+		rigid->setMassSpaceInertiaTensor(massInertiaTensor);
 		rigid->setLinearDamping(ParticlesInfo[particleType].damp);
 		PxShape* shape = getShape(ParticlesInfo[particleType].geometryType, ParticlesInfo[particleType].size);
 		rigid->attachShape(*shape);
@@ -148,19 +173,31 @@ Particle::Particle(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTr
 		setShapeName(ParticlesInfo[particleType].geometryType);
 		setShape(shape);
 		setDensity(ParticlesInfo[particleType].density);
+		setMassInertiaTensor(rigid->getMassSpaceInertiaTensor());
 
 		if (visible) renderItem = new RenderItem(shape, rigid, ParticlesInfo[particleType].col);
 	}
 }
 
-Particle::Particle(PxPhysics* GPhysics, PxScene* GScene, PxTransform Transform, Vector3 Dir, float Mass, float Velc, Vector3 Acc, float Damping, Vector3 Size,
-	float Time, Vector4 Color, string ShapeName, int NumDivisions, int NumExplodes, float Density,bool Visible, bool Active) :
-	particleType(NONE), transform(Transform), dir(Dir), mass(Mass), velc(Velc), acc(Acc), damping(Damping), size(Size), 
+Particle::Particle(PxPhysics* GPhysics, PxScene* GScene, 
+	PxTransform Transform, Vector3 Dir, 
+	float Mass, float Velc, Vector3 Acc, 
+	float Damping, Vector3 Size,
+	float Time, Vector4 Color, string ShapeName, 
+	int NumDivisions, int NumExplodes, 
+	float Density, Vector3 MassInertiaTensor, 
+	bool Visible, bool Active) :
+
+	particleType(NONE), transform(Transform), dir(Dir), 
+	mass(Mass), velc(Velc), acc(Acc), 
+	damping(Damping), size(Size), 
 	time(Time), color(Color), shapeName(ShapeName),
-	numDivisions(NumDivisions), numExplodes(NumExplodes), density(Density),
+	numDivisions(NumDivisions), numExplodes(NumExplodes), 
+	density(Density), massInertiaTensor(MassInertiaTensor),
 	visible(Visible), active(Active),
 	toDelete(false), refCount(1), toExplode(false),
-	gPhysics(GPhysics), gScene(GScene) {
+	gPhysics(GPhysics), gScene(GScene)
+{
 
 	if (gPhysics != nullptr && gScene != nullptr) {
 
@@ -168,8 +205,8 @@ Particle::Particle(PxPhysics* GPhysics, PxScene* GScene, PxTransform Transform, 
 		rigid->setName(getName(particleType));
 		rigid->userData = this;
 		rigid->setLinearVelocity(dir * velc);
-		//rigid->setAngularVelocity(Vector3());
-		//rigid->setMassSpaceInertiaTensor(Vector3());
+		rigid->setAngularVelocity(Vector3(0.0f, 0.0f, 0.0f));
+		rigid->setMassSpaceInertiaTensor(MassInertiaTensor);
 		rigid->setLinearDamping(damping);
 		PxShape* shape = getShape(shapeName, size);
 		rigid->attachShape(*shape);
@@ -179,14 +216,7 @@ Particle::Particle(PxPhysics* GPhysics, PxScene* GScene, PxTransform Transform, 
 		setMass(rigid->getMass());
 		setVel(rigid->getLinearVelocity());
 		setDamping(rigid->getLinearDamping());
-		setSize(size);
-		setTime(time);
-		setColor(color);
-		setNumDivisions(numDivisions);
-		setNumExplodes(numExplodes);
-		setShapeName(shapeName);
 		setShape(shape);
-		setDensity(density);
 
 		if (visible) renderItem = new RenderItem(shape, rigid, color);
 	}

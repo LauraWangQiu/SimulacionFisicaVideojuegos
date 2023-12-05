@@ -186,9 +186,20 @@ Particle* ParticleSystem::addParticle(ParticleType Type, PxTransform Transform, 
 	return p;
 }
 
-Particle* ParticleSystem::addParticle(PxTransform Transform, Vector3 Dir, float Mass, float Velc, Vector3 Acc, float Damping, Vector3 Size,
-	float Time, Vector4 Color, string ShapeName, int NumDivisions, int NumExplodes, float Density, bool Visible, bool Active) {
-	Particle* p = new Particle(Transform, Dir, Mass, Velc, Acc, Damping, Size, Time, Color, ShapeName, NumDivisions, NumExplodes, Density, Visible, Active);
+Particle* ParticleSystem::addParticle(PxTransform Transform, 
+	Vector3 Dir, float Mass, float Velc, Vector3 Acc, 
+	float Damping, Vector3 Size,
+	float Time, Vector4 Color, string ShapeName, 
+	int NumDivisions, int NumExplodes, 
+	float Density, Vector3 MassInertiaTensor,
+	bool Visible, bool Active) {
+
+	Particle* p = new Particle(Transform, Dir, 
+		Mass, Velc, Acc, Damping, Size, 
+		Time, Color, ShapeName, 
+		NumDivisions, NumExplodes, 
+		Density, MassInertiaTensor, 
+		Visible, Active);
 
 	p->setRandom();
 	addParticle(p);
@@ -351,6 +362,10 @@ void ParticleSystem::stopPropulsion() {
 		propulsionForceGenerator->setGravity(Vector3(0.0f, 0.0f, 0.0f));
 		propulsionForceGenerator->setActive(false);
 	}
+}
+
+void ParticleSystem::shoot() {
+	addFirework(gPhysics, gScene, FIREWORK, PxTransform(spacecraft->getPos()));
 }
 
 void ParticleSystem::objectFollowSpacecraft(Particle* p) {

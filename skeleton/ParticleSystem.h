@@ -89,15 +89,25 @@ public:
 #pragma endregion
 
 #pragma region PARTICULAS
-	Particle* addParticle(ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 0.0f, 1.0f), bool Visible = true, bool Active = false);
-	Particle* addParticle(PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), float Mass = 1.0f, float Velc = 10.0f,
-		Vector3 Acc = Vector3(0.0f, 0.0f, 0.0f), float Damping = 0.99f, Vector3 Size = Vector3(1.0f, 1.0f, 1.0f),
-		float Time = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f), string ShapeName = "Sphere", int NumDivisions = 0, int NumExplodes = 0,
-		float Density = 1000.0f, bool Visible = true, bool Active = false);
-	Particle* addParticle(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 0.0f, 1.0f), bool Visible = true, bool Active = false);
+	Particle* addParticle(ParticleType Type,
+		PxTransform Transform, Vector3 Dir = Vector3(0.0f, 0.0f, 1.0f),
+		bool Visible = true, bool Active = false);
+	Particle* addParticle(PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), 
+		float Mass = 1.0f, float Velc = 10.0f,
+		Vector3 Acc = Vector3(0.0f, 0.0f, 0.0f),
+		float Damping = 0.99f, Vector3 Size = Vector3(1.0f, 1.0f, 1.0f),
+		float Time = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f), string ShapeName = "Sphere", 
+		int NumDivisions = 0, int NumExplodes = 0,
+		float Density = 1000.0f, Vector3 MassInertiaTensor = Vector3(0.0, 1.0f, 0.0f),
+		bool Visible = true, bool Active = false);
+	Particle* addParticle(PxPhysics* GPhysics, PxScene* GScene,
+		ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 0.0f, 1.0f), 
+		bool Visible = true, bool Active = false);
 	void addParticle(Particle* p);
 	void addParticles(list<Particle*> list);
-	Firework* addFirework(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible = true, bool Active = false);
+	Firework* addFirework(PxPhysics* GPhysics, PxScene* GScene,
+		ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0, 1.0f, 0.0f),
+		bool Visible = true, bool Active = false);
 
 	inline void increaseNumParticles() { ++numParticles; }
 	inline void decreaseNumParticles() { --numParticles; }
@@ -142,6 +152,7 @@ public:
 	void stopPropulsion();
 	void objectFollowSpacecraft(Particle* p);
 	void generatorFollowSpacecraft(ParticleGenerator* pg);
+	void shoot();
 
 	void manageMode();
 	void switchMode();

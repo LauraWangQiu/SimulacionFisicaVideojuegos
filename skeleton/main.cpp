@@ -105,12 +105,6 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	PX_UNUSED(camera);
 
 	switch(toupper(key)) {
-	// CAMARAS
-	case 'F': GetCamera()->setView(PxVec3(0.0f, 0.0f, -100.0f), PxVec3(0.0f, 0.0f, 1.0f)); break;
-	case 'L': GetCamera()->setView(PxVec3(-100.0f, 0.0f, 0.0f), PxVec3(1.0f, 0.0f, 0.0f)); break;
-	// PARTICULAS UNICAS
-	case '0': particleSys->addFirework(gPhysics, gScene, FIREWORK, camera, GetCamera()->getDir()); break;
-
 	// GENERADORES DE PARTICULAS
 	case 'Z': particleSys->activateRandomSystem(); break;
 
@@ -147,6 +141,19 @@ void keyPressSpecial(int key, const PxTransform& camera) {
 	}*/
 }
 
+void mouseInput(int button) {
+
+	switch (button) {
+	// Clic izquierdo
+	case 0: break;
+	// Clic central
+	case 1: break;
+	// Clic derecho
+	case 2: particleSys->shoot(); break;
+	default: break;
+	}
+}
+
 void onCollision(physx::PxActor* actor1, physx::PxActor* actor2)
 {
 	PX_UNUSED(actor1);
@@ -179,6 +186,7 @@ void onCollision(physx::PxActor* actor1, physx::PxActor* actor2)
 		p2->setToExplode(true);
 		p1->setTime(0);
 		p2->setTime(0);
+		++numParticlesEliminated;
 	}
 }
 

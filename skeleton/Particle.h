@@ -23,6 +23,7 @@ struct particleInfo {
 	Vector3 size;
 	string geometryType;
 	float density;
+	Vector3 massInertiaTensor;
 };
 
 // Declaración del vector como extern en el archivo de encabezado
@@ -90,16 +91,26 @@ struct particlePalettes {
 
 class Particle {
 public:
-	Particle(ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), bool Visible = true, bool Active = false);
-	Particle(PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), float Mass = 1.0f, float Velc = 10.0f,
-		Vector3 Acc = Vector3(0.0f, 0.0f, 0.0f), float Damping = 0.99f, Vector3 Size = Vector3(1.0f, 1.0f, 1.0f),
+	Particle(ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), 
+		bool Visible = true, bool Active = false);
+	Particle(PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), 
+		float Mass = 1.0f, float Velc = 10.0f, Vector3 Acc = Vector3(0.0f, 0.0f, 0.0f), 
+		float Damping = 0.99f, Vector3 Size = Vector3(1.0f, 1.0f, 1.0f),
 		float Time = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f), string ShapeName = "Sphere",
-		int NumDivisions = 0, int NumExplodes = 0, float Density = 1000.0f, bool Visible = true, bool Active = false);
-	Particle(PxPhysics* GPhysics, PxScene* GScene, ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), bool Visible = true, bool Active = false);
-	Particle(PxPhysics* GPhysics, PxScene* GScene, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), float Mass = 1.0f, float Velc = 10.0f,
-		Vector3 Acc = Vector3(0.0f, 0.0f, 0.0f), float Damping = 0.99f, Vector3 Size = Vector3(1.0f, 1.0f, 1.0f),
+		int NumDivisions = 0, int NumExplodes = 0, 
+		float Density = 1000.0f, Vector3 MassInertiaTensor = Vector3(0.0f, 1.0f, 0.0f), 
+		bool Visible = true, bool Active = false);
+	Particle(PxPhysics* GPhysics, PxScene* GScene, 
+		ParticleType Type, PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), 
+		bool Visible = true, bool Active = false);
+	Particle(PxPhysics* GPhysics, PxScene* GScene, 
+		PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), 
+		float Mass = 1.0f, float Velc = 10.0f, Vector3 Acc = Vector3(0.0f, 0.0f, 0.0f), 
+		float Damping = 0.99f, Vector3 Size = Vector3(1.0f, 1.0f, 1.0f),
 		float Time = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f), string ShapeName = "Sphere",
-		int NumDivisions = 0, int NumExplodes = 0, float Density = 1000.0f, bool Visible = true, bool Active = false);
+		int NumDivisions = 0, int NumExplodes = 0, 
+		float Density = 1000.0f, Vector3 MassInertiaTensor = Vector3(0.0f, 1.0f, 0.0f), 
+		bool Visible = true, bool Active = false);
 
 	virtual ~Particle();
 
@@ -126,6 +137,7 @@ protected:
 	bool toExplode;
 
 	float density;
+	Vector3 massInertiaTensor;
 	PxPhysics*	gPhysics	= nullptr;
 	PxScene*	gScene		= nullptr;
 	PxRigidDynamic* rigid	= nullptr;
@@ -180,6 +192,7 @@ public:
 	inline bool getToExplode() const { return toExplode; }
 	inline int getRefCount() const { return refCount; }
 	inline float getDensity() const { return density; }
+	inline Vector3 getMassInertiaTensor() const { return massInertiaTensor; }
 	inline bool isRigid() const { return rigid != nullptr; }
 	inline PxRigidDynamic* getRigid() const { return rigid; }
 
@@ -265,8 +278,19 @@ public:
 	inline void setToExplode(bool ToExplode) { toExplode = ToExplode; }
 	inline void setDensity(float Density) { density = Density; }
 	inline void setRandomDensity() { setDensity(generateRandomValue(1, 1000)); }
+	inline void setMassInertiaTensor(Vector3 m) { massInertiaTensor = m; }
+	inline void setRandomMassInertiaTensor() {
+		int r = generateRandomValue(0, 2);
 
-	inline double generateRandomValue(int min, int max) { return min + (rand() % (max - min + 1)); }
+		switch (r) {
+		case 0: setMassInertiaTensor(Vector3(1.0f, 0.0f, 0.0f)); break;
+		case 1: setMassInertiaTensor(Vector3(0.0f, 1.0f, 0.0f)); break;
+		case 2: setMassInertiaTensor(Vector3(0.0f, 0.0f, 1.0f)); break;
+		default: break;
+		}
+	}
+
+	inline int generateRandomValue(int min, int max) { return min + (rand() % (max - min + 1)); }
 	inline double generateRandomValueWithPrecision(int precision = 2) { return (double)(rand() % (int)pow(10, precision)) / pow(10, precision); }
 
 	inline void setRandom() {
@@ -274,6 +298,7 @@ public:
 		setRandomDensity();
 		setRandomShapeName();
 		setRandomColorAmong();
+		setRandomMassInertiaTensor();
 	}
 
 	inline const char* getName(ParticleType Type) {
