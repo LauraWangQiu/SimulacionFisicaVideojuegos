@@ -18,10 +18,13 @@
 #include "SpringForceGenerator.h"
 // FLOTACIÓN
 #include "BuoyancyForceGenerator.h"
+
 using namespace std;
 using namespace physx;
 
-enum GAME_MODES { NORMAL, PERSONALIZATION, GAME_MODES_SIZE };
+extern float gameTime;
+extern int numParticlesEliminated;
+extern int gameMode;
 
 class ParticleSystem {
 protected:
@@ -32,6 +35,8 @@ protected:
 	Vector3			gravity;
 	PxTransform		origin;
 	Camera*			camera					= nullptr;
+	float			inGameTime				= 0.0f;
+	bool			stopped					= false;
 
 	// GENERADORES DE PARTICULAS
 	list<ParticleGenerator*> listOfParticleGenerators;
@@ -43,6 +48,9 @@ protected:
 	ParticleGenerator* propellantGenerator2	= nullptr;
 	Particle* propellantModel1				= nullptr;
 	Particle* propellantModel2				= nullptr;
+
+	ParticleGenerator*	fireworkGenerator	= nullptr;
+	Particle* fireworkModel					= nullptr;
 
 	// GENERADORES DE FUERZAS
 	list<ForceGenerator*> listOfForceGenerators;
@@ -61,7 +69,6 @@ protected:
 	Particle* window			= nullptr;
 	particlePalettes palettes;
 	int colorIndex = 0;
-	int gameMode = PERSONALIZATION;
 
 	float cameraAzimuth = CAMERA_INITIAL_AZIMUTH;
 	float cameraElevation = CAMERA_INITIAL_ELEVATION;
@@ -113,7 +120,6 @@ public:
 	inline void decreaseNumParticles() { --numParticles; }
 	inline void setNumParticlesToMax() { numParticles = MAX_PARTICLES; }
 	inline void updateNumParticles(int n) { numParticles += n; }
-	inline void updateNumParticlesText() { num_particles = to_string(numParticles); }
 	inline int getNumMaxParticles() const { return MAX_PARTICLES; }
 #pragma endregion
 
@@ -132,6 +138,15 @@ public:
 	inline void activateRandomSystem() {
 		if (randomGenerator != nullptr)
 			randomGenerator->setActive(!randomGenerator->getActive());
+	}
+
+	void generateFireworkSystem();
+	inline Particle* getFireworkModel() const { return fireworkModel; }
+	inline void setFireworkModel(Particle* p) { delete fireworkModel; fireworkModel = p; }
+
+	inline void activateFireworkSystem() {
+		if (fireworkGenerator != nullptr)
+			fireworkGenerator->setActive(!fireworkGenerator->getActive());
 	}
 #pragma endregion
 	

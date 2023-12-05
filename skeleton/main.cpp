@@ -5,14 +5,16 @@
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
 // ==================
+#include "Constants.h"
 #include "ParticleSystem.h"
 
 std::string title = "Space up!";
 std::string controls1 = "Q-E -> select spacecraft color";
 std::string controls2 = "ENTER to change mode";
+std::string end = "Congratulations!";
+float gameTime = GAME_TIME;
 int numParticlesEliminated = 0;
-std::string num_particles = "0";
-bool menu = true;
+int gameMode = PERSONALIZATION;
 
 using namespace physx;
 
@@ -106,7 +108,8 @@ void keyPress(unsigned char key, const PxTransform& camera)
 
 	switch(toupper(key)) {
 	// GENERADORES DE PARTICULAS
-	case 'Z': particleSys->activateRandomSystem(); break;
+	case '1': particleSys->activateRandomSystem(); break;
+	case '2': particleSys->activateFireworkSystem(); break;
 
 	// MOVIMIENTO DEL COHETE
 	case 'A': particleSys->left(); break;
@@ -159,34 +162,36 @@ void onCollision(physx::PxActor* actor1, physx::PxActor* actor2)
 	PX_UNUSED(actor1);
 	PX_UNUSED(actor2);
 
-	// Colision Nave - Objeto Random
-	if ((actor1->getName() == "SPACECRAFT" && actor2->getName() == "NONE") ||
-		(actor1->getName() == "NONE" && actor2->getName() == "SPACECRAFT")) {
+	if (gameMode == NORMAL || gameMode == PERSONALIZATION) {
+		// Colision Nave - Objeto Random
+		if ((actor1->getName() == "SPACECRAFT" && actor2->getName() == "NONE") ||
+			(actor1->getName() == "NONE" && actor2->getName() == "SPACECRAFT")) {
 
-		Particle* p1 = static_cast<Particle*>(actor1->userData);
-		Particle* p2 = static_cast<Particle*>(actor2->userData);
+			Particle* p1 = static_cast<Particle*>(actor1->userData);
+			Particle* p2 = static_cast<Particle*>(actor2->userData);
 
-		// Si son del mismo color, se elimina el Objeto Random
-		if (p1->getColor() == p2->getColor()) {
-			(actor1->getName() == "NONE") ? p1->setTime(0) :
-				p2->setTime(0);
+			// Si son del mismo color, se elimina el Objeto Random
+			if (p1->getColor() == p2->getColor()) {
+				(actor1->getName() == "NONE") ? p1->setTime(0) :
+					p2->setTime(0);
+				++numParticlesEliminated;
+			}
+		}
+
+		// Colision Fuego Artificial - Objeto Random
+		if (((actor1->getName() == "FIREWORK" || actor1->getName() == "FIREWORK2") && actor2->getName() == "NONE") ||
+			(actor1->getName() == "NONE" && (actor2->getName() == "FIREWORK" || actor2->getName() == "FIREWORK2"))) {
+
+			Particle* p1 = static_cast<Particle*>(actor1->userData);
+			Particle* p2 = static_cast<Particle*>(actor2->userData);
+
+			// Desaparecen de la escena y en el caso del fuego artificial, explota
+			p1->setToExplode(true);
+			p2->setToExplode(true);
+			p1->setTime(0);
+			p2->setTime(0);
 			++numParticlesEliminated;
 		}
-	}
-
-	// Colision Fuego Artificial - Objeto Random
-	if ((actor1->getName() == "FIREWORK" && actor2->getName() == "NONE") || 
-		(actor1->getName() == "NONE" && actor2->getName() == "FIREWORK")) {
-		
- 		Particle* p1 = static_cast<Particle*>(actor1->userData);
-		Particle* p2 = static_cast<Particle*>(actor2->userData);
-
-		// Desaparecen de la escena y en el caso del fuego artificial, explota
-		p1->setToExplode(true);
-		p2->setToExplode(true);
-		p1->setTime(0);
-		p2->setTime(0);
-		++numParticlesEliminated;
 	}
 }
 

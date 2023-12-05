@@ -8,7 +8,7 @@ using namespace std;
 using namespace physx;
 
 enum ParticleType {
-	BASIC, FIREWORK, RANDOM, SPACECRAFT, PROPELLANT, WINDOW, NONE
+	BASIC, FIREWORK, FIREWORK2, RANDOM, SPACECRAFT, PROPELLANT, WINDOW, NONE
 };
 
 struct particleInfo {
@@ -305,6 +305,7 @@ public:
 		switch (Type) {
 		case BASIC: return "BASIC";
 		case FIREWORK: return "FIREWORK";
+		case FIREWORK2: return "FIREWORK";
 		case RANDOM: return "RANDOM";
 		case SPACECRAFT: return "SPACECRAFT";
 		case PROPELLANT: return "PROPELLANT";

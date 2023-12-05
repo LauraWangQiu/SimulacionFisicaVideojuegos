@@ -31,7 +31,7 @@ list<Particle*> UniformParticleGenerator::generateParticles() {
 				mGenerator.push_back(p);
 
 				switch (model->getParticleType()) {
-				case FIREWORK:
+				case FIREWORK: case FIREWORK2:
 					static_cast<Firework*>(p)->addGenerator(this);
 					break;
 				}
@@ -64,6 +64,13 @@ list<Particle*> UniformParticleGenerator::generateParticles(Particle* deadP) {
 			case FIREWORK:
 				pos = deadP->getPos() + Vector3(u2(generator) * posWidth.x, u2(generator) * posWidth.y, u2(generator) * posWidth.z);
 				dir = deadP->getVel() + Vector3(u2(generator) * (velWidth.x + randomX(generator)), u2(generator) * velWidth.y, u2(generator) * (velWidth.z + randomZ(generator)));
+				if (p->getNumExplodes() > 0) static_cast<Firework*>(p)->addGenerator(this);
+				break;
+			case FIREWORK2:
+				pos = deadP->getPos();
+				dir.x = std::cos(angle);
+				dir.y = std::sin(angle);
+				dir.z = 0.0f;
 				if (p->getNumExplodes() > 0) static_cast<Firework*>(p)->addGenerator(this);
 				break;
 			}

@@ -46,12 +46,14 @@
 #error platform not supported.
 #endif
 #include <string>
+#include "../Constants.h"
 
 extern std::string title;
 extern std::string controls1;
 extern std::string controls2;
-extern std::string num_particles;
-extern bool menu;
+extern std::string end;
+extern int numParticlesEliminated;
+extern int gameMode;
 
 namespace Snippets
 {

@@ -8,9 +8,8 @@
 
 // SOLIDOS RIGIDOS
 #define RANDOM_GEN_RIGIDBODY true
+#define FIREWORK_GEN_RIGIDBODY false
 #define PROPELLER_GEN_RIGIDBODY false
-
-#define PROPULSION_FORCE Vector3(0.0f, 50.0f, 0.0f)
 
 ParticleSystem::ParticleSystem(PxPhysics* gPhysics, PxScene* gScene, Camera* camera, const Vector3& g) : gravity(g),
 	numParticles(0),
@@ -49,7 +48,7 @@ ParticleSystem::~ParticleSystem() {
 
 void ParticleSystem::update(double t) {
 
-	// Camara
+	if (gameMode == NORMAL) inGameTime += t;
 	manageMode();
 
 	// Recorro todos los generadores de particulas y genero particulas anadiendolas a listOfParticles
@@ -100,11 +99,10 @@ void ParticleSystem::update(double t) {
 			particleForceRegistry.deleteParticleRegistry(*p);
 			p = listOfParticles.erase(p);
 			decreaseNumParticles();
-			updateNumParticlesText();
 		}
 		else {
 
-			if (*p == spacecraft) {
+			if (*p == spacecraft && floorRI != nullptr) {
 				propellantGenerator1->setActive(spacecraft->getPosY() > FLOOR_HEIGHT);
 				propellantGenerator2->setActive(spacecraft->getPosY() > FLOOR_HEIGHT);
 			}
@@ -120,6 +118,9 @@ void ParticleSystem::update(double t) {
 void ParticleSystem::onParticleDeath(Particle* p) {
 	switch (p->getParticleType()) {
 	case FIREWORK:
+		addParticles(static_cast<Firework*>(p)->explode(numParticles));
+	case FIREWORK2:
+		p->setToExplode(true);
 		addParticles(static_cast<Firework*>(p)->explode(numParticles));
 		break;
 	}
@@ -177,7 +178,6 @@ void ParticleSystem::addParticles(list<Particle*> list) {
 		listOfParticles.push_back(p);
 	}
 	updateNumParticles(list.size());
-	updateNumParticlesText();
 }
 
 Particle* ParticleSystem::addParticle(ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible, bool Active) {
@@ -215,7 +215,6 @@ Particle* ParticleSystem::addParticle(PxPhysics* GPhysics, PxScene* GScene, Part
 void ParticleSystem::addParticle(Particle* p) {
 	listOfParticles.push_back(p);
 	increaseNumParticles();
-	updateNumParticlesText();
 }
 
 Firework* ParticleSystem::addFirework(PxPhysics* gPhysics, PxScene* gScene, ParticleType Type, PxTransform Transform, Vector3 Dir, bool Visible, bool Active) {
@@ -249,6 +248,17 @@ void ParticleSystem::generateRandomSystem() {
 		randomGenerator = new UniformParticleGenerator("Random", RANDOM_GENERATOR_ORIGIN, Vector3(0.0f, 0.0f, 0.0f), 1.0, 1,
 			randomModel, Vector3(1.0f, 1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f));
 		addParticleGenerator(randomGenerator);
+	}
+}
+
+void ParticleSystem::generateFireworkSystem() {
+	if (fireworkGenerator == nullptr) {
+		if (!FIREWORK_GEN_RIGIDBODY) fireworkModel = new Firework(FIREWORK2, PxTransform(FIREWORK_GENERATOR_ORIGIN), Vector3(0.0f, 1.0f, 0.0f), FIREWORK_MODEL_VISIBLE);
+		else fireworkModel = new Firework(gPhysics, gScene, FIREWORK2, PxTransform(FIREWORK_GENERATOR_ORIGIN), Vector3(0.0f, 1.0f, 0.0f), FIREWORK_MODEL_VISIBLE);
+
+		fireworkGenerator = new GaussianParticleGenerator("Fireworks", FIREWORK_GENERATOR_ORIGIN, Vector3(0.0f, 0.0f, 0.0f), 0.1, 1,
+			fireworkModel, Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
+		addParticleGenerator(fireworkGenerator);
 	}
 }
 #pragma endregion
@@ -299,6 +309,10 @@ void ParticleSystem::createScene() {
 	generateRandomSystem();
 	randomGenerator->setActive(true);
 	addParticles(randomGenerator->generateParticles());
+
+	generateFireworkSystem(); // Se activa cuando sea condición de victoria
+
+	stopMotion(true);
 }
 
 void ParticleSystem::generatePropellants(Vector3 SpacecraftPos) {
@@ -391,6 +405,10 @@ void ParticleSystem::generatorFollowSpacecraft(ParticleGenerator* pg) {
 }
 
 void ParticleSystem::manageMode() {
+
+	if (inGameTime >= gameTime) gameMode = END;
+	stopped = gameMode == PERSONALIZATION || gameMode == END;
+
 	switch (gameMode) {
 	case NORMAL: 
 		cameraAzimuth = CAMERA_INITIAL_AZIMUTH; 
@@ -398,6 +416,14 @@ void ParticleSystem::manageMode() {
 		break;
 	case PERSONALIZATION: 
 		cameraAzimuth += 0.001f; 
+		cameraRotate();
+		break;
+	case END:
+		if (randomGenerator->getActive()) randomGenerator->setActive(false);
+		if (!fireworkGenerator->getActive()) fireworkGenerator->setActive(true);
+		if (stopped) stopMotion(true);
+		spacecraft->setPos(Vector3(0.0f, 900.0f, 0.0f));
+		cameraAzimuth += 0.001f;
 		cameraRotate();
 		break;
 	default: break;
@@ -419,16 +445,16 @@ void ParticleSystem::rightColor() {
 }
 
 void ParticleSystem::switchMode(){
-	gameMode = (gameMode + 1) % GAME_MODES_SIZE;
+	if (gameMode == NORMAL) gameMode = PERSONALIZATION;
+	else if (gameMode == PERSONALIZATION) gameMode = NORMAL;
+	stopped = gameMode == PERSONALIZATION || gameMode == END;
 
 	switch (gameMode) {
 	case NORMAL:
-		menu = false;
 		cameraFollow(); 
 		stopMotion(false);
 		break;
 	case PERSONALIZATION:
-		menu = true;
 		cameraRotate();
 		stopMotion(true);
 		break;
@@ -451,6 +477,11 @@ void ParticleSystem::cameraFollow() {
 }
 
 void ParticleSystem::stopMotion(bool m) {
-	spacecraft->getRigid()->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, m);
+	for (auto p : listOfParticles) {
+		if (p->isRigid()) p->getRigid()->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, m);
+		if (p->getParticleType() == NONE)
+			p->setActive(m);
+	}
+	randomGenerator->setActive(!m);
 }
 #pragma endregion

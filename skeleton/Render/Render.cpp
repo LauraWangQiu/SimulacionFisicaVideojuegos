@@ -29,7 +29,7 @@
 
 #include "Render.h"
 #include <assert.h>
-
+#include <iostream>
 using namespace physx;
 
 static float gCylinderData[]={
@@ -288,16 +288,26 @@ void startRender(const PxVec3& cameraEye, const PxVec3& cameraDir, PxReal clipNe
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	// Display text
-	if (menu) {
+	switch (gameMode) {
+	case PERSONALIZATION:
 		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 		drawText(title, glutGet(GLUT_WINDOW_WIDTH) / 2 - title.size() * 24, glutGet(GLUT_WINDOW_HEIGHT) / 2, GLUT_BITMAP_TIMES_ROMAN_24);
 		glColor4f(1.0f, 0.078f, 0.576f, 1.0f);
 		drawText(controls1, glutGet(GLUT_WINDOW_WIDTH) / 2 - 125, 40, GLUT_BITMAP_HELVETICA_18);
 		drawText(controls2, glutGet(GLUT_WINDOW_WIDTH) / 2 - 100, 15, GLUT_BITMAP_HELVETICA_18);
-		//glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-		//drawText("Number of particles: " + num_particles, 5, glutGet(GLUT_WINDOW_HEIGHT) - 20);
+		break;
+	case NORMAL:
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		drawText("Eliminated: " + std::to_string(numParticlesEliminated), glutGet(GLUT_WINDOW_WIDTH) / 2 - 50, glutGet(GLUT_WINDOW_HEIGHT) - 30, GLUT_BITMAP_TIMES_ROMAN_24);
+		break;
+	case END:
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		drawText(end, glutGet(GLUT_WINDOW_WIDTH) / 2 - 95, glutGet(GLUT_WINDOW_HEIGHT) / 2, GLUT_BITMAP_TIMES_ROMAN_24);
+		drawText("You eliminated: " + std::to_string(numParticlesEliminated), glutGet(GLUT_WINDOW_WIDTH) / 2 - 100, glutGet(GLUT_WINDOW_HEIGHT) / 2 - 30, GLUT_BITMAP_TIMES_ROMAN_24);
+		break;
+	default: break;
 	}
-
+	
 	// Setup camera
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();

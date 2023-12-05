@@ -13,13 +13,19 @@
 #define SPHERE_INTERVAL 3.0f
 #define MAX_SIZE 5.0f
 
+enum GAME_MODES { NORMAL, PERSONALIZATION, END, GAME_MODES_SIZE };
+#define GAME_TIME 10.0f
+
 #define RANDOM_GENERATOR_ORIGIN Vector3(0.0f, 200.0f, 0.0f)
+#define FIREWORK_GENERATOR_ORIGIN Vector3(0.0f, 500.0f, 200.0f)
+
 #define FLOOR_HEIGHT 3.0f
 #define SPACECRAFT_MOVEMENT_SPEED 2.0f
 #define PROPELLANT1_POSITION Vector3(-2.0f, -6.0f, 0.0f)
 #define PROPELLANT2_POSITION Vector3(2.0f, -6.0f, 0.0f)
 #define PROPELLANT1_GENERATOR_POSITION Vector3(-2.0f, -8.0f, 0.0f)
 #define PROPELLANT2_GENERATOR_POSITION Vector3(2.0f, -8.0f, 0.0f)
+#define PROPULSION_FORCE Vector3(0.0f, 50.0f, 0.0f)
 #define WINDOW_POSITION Vector3(0.0f, 0.0f, -3.0f)
 
 #define CAMERA_INITIAL_AZIMUTH 8.0f		// Ángulo horizontal (azimut)

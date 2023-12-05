@@ -24,5 +24,8 @@ void ParticleGenerator::setParticleColor(Particle* p) {
 	case FIREWORK:
 		p->setColor2(palettes.fireWorkPalette[rand() % palettes.fireWorkPaletteSize]);
 		break;
+	case FIREWORK2:
+		p->setColor2(palettes.fireWorkPalette2[rand() % palettes.fireWorkPaletteSize2]);
+		break;
 	}
 }

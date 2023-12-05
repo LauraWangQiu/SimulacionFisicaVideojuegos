@@ -29,6 +29,20 @@ vector<particleInfo> ParticlesInfo = {
 		1.0f,
 		Vector3(0.0f, 1.0f, 0.0f)
 	},
+	{ // FIREWORK2
+		1.0f,
+		150.0f,
+		Vector3(0.0f, -50.0f, 0.0f),
+		0.99f,
+		Vector4(1.0f, 0.0f, 0.0f, 1.0f),
+		3.0f,
+		10,
+		1,
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Sphere",
+		1.0f,
+		Vector3(0.0f, 1.0f, 0.0f)
+	},
 	{ // RANDOM
 		0.1f,
 		100.0f,
