@@ -99,32 +99,6 @@ vector<particleInfo> ParticlesInfo = {
 		1.0f,
 		Vector3(0.0f, 0.0f, 1.0f)
 	},
-	{ // SPRING_BASE
-		1.0f,
-		0.0f,
-		Vector3(0.0f, 0.0f, 0.0f),
-		0.99f,
-		Vector4(1.0f, 0.0f, 0.8f, 1.0f),
-		0.0f,
-		0,
-		0,
-		Vector3(100.0f, 10.0f, 100.0f),
-		"Cube",
-		1.0f
-	},
-	{ // SPRING_STATIC
-		1.0f,
-		0.0f,
-		Vector3(0.0f, 0.0f, 0.0f),
-		0.99f,
-		Vector4(1.0f, 0.0f, 0.8f, 1.0f),
-		0.0f,
-		0,
-		0,
-		Vector3(50.0f, 50.0f, 50.0f),
-		"Sphere",
-		1.0f
-	},
 	{ // WATER_PLANE
 		1350.0f,
 		0.0f,

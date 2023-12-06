@@ -19,7 +19,7 @@
 
 ParticleSystem::ParticleSystem(PxPhysics* gPhysics, PxScene* gScene, Camera* camera, const Vector3& g) : gravity(g),
 	numParticles(0),
-	origin(PxTransform(Vector3(0.0f, 0.0f, 0.0f))),
+	origin(PxTransform(VECTOR_ZERO)),
 	gPhysics(gPhysics), gScene(gScene), camera(camera) {
 
 #ifdef ORIGIN
@@ -174,7 +174,7 @@ ParticleGenerator* ParticleSystem::getParticleGenerator(const string& name) {
 
 #pragma region ORIGIN
 void ParticleSystem::addOrigin() {
-	originParticle = new Particle(BASIC, origin, Vector3(0.0f, 0.0f, 0.0f), true, true);
+	originParticle = new Particle(BASIC, origin, VECTOR_ZERO, true, true);
 }
 #pragma endregion
 
@@ -237,7 +237,7 @@ Firework* ParticleSystem::addFirework(PxPhysics* gPhysics, PxScene* gScene, Part
 
 	addParticle(p);
 	GaussianParticleGenerator* g = new GaussianParticleGenerator("Firework", Transform.p, Dir, 0.1, 1,
-		model, Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f));
+		model, VECTOR_ZERO, Vector3(1.0f, 1.0f, 1.0f));
 	p->addGenerator(g);
 
 	return p;
@@ -250,7 +250,7 @@ void ParticleSystem::generateRandomSystem() {
 		if (!RANDOM_GEN_RIGIDBODY) randomModel = new Particle(RANDOM, PxTransform(RANDOM_GENERATOR_ORIGIN), Vector3(0.0f, -1.0f, 0.0f), RANDOM_MODEL_VISIBLE);
 		else randomModel = new Particle(gPhysics, gScene, RANDOM, PxTransform(RANDOM_GENERATOR_ORIGIN), Vector3(0.0f, -1.0f, 0.0f), RANDOM_MODEL_VISIBLE);
 
-		randomGenerator = new UniformParticleGenerator("Random", RANDOM_GENERATOR_ORIGIN, Vector3(0.0f, 0.0f, 0.0f), 1.0, 1,
+		randomGenerator = new UniformParticleGenerator("Random", RANDOM_GENERATOR_ORIGIN, VECTOR_ZERO, 1.0, 1,
 			randomModel, Vector3(1.0f, 1.0f, 1.0f), Vector3(1.0f, 1.0f, 1.0f));
 		addParticleGenerator(randomGenerator);
 	}
@@ -261,8 +261,8 @@ void ParticleSystem::generateFireworkSystem() {
 		if (!FIREWORK_GEN_RIGIDBODY) fireworkModel = new Firework(FIREWORK2, PxTransform(FIREWORK_GENERATOR_ORIGIN), Vector3(0.0f, 1.0f, 0.0f), FIREWORK_MODEL_VISIBLE);
 		else fireworkModel = new Firework(gPhysics, gScene, FIREWORK2, PxTransform(FIREWORK_GENERATOR_ORIGIN), Vector3(0.0f, 1.0f, 0.0f), FIREWORK_MODEL_VISIBLE);
 
-		fireworkGenerator = new GaussianParticleGenerator("Fireworks", FIREWORK_GENERATOR_ORIGIN, Vector3(0.0f, 0.0f, 0.0f), 0.1, 1,
-			fireworkModel, Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
+		fireworkGenerator = new GaussianParticleGenerator("Fireworks", FIREWORK_GENERATOR_ORIGIN, VECTOR_ZERO, 0.1, 1,
+			fireworkModel, VECTOR_ZERO, Vector3(10.0f, 10.0f, 10.0f));
 		addParticleGenerator(fireworkGenerator);
 	}
 }
@@ -281,10 +281,9 @@ void ParticleSystem::addForces(Particle* p) {
 	}
 
 	if (buoyancyForceGenerator != nullptr && buoyancyForceGenerator->getActive()) {
-		if (p == spacecraft)
+		if (p == spacecraft || p->getParticleType() == RANDOM)
 			particleForceRegistry.addRegistry(buoyancyForceGenerator, p);
 	}
-
 }
 
 void ParticleSystem::generatePropulsionForce() {
@@ -301,7 +300,7 @@ void ParticleSystem::generateWhirlWindsForce() {
 
 void ParticleSystem::generateBuoyancyForce() {
 	if (liquidModel == nullptr) {
-		liquidModel = new Particle(WATER_PLANE, PxTransform(WATER_PLANE_POSITION), Vector3(0.0f, 0.0f, 0.0f), true, true);
+		liquidModel = new Particle(WATER_PLANE, PxTransform(WATER_PLANE_POSITION), VECTOR_ZERO, true, true);
 		float volume = spacecraft->getSize().x * spacecraft->getSize().y * spacecraft->getSize().z;
 		buoyancyForceGenerator = new BuoyancyForceGenerator(liquidModel, 15.0f, volume, 1000.0f, gravity.y, "BuoyancyForce", BUOYANCY_FORCE_DURATION);
 		addForceGenerator(buoyancyForceGenerator);
@@ -344,7 +343,7 @@ void ParticleSystem::stopMotion(bool m) {
 	randomGenerator->setActive(!m);
 }
 
-void ParticleSystem::addSphere() {
+void ParticleSystem::addSphere(bool random) {
 
 	for (int i = 0; i < NUM_PARTICLES_SPHERE; ++i) {
 		float latitud = ((float)rand() / RAND_MAX) * 360.0f;
@@ -362,8 +361,9 @@ void ParticleSystem::addSphere() {
 		particleDirection.normalize();
 
 		Particle* p = nullptr;
-		if (!ADD_SPHERE_RIGIDBODY) addParticle(RANDOM, PxTransform(particlePosition), particleDirection);
-		else addParticle(gPhysics, gScene, RANDOM, PxTransform(particlePosition), particleDirection);
+		if (!ADD_SPHERE_RIGIDBODY) p = addParticle(RANDOM, PxTransform(particlePosition), particleDirection, true, true);
+		else p = addParticle(gPhysics, gScene, RANDOM, PxTransform(particlePosition), particleDirection, true, true);
+		if (random) p->setRandomColor();
 	}
 }
 
@@ -395,7 +395,7 @@ void ParticleSystem::manageMode() {
 			end = true;
 			randomGenerator->setActive(false);
 			fireworkGenerator->setActive(true);
-			spacecraft->setPos(Vector3(0.0f, 900.0f, 0.0f));
+			spacecraft->setPos(SPACECRAFT_END_POSITION);
 		}
 		cameraAzimuth += 0.001f;
 		cameraRotate();
@@ -406,11 +406,11 @@ void ParticleSystem::manageMode() {
 		if (!end2 && c > 50) {
 			end2 = true;
 			fireworkGenerator->setActive(false);
-			spacecraft->setPos(center - Vector3(0.0f, 70.0f, 0.0f));
+			spacecraft->setPos(SPACECRAFT_END2_POSITION);
 			addSphere();
 			whirlWindsForceGenerator->setActive(true);
 			propulsionForceGenerator->setActive(true);
-			propulsionForceGenerator->setGravity(Vector3(0.0f, 120.0f, 0.0f));
+			propulsionForceGenerator->setGravity(PROPULSION_END2_FORCE);
 			c = 0;
 		}
 		break;
@@ -420,13 +420,24 @@ void ParticleSystem::manageMode() {
 		if (!end) ++c;
 		if (!end3 && c > 50) {
 			end3 = true;
-			spacecraft->setPos(WATER_PLANE_POSITION + Vector3(0.0f, 80.0f, 0.0f));
+			spacecraft->setPos(SPACECRAFT_END3_POSITION);
 			whirlWindsForceGenerator->setActive(false);
 			spacecraft->clearForce();
-			spacecraft->getRigid()->setLinearVelocity(Vector3(0.0f, 0.0f, 0.0f));
-			propulsionForceGenerator->setGravity(Vector3(0.0f, 0.0f, 0.0f));
+			spacecraft->getRigid()->setLinearVelocity(VECTOR_ZERO);
+			propulsionForceGenerator->setGravity(VECTOR_ZERO);
 			propulsionForceGenerator->setActive(false);
 			buoyancyForceGenerator->setActive(true);
+			auto p = listOfParticles.begin();
+			while (p != listOfParticles.end()) {
+				if ((*p)->getParticleType() == RANDOM || 
+					(*p)->getParticleType() == NONE || 
+					(*p)->getParticleType() == FIREWORK ||
+					(*p)->getParticleType() == BASIC)
+					p = listOfParticles.erase(p);
+				else ++p;
+			}
+			center = SPHERE_END3_POSITION;
+			addSphere(true);
 			c = 0;
 		}
 		break;
@@ -454,7 +465,7 @@ void ParticleSystem::switchMode() {
 #pragma region NAVE
 void ParticleSystem::createSpacecraft() {
 	
-	spacecraft = addParticle(gPhysics, gScene, SPACECRAFT, origin, Vector3(0.0f, 0.0f, 0.0f), true, true);
+	spacecraft = addParticle(gPhysics, gScene, SPACECRAFT, origin, VECTOR_ZERO, true, true);
 	// Bloquear las rotaciones
 	PxRigidDynamicLockFlags flags =
 		PxRigidDynamicLockFlag::eLOCK_ANGULAR_X
@@ -470,7 +481,7 @@ void ParticleSystem::createSpacecraft() {
 			spacecraft->getPosX(),
 			spacecraft->getPosY(),
 			spacecraft->getPosZ() - 3.0f)),
-		Vector3(0.0f, 0.0f, 0.0f), true, true);
+		VECTOR_ZERO, true, true);
 
 	// Propulsores
 	createPropellants(spacecraft->getPos());
@@ -507,12 +518,12 @@ void ParticleSystem::createPropellants(Vector3 SpacecraftPos) {
 		propellant1 = addParticle(PROPELLANT, PxTransform(SpacecraftPos + PROPELLANT1_POSITION), Vector3(0.0f, -1.0f, 0.0f), true, true);
 
 		if (propellantGenerator1 == nullptr) {
-			propellantGenerator1 = new GaussianParticleGenerator("Propellant1", SpacecraftPos + PROPELLANT1_GENERATOR_POSITION, Vector3(0.0f, 0.0f, 0.0f), 1, 3,
+			propellantGenerator1 = new GaussianParticleGenerator("Propellant1", SpacecraftPos + PROPELLANT1_GENERATOR_POSITION, VECTOR_ZERO, 1, 3,
 				propellantModel1, Vector3(0.1f, 0.1f, 0.1f), Vector3(1.0f, 1.0f, 1.0f));
 			addParticleGenerator(propellantGenerator1);
 		}
 		if (propellantGenerator2 == nullptr) {
-			propellantGenerator2 = new GaussianParticleGenerator("Propellant2", SpacecraftPos + PROPELLANT2_GENERATOR_POSITION, Vector3(0.0f, 0.0f, 0.0f), 1, 3,
+			propellantGenerator2 = new GaussianParticleGenerator("Propellant2", SpacecraftPos + PROPELLANT2_GENERATOR_POSITION, VECTOR_ZERO, 1, 3,
 				propellantModel2, Vector3(0.1f, 0.1f, 0.1f), Vector3(1.0f, 1.0f, 1.0f));
 			addParticleGenerator(propellantGenerator2);
 		}
@@ -542,7 +553,7 @@ void ParticleSystem::addPropulsion() {
 void ParticleSystem::stopPropulsion() {
 	if (propulsionForceGenerator != nullptr && spacecraft != nullptr && gameMode == NORMAL) {
 		spacecraft->clearForce();
-		propulsionForceGenerator->setGravity(Vector3(0.0f, 0.0f, 0.0f));
+		propulsionForceGenerator->setGravity(VECTOR_ZERO);
 		propulsionForceGenerator->setActive(false);
 	}
 }

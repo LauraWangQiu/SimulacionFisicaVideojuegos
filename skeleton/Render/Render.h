@@ -51,7 +51,11 @@
 extern std::string title;
 extern std::string controls1;
 extern std::string controls2;
+extern std::string controls3;
+extern std::string controls4;
+extern std::string controls5;
 extern std::string end;
+extern std::string the_end;
 extern std::string special_thanks;
 extern int numParticlesEliminated;
 extern float inGameTime;

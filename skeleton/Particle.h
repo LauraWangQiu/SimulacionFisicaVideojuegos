@@ -8,7 +8,7 @@ using namespace std;
 using namespace physx;
 
 enum ParticleType {
-	BASIC, FIREWORK, FIREWORK2, RANDOM, SPACECRAFT, PROPELLANT, WINDOW, SPRING_BASE, SPRING_STATIC, WATER_PLANE, NONE
+	BASIC, FIREWORK, FIREWORK2, RANDOM, SPACECRAFT, PROPELLANT, WINDOW, WATER_PLANE, NONE
 };
 
 struct particleInfo {
@@ -236,10 +236,12 @@ public:
 		float G = static_cast<float>(rand()) / RAND_MAX; // Componente Verde
 		float B = static_cast<float>(rand()) / RAND_MAX; // Componente Azul
 		setColor(R, G, B);
+		setColor2(R, G, B);
 	}
 	inline void setRandomColorAmong() {
 		int r = rand() % palettes.spacecraftPaletteSize;
 		setColor(palettes.spacecraftPalette[r]);
+		setColor2(palettes.spacecraftPalette[r]);
 	}
 	inline void setTime(float Time) { time = Time; }
 	inline void increaseTime(float Time) { time += Time; }

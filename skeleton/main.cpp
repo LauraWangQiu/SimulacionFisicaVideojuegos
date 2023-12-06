@@ -10,8 +10,12 @@
 
 std::string title = "Space up!";
 std::string controls1 = "Q-E -> select spacecraft color";
-std::string controls2 = "ENTER to change mode";
+std::string controls2 = "ENTER to PLAY";
+std::string controls3 = "WASD to move";
+std::string controls4 = "ESPACE to fly";
+std::string controls5 = "Right click to shoot";
 std::string end = "Congratulations!";
+std::string the_end = "THE END";
 std::string special_thanks = "Thanks for making the space a better place :)";
 float gameTime = GAME_TIME;
 float inGameTime = 0.0f;

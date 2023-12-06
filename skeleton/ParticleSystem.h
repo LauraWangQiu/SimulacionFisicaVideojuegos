@@ -61,7 +61,7 @@ protected:
 	
 	GravityForceGenerator*		propulsionForceGenerator	= nullptr;
 	WhirlWindForceGenerator*	whirlWindsForceGenerator	= nullptr;
-	Vector3 center = CAMERA_FINAL_POSITION + Vector3(0.0f, 0.0f, 100.0f);
+	Vector3 center											= SPHERE_END2_POSITION;
 	BuoyancyForceGenerator*		buoyancyForceGenerator		= nullptr;
 	Particle*					liquidModel					= nullptr;
 
@@ -109,7 +109,7 @@ public:
 		bool Visible = true, bool Active = false);
 	Particle* addParticle(PxTransform Transform, Vector3 Dir = Vector3(0.0f, 1.0f, 0.0f), 
 		float Mass = 1.0f, float Velc = 10.0f,
-		Vector3 Acc = Vector3(0.0f, 0.0f, 0.0f),
+		Vector3 Acc = VECTOR_ZERO,
 		float Damping = 0.99f, Vector3 Size = Vector3(1.0f, 1.0f, 1.0f),
 		float Time = 1.0f, Vector4 Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f), string ShapeName = "Sphere", 
 		int NumDivisions = 0, int NumExplodes = 0,
@@ -184,7 +184,7 @@ public:
 #pragma region JUEGO
 	void createScene();
 	void stopMotion(bool m);
-	void addSphere();
+	void addSphere(bool random = false);
 	void manageMode();
 	void switchMode();
 
