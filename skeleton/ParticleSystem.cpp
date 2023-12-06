@@ -317,7 +317,7 @@ void ParticleSystem::createScene() {
 	floorShape = CreateShape(PxBoxGeometry(100, 1, 100));
 	floor->attachShape(*floorShape);
 	gScene->addActor(*floor);
-	floorRI = new RenderItem(floorShape, floor, { 0.0, 1.0, 0.0, 1 });
+	floorRI = new RenderItem(floorShape, floor, { 1.0, 1.0, 1.0, 1.0 });
 
 	// NAVE
 	createSpacecraft();
