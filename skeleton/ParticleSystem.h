@@ -61,6 +61,8 @@ protected:
 	GravityForceGenerator*		propulsionForceGenerator	= nullptr;
 	WhirlWindForceGenerator*	whirlWindsForceGenerator	= nullptr;
 	Vector3 center = CAMERA_FINAL_POSITION + Vector3(0.0f, 0.0f, 100.0f);
+	BuoyancyForceGenerator*		buoyancyForceGenerator		= nullptr;
+	Particle*					liquidModel					= nullptr;
 
 	// SÓLIDOS RÍGIDOS
 	PxPhysics*		gPhysics	= nullptr;
@@ -159,16 +161,22 @@ public:
 	inline ParticleForceRegistry getParticleForceRegistry() const { return particleForceRegistry; }
 	void addForces(Particle* p);
 
+	void generatePropulsionForce();
+	inline void activatePropulsionForce() {
+		if (propulsionForceGenerator != nullptr)
+			propulsionForceGenerator->setActive(!propulsionForceGenerator->getActive());
+	}
+
 	void generateWhirlWindsForce();
 	inline void activateWhirlWindsForce() {
 		if (whirlWindsForceGenerator != nullptr)
 			whirlWindsForceGenerator->setActive(!whirlWindsForceGenerator->getActive());
 	}
 
-	void generatePropulsionForce();
-	inline void activatePropulsionForce() {
-		if (propulsionForceGenerator != nullptr)
-			propulsionForceGenerator->setActive(!propulsionForceGenerator->getActive());
+	void generateBuoyancyForce();
+	inline void activateBuoyancyForce() {
+		if (buoyancyForceGenerator != nullptr)
+			buoyancyForceGenerator->setActive(!buoyancyForceGenerator->getActive());
 	}
 #pragma endregion
 

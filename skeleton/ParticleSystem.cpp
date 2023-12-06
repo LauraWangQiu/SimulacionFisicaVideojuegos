@@ -8,6 +8,8 @@
 
 // GENERADORES DE FUERZAS
 #define WHIRL_WIND_FORCE_DURATION 0.0f
+#define SPRING_FORCE_STATIC_DURATION 0.0f
+#define BUOYANCY_FORCE_DURATION 0.0f
 
 // SOLIDOS RIGIDOS
 #define RANDOM_GEN_RIGIDBODY true
@@ -48,6 +50,8 @@ ParticleSystem::~ParticleSystem() {
 	listOfForceGenerators.clear();
 
 	propulsionForceGenerator	= nullptr;
+	whirlWindsForceGenerator	= nullptr;
+	buoyancyForceGenerator		= nullptr;
 }
 
 void ParticleSystem::update(double t) {
@@ -272,8 +276,15 @@ void ParticleSystem::addForces(Particle* p) {
 	}
 
 	if (whirlWindsForceGenerator != nullptr && whirlWindsForceGenerator->getActive()) {
-		particleForceRegistry.addRegistry(whirlWindsForceGenerator, p);
+		if (p->getParticleType() == RANDOM)
+			particleForceRegistry.addRegistry(whirlWindsForceGenerator, p);
 	}
+
+	if (buoyancyForceGenerator != nullptr && buoyancyForceGenerator->getActive()) {
+		if (p == spacecraft)
+			particleForceRegistry.addRegistry(buoyancyForceGenerator, p);
+	}
+
 }
 
 void ParticleSystem::generatePropulsionForce() {
@@ -286,6 +297,15 @@ void ParticleSystem::generateWhirlWindsForce() {
 	whirlWindsForceGenerator = new WhirlWindForceGenerator(7.0f, center - Vector3(0.0f, 50.0f, 0.0f),
 		"WhirlWindForce", WHIRL_WIND_FORCE_DURATION);
 	addForceGenerator(whirlWindsForceGenerator);
+}
+
+void ParticleSystem::generateBuoyancyForce() {
+	if (liquidModel == nullptr) {
+		liquidModel = new Particle(WATER_PLANE, PxTransform(WATER_PLANE_POSITION), Vector3(0.0f, 0.0f, 0.0f), true, true);
+		float volume = spacecraft->getSize().x * spacecraft->getSize().y * spacecraft->getSize().z;
+		buoyancyForceGenerator = new BuoyancyForceGenerator(liquidModel, liquidModel->getPosX() - 10.0f, volume, 1000.0f, gravity.y, "BuoyancyForce", BUOYANCY_FORCE_DURATION);
+		addForceGenerator(buoyancyForceGenerator);
+	}
 }
 #pragma endregion
 
@@ -310,6 +330,7 @@ void ParticleSystem::createScene() {
 
 	generateFireworkSystem();
 	generateWhirlWindsForce();
+	generateBuoyancyForce();
 
 	stopMotion(true);
 }
@@ -379,10 +400,11 @@ void ParticleSystem::manageMode() {
 		if (!end2 && c > 50) {
 			end2 = true;
 			fireworkGenerator->setActive(false);
-			deleteSpacecraft();
-			clearListOfParticles();
+			spacecraft->setPos(center - Vector3(0.0f, 70.0f, 0.0f));
 			addSphere();
 			whirlWindsForceGenerator->setActive(true);
+			propulsionForceGenerator->setActive(true);
+			propulsionForceGenerator->setGravity(Vector3(0.0f, 120.0f, 0.0f));
 		}
 		break;
 	default: break;
