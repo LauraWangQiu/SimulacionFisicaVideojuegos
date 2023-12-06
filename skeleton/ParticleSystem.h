@@ -39,6 +39,7 @@ protected:
 	bool			stopped					= true;
 	bool			end						= false;
 	bool			end2					= false;
+	bool			end3					= false;
 
 	// GENERADORES DE PARTICULAS
 	list<ParticleGenerator*> listOfParticleGenerators;

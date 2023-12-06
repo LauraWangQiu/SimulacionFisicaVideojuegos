@@ -56,7 +56,7 @@ ParticleSystem::~ParticleSystem() {
 
 void ParticleSystem::update(double t) {
 
-	if (gameMode == NORMAL || gameMode == END) inGameTime += t;
+	if (gameMode == NORMAL || gameMode == END || gameMode == END2) inGameTime += t;
 
 	manageMode();
 
@@ -303,7 +303,7 @@ void ParticleSystem::generateBuoyancyForce() {
 	if (liquidModel == nullptr) {
 		liquidModel = new Particle(WATER_PLANE, PxTransform(WATER_PLANE_POSITION), Vector3(0.0f, 0.0f, 0.0f), true, true);
 		float volume = spacecraft->getSize().x * spacecraft->getSize().y * spacecraft->getSize().z;
-		buoyancyForceGenerator = new BuoyancyForceGenerator(liquidModel, liquidModel->getPosX() - 10.0f, volume, 1000.0f, gravity.y, "BuoyancyForce", BUOYANCY_FORCE_DURATION);
+		buoyancyForceGenerator = new BuoyancyForceGenerator(liquidModel, 15.0f, volume, 1000.0f, gravity.y, "BuoyancyForce", BUOYANCY_FORCE_DURATION);
 		addForceGenerator(buoyancyForceGenerator);
 	}
 }
@@ -369,7 +369,13 @@ void ParticleSystem::addSphere() {
 
 void ParticleSystem::manageMode() {
 
-	if (inGameTime >= gameTime) (inGameTime >= gameTime + END_TIME) ? gameMode = END2 : gameMode = END;
+	if (inGameTime >= gameTime) {
+		if (inGameTime >= (gameTime + END_TIME)) {
+			if (inGameTime >= (gameTime + END_TIME2)) gameMode = END3;
+			else gameMode = END2;
+		} else gameMode = END;
+	}
+
 	stopped = gameMode == PERSONALIZATION || gameMode == END;
 
 	static int c = 0;
@@ -405,6 +411,23 @@ void ParticleSystem::manageMode() {
 			whirlWindsForceGenerator->setActive(true);
 			propulsionForceGenerator->setActive(true);
 			propulsionForceGenerator->setGravity(Vector3(0.0f, 120.0f, 0.0f));
+			c = 0;
+		}
+		break;
+	case END3:
+		cameraAzimuth = CAMERA_INITIAL_AZIMUTH;
+		cameraFollow();
+		if (!end) ++c;
+		if (!end3 && c > 50) {
+			end3 = true;
+			spacecraft->setPos(WATER_PLANE_POSITION + Vector3(0.0f, 80.0f, 0.0f));
+			whirlWindsForceGenerator->setActive(false);
+			spacecraft->clearForce();
+			spacecraft->getRigid()->setLinearVelocity(Vector3(0.0f, 0.0f, 0.0f));
+			propulsionForceGenerator->setGravity(Vector3(0.0f, 0.0f, 0.0f));
+			propulsionForceGenerator->setActive(false);
+			buoyancyForceGenerator->setActive(true);
+			c = 0;
 		}
 		break;
 	default: break;
