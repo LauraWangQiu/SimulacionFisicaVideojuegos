@@ -104,7 +104,7 @@ vector<particleInfo> ParticlesInfo = {
 		0.0f,
 		Vector3(0.0f, 0.0f, 0.0f),
 		0.99f,
-		Vector4(1.0f, 1.0f, 1.0f, 1.0f),
+		Vector4(1.0f, 1.0f, 1.0f, 0.4f),
 		0.0f,
 		0,
 		0,
@@ -278,7 +278,7 @@ bool Particle::integrate(double t) {
 #pragma endregion
 
 #pragma region EULER-SEMIIMPLICITO
-	// Actualizamos la velocidad de la particula
+		// Actualizamos la velocidad de la particula
 		vel += totalAcc * t;
 
 		// Aplicamos el damping
