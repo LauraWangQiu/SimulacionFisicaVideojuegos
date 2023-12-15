@@ -16,7 +16,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(0.0f, 1.0f, 0.0f)
 	},
 	{ // FIREWORK
-		1.0f,
+		0.0f,
 		100.0f,
 		Vector3(0.0f, -50.0f, 0.0f),
 		0.99f,
@@ -30,7 +30,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(0.0f, 1.0f, 0.0f)
 	},
 	{ // FIREWORK2
-		1.0f,
+		0.0f,
 		150.0f,
 		Vector3(0.0f, -50.0f, 0.0f),
 		0.99f,
@@ -44,7 +44,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(0.0f, 1.0f, 0.0f)
 	},
 	{ // RANDOM
-		0.1f,
+		1.0f,
 		100.0f,
 		Vector3(0.0f, 0.0f, 0.0f),
 		0.99f,
@@ -57,8 +57,22 @@ vector<particleInfo> ParticlesInfo = {
 		1.0f,
 		Vector3(0.0f, 1.0f, 0.0f)
 	},
-	{ // SPACECRAFT
+	{ // TRASH
+		1.0f,
+		100.0f,
+		Vector3(0.0f, 0.0f, 0.0f),
+		0.99f,
+		Vector4(0.0f, 0.0f, 1.0f, 1.0f),
 		10.0f,
+		0,
+		0,
+		Vector3(1.0f, 1.0f, 1.0f),
+		"Cube",
+		10000.0f,
+		Vector3(0.0f, 1.0f, 0.0f)
+	},
+	{ // SPACECRAFT
+		10000.0f,
 		0.0f,
 		Vector3(0.0f, 0.0f, 0.0f),
 		0.99f,
@@ -68,7 +82,7 @@ vector<particleInfo> ParticlesInfo = {
 		0,
 		Vector3(3.2f, 7.0f, 3.2f),
 		"Cube",
-		1.0f,
+		10000.0f,
 		Vector3(0.0f, 1.0f, 0.0f)
 	},
 	{ // PROPELLANT
@@ -100,7 +114,7 @@ vector<particleInfo> ParticlesInfo = {
 		Vector3(0.0f, 0.0f, 1.0f)
 	},
 	{ // WATER_PLANE
-		1350.0f,
+		100000.0f,
 		0.0f,
 		Vector3(0.0f, 0.0f, 0.0f),
 		0.99f,
@@ -110,7 +124,8 @@ vector<particleInfo> ParticlesInfo = {
 		0,
 		Vector3(100.0f, 10.0f, 100.0f),
 		"Cube",
-		1.0f
+		1000000.0f,
+		Vector3(0.0f, 1.0f, 0.0f)
 	}
 };
 
@@ -187,6 +202,7 @@ Particle::Particle(PxPhysics* GPhysics, PxScene* GScene,
 		PxShape* shape = getShape(ParticlesInfo[particleType].geometryType, ParticlesInfo[particleType].size);
 		rigid->attachShape(*shape);
 		PxRigidBodyExt::updateMassAndInertia(*rigid, ParticlesInfo[particleType].density);
+		//rigid->setMass(ParticlesInfo[particleType].mass);
 		gScene->addActor(*rigid);
 
 		setMass(rigid->getMass());
@@ -238,6 +254,7 @@ Particle::Particle(PxPhysics* GPhysics, PxScene* GScene,
 		PxShape* shape = getShape(shapeName, size);
 		rigid->attachShape(*shape);
 		PxRigidBodyExt::updateMassAndInertia(*rigid, density);
+		//rigid->setMass(mass);
 		gScene->addActor(*rigid);
 
 		setMass(rigid->getMass());

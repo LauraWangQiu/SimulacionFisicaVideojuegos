@@ -281,7 +281,7 @@ void ParticleSystem::addForces(Particle* p) {
 	}
 
 	if (buoyancyForceGenerator != nullptr && buoyancyForceGenerator->getActive()) {
-		if (p == spacecraft || p->getParticleType() == RANDOM)
+		if (p == spacecraft || p->getParticleType() == TRASH)
 			particleForceRegistry.addRegistry(buoyancyForceGenerator, p);
 	}
 }
@@ -302,7 +302,7 @@ void ParticleSystem::generateBuoyancyForce() {
 	if (liquidModel == nullptr) {
 		liquidModel = new Particle(WATER_PLANE, PxTransform(WATER_PLANE_POSITION), VECTOR_ZERO, true, true);
 		float volume = spacecraft->getSize().x * spacecraft->getSize().y * spacecraft->getSize().z;
-		buoyancyForceGenerator = new BuoyancyForceGenerator(liquidModel, 15.0f, volume, 1000.0f, gravity.y, "BuoyancyForce", BUOYANCY_FORCE_DURATION);
+		buoyancyForceGenerator = new BuoyancyForceGenerator(liquidModel, 15.0f, volume, liquidModel->getDensity(), gravity.y, "BuoyancyForce", BUOYANCY_FORCE_DURATION);
 		addForceGenerator(buoyancyForceGenerator);
 	}
 }
@@ -343,7 +343,7 @@ void ParticleSystem::stopMotion(bool m) {
 	randomGenerator->setActive(!m);
 }
 
-void ParticleSystem::addSphere(bool random) {
+void ParticleSystem::addSphere(ParticleType type, bool random) {
 
 	for (int i = 0; i < NUM_PARTICLES_SPHERE; ++i) {
 		float latitud = ((float)rand() / RAND_MAX) * 360.0f;
@@ -361,8 +361,8 @@ void ParticleSystem::addSphere(bool random) {
 		particleDirection.normalize();
 
 		Particle* p = nullptr;
-		if (!ADD_SPHERE_RIGIDBODY) p = addParticle(RANDOM, PxTransform(particlePosition), particleDirection, true, true);
-		else p = addParticle(gPhysics, gScene, RANDOM, PxTransform(particlePosition), particleDirection, true, true);
+		if (!ADD_SPHERE_RIGIDBODY) p = addParticle(type, PxTransform(particlePosition), particleDirection, true, true);
+		else p = addParticle(gPhysics, gScene, type, PxTransform(particlePosition), particleDirection, true, true);
 		if (random) p->setRandomColor();
 	}
 }
@@ -407,7 +407,7 @@ void ParticleSystem::manageMode() {
 			end2 = true;
 			fireworkGenerator->setActive(false);
 			spacecraft->setPos(SPACECRAFT_END2_POSITION);
-			addSphere();
+			addSphere(RANDOM);
 			whirlWindsForceGenerator->setActive(true);
 			propulsionForceGenerator->setActive(true);
 			propulsionForceGenerator->setGravity(PROPULSION_END2_FORCE);
@@ -437,7 +437,7 @@ void ParticleSystem::manageMode() {
 				else ++p;
 			}
 			center = SPHERE_END3_POSITION;
-			addSphere(true);
+			addSphere(TRASH, true);
 			c = 0;
 		}
 		break;

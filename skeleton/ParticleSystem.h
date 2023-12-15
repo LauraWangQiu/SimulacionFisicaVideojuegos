@@ -184,7 +184,7 @@ public:
 #pragma region JUEGO
 	void createScene();
 	void stopMotion(bool m);
-	void addSphere(bool random = false);
+	void addSphere(ParticleType type, bool random = false);
 	void manageMode();
 	void switchMode();
 
