@@ -1,20 +1,14 @@
-# Hola, usuario...
-Este repositorio está dedicado para la asignatura de Simulación Física para Videojuegos del Grado de Desarrollo de Videojuegos en la UCM.
+# Manual del usuario
 
-### ¿Qué se puede encontrar aquí?
-Se presenta un motor básico de videojuegos basado en el uso de la librería de simulación Physx de Nvidia.
+## Descripción
 
-### ¿Cómo lo pruebo?
-Sigue los siguientes pasos para probar el código: 
+¡Ayúdame a eliminar la chatarra que hay en el espacio! Controla un cohete y disfruta de una narrativa visual.
 
-**⚠️Importante tener Visual Studio Community⚠️**
+## Controles
 
-1. Descarga este repositorio.
-2. Descarga `resources.zip`desde el siguiente
-[link](https://ucomplutense-my.sharepoint.com/:f:/g/personal/liagar05_ucm_es/ElNxHPmZVj9Ni9-8FKTKp7cBJHAarnL3vvEvG50z0QMrzg).
-3. Descomprime `resources.zip`.
-4. Deja las carpetas `bin` y `common` en la raíz del repositorio.
-5. Accede a `.../SimulacionFisicaVideojuegos/skeleton/game.sln` y ejecútalo.
+En el menú de inicio, para cambiar de color del cohete utiliza las teclas `Q` y `E`. Para seleccionar y empezar el juego, `Enter`.
+
+Durante el estado de juego, para controlar la nave utiliza las teclas `WASD` y `SPACE` para propulsarte. Luego, para lanzar proyectiles con el `Right Click`.
 
 <hr>
 
